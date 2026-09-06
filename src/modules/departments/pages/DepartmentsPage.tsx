@@ -11,6 +11,7 @@ import type { Department } from '../types/department.type'
 import '../../dashboard/pages/DashboardPage.css'
 import './DepartmentsPage.css'
 import { useNotification } from '../../notification'
+import { useConfirmation } from '../../confirmation'
 
 const PAGE_SIZE = 5
 
@@ -57,6 +58,7 @@ export function DepartmentsPage() {
     success,
     error: showError,
   } = useNotification()
+  const { confirm } = useConfirmation()
 
   useEffect(() => {
     void loadDepartments()
@@ -142,19 +144,23 @@ export function DepartmentsPage() {
 }
 
   async function handleDelete(department: Department) {
-    const shouldDelete = window.confirm(
-      `Bạn có chắc muốn xóa "${department.name}" không?`,
-    )
+    const shouldDelete = await confirm({
+      title: 'Xóa khoa / phòng ban',
+      message: `Bạn có chắc muốn xóa "${department.name}" không? Thao tác này không thể hoàn tác.`,
+      confirmText: 'Xóa',
+      cancelText: 'Hủy',
+      tone: 'danger',
+    })
     if (!shouldDelete) return
 
-    setError('')
     try {
-      await deleteDepartment(department.departmentId)
+      const response = await deleteDepartment(department.departmentId)
       setDepartments((current) =>
         current.filter((item) => item.departmentId !== department.departmentId),
       )
+      success(response.message)
     } catch (requestError) {
-      setError(getErrorMessage(requestError))
+      showError(getErrorMessage(requestError))
     }
   }
 

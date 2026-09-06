@@ -1,0 +1,114 @@
+.confirmation-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 9000;
+  display: grid;
+  place-items: center;
+  padding: 20px;
+  background: rgba(15, 23, 42, 0.62);
+  animation: confirmation-fade-in 180ms ease-out;
+}
+
+.confirmation-dialog {
+  width: min(440px, 100%);
+  display: grid;
+  grid-template-columns: 46px 1fr;
+  gap: 14px;
+  padding: 22px;
+  border-radius: 8px;
+  background: #fff;
+  color: #1f2937;
+  box-shadow: 0 22px 60px rgba(15, 23, 42, 0.32);
+  animation: confirmation-pop-in 220ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.confirmation-icon {
+  width: 46px;
+  height: 46px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  background: #dc2626;
+  color: #fff;
+  font-size: 24px;
+  font-weight: 800;
+}
+
+.confirmation-icon.primary {
+  background: #0078d4;
+}
+
+.confirmation-content h3 {
+  margin: 1px 0 7px;
+  font-size: 18px;
+}
+
+.confirmation-content p {
+  margin: 0;
+  color: #64748b;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.confirmation-actions {
+  grid-column: 1 / -1;
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 8px;
+}
+
+.confirmation-actions button {
+  height: 40px;
+  padding: 0 17px;
+  border: 0;
+  border-radius: 5px;
+  color: #fff;
+  cursor: pointer;
+  font-weight: 600;
+}
+
+.confirmation-actions button.cancel {
+  border: 1px solid #cbd5e1;
+  background: #fff;
+  color: #334155;
+}
+
+.confirmation-actions button.danger {
+  background: #dc2626;
+}
+
+.confirmation-actions button.primary {
+  background: #0078d4;
+}
+
+.confirmation-actions button.danger:hover {
+  background: #b91c1c;
+}
+
+.confirmation-actions button.primary:hover {
+  background: #0064b1;
+}
+
+@keyframes confirmation-fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes confirmation-pop-in {
+  from {
+    opacity: 0;
+    transform: translateY(10px) scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .confirmation-backdrop,
+  .confirmation-dialog {
+    animation-duration: 1ms;
+  }
+}
