@@ -7,20 +7,22 @@ export function LoginPage() {
   }
 
   return (
-    <div className="login-container">
-      <div className="login-box">
-        <div className="logo">
-          <div className="logo-icon">🎓</div>
-          <h1>Log In</h1>
-          <p>Hệ thống đăng nhập thông tin</p>
-        </div>
+    <main className="auth-page">
+      <div className="login-container">
+        <div className="login-box">
+          <div className="logo">
+            <div className="logo-icon">🎓</div>
+            <h1>Log In</h1>
+            <p>Hệ thống đăng nhập thông tin</p>
+          </div>
 
-        <LoginForm onLoginSuccess={handleLoginSuccess} />
+          <LoginForm onLoginSuccess={handleLoginSuccess} />
 
-        <div className="login-footer">
-          <p>© 2026 Course Registration</p>
+          <div className="login-footer">
+            <p>© 2026 Course Registration</p>
+          </div>
         </div>
       </div>
-    </div>
+    </main>
   )
 }

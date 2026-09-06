@@ -1,13 +1,13 @@
-body {
+.auth-page {
   min-height: 100vh;
   background: url('https://hcmute.edu.vn/Resources/Images/SubDomain/HomePage/Nut/H%C3%ACnh%20%E1%BA%A3nh/Nen%20cong%20truong.jpg') no-repeat center center fixed;
   background-size: cover;
   position: relative;
 }
 
-body::before {
+.auth-page::before {
   content: '';
-  position: fixed;
+  position: absolute;
   inset: 0;
   background: rgba(0, 0, 0, 0.35);
   z-index: 0;
