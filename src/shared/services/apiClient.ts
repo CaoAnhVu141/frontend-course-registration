@@ -4,12 +4,19 @@ export async function apiClient<TResponse>(
     path: string,
     options?: RequestInit,
 ): Promise<TResponse> {
+    const headers = new Headers(options?.headers)
+    headers.set('Content-Type', 'application/json')
+
+    const accessToken = localStorage.getItem('accessToken')
+    const tokenType = localStorage.getItem('tokenType') ?? 'Bearer'
+
+    if (accessToken) {
+        headers.set('Authorization', `${tokenType} ${accessToken}`)
+    }
+
     const response = await fetch(`${API_BASE_URL}${path}`, {
-        headers: {
-            'Content-Type': 'application/json',
-            ...options?.headers,
-        },
         ...options,
+        headers,
     })
 
     const data = await response.json().catch(() => null)

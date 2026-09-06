@@ -4,7 +4,7 @@ import './DashboardPage.css'
 
 const navItems = [
   { label: 'Chương trình đào tạo', icon: '▤', active: false },
-  { label: 'Quản lý khoa/phòng ban', icon: '▦', active: true },
+  { label: 'Quản lý khoa/phòng ban', icon: '▦', active: false, href: '/departments' },
   { label: 'Quản lý chuyên môn', icon: '▣', active: false },
   { label: 'Quản lý giảng viên', icon: '▥', active: false },
   { label: 'Quản lý kỳ đăng ký', icon: '◴', active: false },
@@ -54,7 +54,7 @@ export function DashboardPage() {
         <ul className="nav-menu">
           {navItems.map((item) => (
             <li key={item.label}>
-              <a className={item.active ? 'active' : ''} href="#!">
+              <a className={item.active ? 'active' : ''} href={item.href ?? '#!'}>
                 <span className="nav-icon">{item.icon}</span>
                 {item.label}
               </a>
