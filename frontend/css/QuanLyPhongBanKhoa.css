@@ -1,0 +1,278 @@
+/* style.css */
+:root {
+    --sidebar-bg: #005691;
+    --sidebar-hover: #004677;
+    --main-bg: #1e2732;
+    --table-header-bg: #164a76;
+    --table-border: #2c3e50;
+    --text-light: #e0e0e0;
+    --text-active: #ffc107;
+    --card-bg: #d9eaf7;
+    --active-day-bg: #a89012;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+body {
+    display: flex;
+    height: 100vh;
+    background-color: var(--main-bg);
+    color: var(--text-light);
+    overflow: hidden;
+}
+
+/* --- SIDEBAR --- */
+.sidebar {
+    width: 260px;
+    background-color: var(--sidebar-bg);
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+}
+
+.logo-section {
+    padding: 20px;
+    text-align: center;
+    border-bottom: 1px solid rgba(255,255,255,0.1);
+}
+
+.logo-section img {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    background: white;
+    padding: 5px;
+    margin-bottom: 10px;
+}
+
+.user-info {
+    padding: 15px;
+    text-align: center;
+    font-size: 14px;
+    border-bottom: 1px solid rgba(255,255,255,0.1);
+}
+
+.user-info .avatar {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    margin-bottom: 10px;
+}
+
+.nav-menu {
+    list-style: none;
+    padding: 10px 0;
+}
+
+.nav-menu li a {
+    display: flex;
+    align-items: center;
+    padding: 12px 20px;
+    color: white;
+    text-decoration: none;
+    font-size: 14px;
+    transition: 0.2s;
+}
+
+.nav-menu li a:hover {
+    background-color: var(--sidebar-hover);
+}
+
+.nav-menu li a.active {
+    color: var(--text-active);
+    font-weight: bold;
+    border-left: 4px solid var(--text-active);
+}
+
+.nav-menu li a i {
+    width: 25px;
+    font-size: 16px;
+}
+
+/* --- MAIN CONTENT --- */
+.main-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+}
+
+.top-navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 25px;
+    background-color: rgba(0,0,0,0.2);
+    border-bottom: 1px solid var(--table-border);
+}
+
+.top-navbar h2 {
+    font-size: 18px;
+    font-weight: 600;
+    color: #fff;
+}
+
+.top-actions {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.content-body {
+    padding: 25px;
+}
+
+.page-title {
+    display: inline-block;
+    background-color: #0078d4;
+    padding: 8px 20px;
+    font-size: 18px;
+    font-weight: bold;
+    color: white;
+    position: relative;
+    margin-bottom: 20px;
+}
+
+.page-title::after {
+    content: '';
+    position: absolute;
+    right: -20px;
+    top: 0;
+    border-top: 20px solid transparent;
+    border-bottom: 19px solid transparent;
+    border-left: 20px solid #0078d4;
+}
+
+/* --- TABS & FILTERS --- */
+.tabs {
+    display: flex;
+    border-bottom: 1px solid var(--table-border);
+    margin-bottom: 20px;
+    gap: 20px;
+}
+
+.tabs div {
+    padding: 10px 0;
+    font-size: 14px;
+    cursor: pointer;
+    color: #8892a0;
+}
+
+.tabs div.active {
+    color: #ff6b81;
+    border-bottom: 2px solid #ff6b81;
+    font-weight: 600;
+}
+
+.filters {
+    display: flex;
+    gap: 15px;
+    margin-bottom: 20px;
+    align-items: flex-end;
+}
+
+.filter-group {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.filter-group label {
+    font-size: 12px;
+    color: #8892a0;
+}
+
+.filter-group select {
+    background-color: #2b3b4d;
+    color: white;
+    border: 1px solid var(--table-border);
+    padding: 8px 12px;
+    border-radius: 4px;
+    outline: none;
+    min-width: 150px;
+}
+
+.btn {
+    background-color: #0078d4;
+    color: white;
+    border: none;
+    padding: 9px 15px;
+    border-radius: 4px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.btn:hover { background-color: #0060aa; }
+
+/* --- TIMETABLE --- */
+table.timetable {
+    width: 100%;
+    border-collapse: collapse;
+    background-color: #222d3a;
+}
+
+table.timetable th, table.timetable td {
+    border: 1px solid var(--table-border);
+    padding: 10px;
+    text-align: center;
+}
+
+table.timetable th {
+    background-color: var(--table-header-bg);
+    color: white;
+    font-weight: 600;
+    padding: 15px;
+}
+
+table.timetable td.day-col {
+    font-weight: bold;
+    color: #e0e0e0;
+    width: 10%;
+}
+
+table.timetable td.current-day {
+    background-color: var(--active-day-bg);
+    color: white;
+}
+
+table.timetable td.current-day small {
+    display: block;
+    font-weight: normal;
+    font-size: 12px;
+    color: #ffd;
+}
+
+/* --- COURSE CARD --- */
+.course-card {
+    background-color: var(--card-bg);
+    border-radius: 6px;
+    padding: 12px;
+    text-align: center;
+    font-size: 13px;
+    color: #333;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.course-card .title {
+    color: #d32f2f;
+    font-weight: bold;
+    margin-bottom: 5px;
+}
+
+.course-card .info {
+    color: #388e3c;
+    margin-bottom: 3px;
+}
+
+.course-card .link {
+    color: #1976d2;
+    text-decoration: none;
+    word-break: break-all;
+}

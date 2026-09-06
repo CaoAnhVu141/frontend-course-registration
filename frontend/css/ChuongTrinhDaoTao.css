@@ -1,0 +1,259 @@
+/* =========================================
+   PHẦN 1: GIAO DIỆN CHUNG (LAYOUT GỐC)
+========================================= */
+:root {
+    --sidebar-bg: #005691;
+    --sidebar-hover: #004677;
+    --main-bg: #1e2732;
+    --table-header-bg: #164a76;
+    --table-border: #2c3e50;
+    --text-light: #e0e0e0;
+    --text-active: #ffc107;
+    --card-bg: #d9eaf7;
+    --active-day-bg: #a89012;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+body {
+    display: flex;
+    height: 100vh;
+    background-color: var(--main-bg);
+    color: var(--text-light);
+    overflow: hidden;
+}
+
+/* --- SIDEBAR --- */
+.sidebar {
+    width: 260px;
+    background-color: var(--sidebar-bg);
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+}
+
+.logo-section {
+    padding: 20px;
+    text-align: center;
+    border-bottom: 1px solid rgba(255,255,255,0.1);
+}
+
+.logo-section img {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    background: white;
+    padding: 5px;
+    margin-bottom: 10px;
+}
+
+.user-info {
+    padding: 15px;
+    text-align: center;
+    font-size: 14px;
+    border-bottom: 1px solid rgba(255,255,255,0.1);
+}
+
+.user-info .avatar {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    margin-bottom: 10px;
+}
+
+.nav-menu {
+    list-style: none;
+    padding: 10px 0;
+}
+
+.nav-menu li a {
+    display: flex;
+    align-items: center;
+    padding: 12px 20px;
+    color: white;
+    text-decoration: none;
+    font-size: 14px;
+    transition: 0.2s;
+}
+
+.nav-menu li a:hover {
+    background-color: var(--sidebar-hover);
+}
+
+.nav-menu li a.active {
+    color: var(--text-active);
+    font-weight: bold;
+    border-left: 4px solid var(--text-active);
+}
+
+.nav-menu li a i {
+    width: 25px;
+    font-size: 16px;
+}
+
+/* --- MAIN CONTENT --- */
+.main-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+}
+
+.top-navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 25px;
+    background-color: rgba(0,0,0,0.2);
+    border-bottom: 1px solid var(--table-border);
+}
+
+.top-navbar h2 {
+    font-size: 18px;
+    font-weight: 600;
+    color: #fff;
+}
+
+.top-actions {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.content-body {
+    padding: 25px;
+}
+
+.page-title {
+    display: inline-block;
+    background-color: #0078d4;
+    padding: 8px 20px;
+    font-size: 18px;
+    font-weight: bold;
+    color: white;
+    position: relative;
+    margin-bottom: 20px;
+}
+
+.page-title::after {
+    content: '';
+    position: absolute;
+    right: -20px;
+    top: 0;
+    border-top: 20px solid transparent;
+    border-bottom: 19px solid transparent;
+    border-left: 20px solid #0078d4;
+}
+
+/* =========================================
+   PHẦN 2: BẢNG CHƯƠNG TRÌNH ĐÀO TẠO
+========================================= */
+
+.program-header {
+    margin-bottom: 15px;
+    display: flex;
+    align-items: flex-start;
+}
+
+.filter-box {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    background: rgba(0, 0, 0, 0.1);
+    padding: 10px 15px;
+    border-radius: 4px;
+    border: 1px solid var(--table-border);
+}
+
+.filter-box label {
+    font-size: 11px;
+    color: #a0aab5;
+}
+
+.filter-box select {
+    background-color: transparent;
+    color: white;
+    border: none;
+    outline: none;
+    font-size: 14px;
+    font-weight: bold;
+    cursor: pointer;
+    padding-right: 10px;
+}
+
+.filter-box select option {
+    background-color: var(--main-bg);
+}
+
+.table-responsive {
+    width: 100%;
+    overflow-x: auto;
+    border: 1px solid var(--table-border);
+}
+
+.data-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+    background-color: #222d3a;
+}
+
+.data-table th, .data-table td {
+    border: 1px solid #364859;
+    padding: 8px 10px;
+    text-align: center;
+    vertical-align: middle;
+}
+
+.data-table th {
+    background-color: #0060aa;
+    color: white;
+    font-weight: bold;
+    font-size: 12px;
+}
+
+.data-table td.left-align {
+    text-align: left;
+}
+
+.group-row td {
+    background-color: #6d1a1a !important;
+    color: white;
+    font-weight: bold;
+    text-align: left !important;
+    padding: 10px !important;
+    text-transform: uppercase;
+}
+
+.category-row td {
+    background-color: #d1d8e0 !important;
+    color: #000;
+    font-weight: bold;
+    text-align: left !important;
+}
+
+.data-table td:first-child {
+    font-weight: bold;
+}
+
+.icon-eye {
+    color: #ff4757;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+.program-notes {
+    margin-top: 15px;
+    font-size: 13px;
+    line-height: 1.6;
+    color: #d1d8e0;
+}
+
+.program-notes p {
+    margin-bottom: 5px;
+}
