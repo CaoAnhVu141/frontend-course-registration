@@ -3,15 +3,15 @@ import { getRoleLabel } from '../../../shared/utils/roleLabel'
 import './DashboardPage.css'
 
 const navItems = [
-  { label: 'Chương trình đào tạo', icon: '▤', active: false },
-  { label: 'Quản lý khoa/phòng ban', icon: '▦', active: false, href: '/departments' },
-  { label: 'Quản lý chuyên môn', icon: '▣', active: false },
-  { label: 'Quản lý giảng viên', icon: '▥', active: false },
-  { label: 'Quản lý kỳ đăng ký', icon: '◴', active: false },
-  { label: 'Quản lý nhóm sinh viên', icon: '★', active: false },
-  { label: 'Quản lý sinh viên', icon: '●', active: false },
-  { label: 'Quản lý đề tài', icon: '▧', active: false },
-  { label: 'Quản lý đăng ký đề tài', icon: '▨', active: false },
+  { label: 'Chương trình đào tạo', icon: '▤', href: '/dashboard' },
+  { label: 'Quản lý khoa/phòng ban', icon: '▦', href: '/departments', roles: ['ADMIN' as const] },
+  { label: 'Quản lý chuyên môn', icon: '▣', href: '#!', roles: ['ADMIN' as const] },
+  { label: 'Quản lý giảng viên', icon: '▥', href: '/lecturers', roles: ['ADMIN' as const] },
+  { label: 'Quản lý kỳ đăng ký', icon: '◴', href: '#!', roles: ['ADMIN' as const] },
+  { label: 'Quản lý nhóm sinh viên', icon: '★', href: '#!' },
+  { label: 'Quản lý sinh viên', icon: '●', href: '#!', roles: ['ADMIN' as const] },
+  { label: 'Quản lý đề tài', icon: '▧', href: '#!' },
+  { label: 'Quản lý đăng ký đề tài', icon: '▨', href: '#!' },
 ]
 
 export function DashboardPage() {
@@ -24,6 +24,10 @@ export function DashboardPage() {
 
   const displayEmail = user.email ?? 'Chưa có email'
   const roleLabel = getRoleLabel(user.roles)
+  const currentPath = window.location.pathname
+  const visibleNavItems = navItems.filter(
+    (item) => !item.roles || item.roles.some((role) => user.roles.includes(role)),
+  )
 
   function handleLogout() {
     tokenStorage.clear()
@@ -52,9 +56,9 @@ export function DashboardPage() {
         </div>
 
         <ul className="nav-menu">
-          {navItems.map((item) => (
+          {visibleNavItems.map((item) => (
             <li key={item.label}>
-              <a className={item.active ? 'active' : ''} href={item.href ?? '#!'}>
+              <a className={item.href === currentPath ? 'active' : ''} href={item.href}>
                 <span className="nav-icon">{item.icon}</span>
                 {item.label}
               </a>

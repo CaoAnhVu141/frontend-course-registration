@@ -11,17 +11,18 @@ import type { Department } from '../types/department.type'
 import '../../dashboard/pages/DashboardPage.css'
 import './DepartmentsPage.css'
 import { useNotification } from '../../notification'
+import { useConfirmation } from '../../confirmation'
 
 const PAGE_SIZE = 5
 
 const navItems = [
-  { label: 'Chương trình đào tạo', icon: '▤', href: '#!' },
-  { label: 'Quản lý khoa/phòng ban', icon: '▦', href: '/departments' },
-  { label: 'Quản lý chuyên môn', icon: '▣', href: '#!' },
-  { label: 'Quản lý giảng viên', icon: '▥', href: '#!' },
-  { label: 'Quản lý kỳ đăng ký', icon: '◴', href: '#!' },
+  { label: 'Chương trình đào tạo', icon: '▤', href: '/dashboard' },
+  { label: 'Quản lý khoa/phòng ban', icon: '▦', href: '/departments', roles: ['ADMIN' as const] },
+  { label: 'Quản lý chuyên môn', icon: '▣', href: '#!', roles: ['ADMIN' as const] },
+  { label: 'Quản lý giảng viên', icon: '▥', href: '/lecturers', roles: ['ADMIN' as const] },
+  { label: 'Quản lý kỳ đăng ký', icon: '◴', href: '#!', roles: ['ADMIN' as const] },
   { label: 'Quản lý nhóm sinh viên', icon: '★', href: '#!' },
-  { label: 'Quản lý sinh viên', icon: '●', href: '#!' },
+  { label: 'Quản lý sinh viên', icon: '●', href: '#!', roles: ['ADMIN' as const] },
   { label: 'Quản lý đề tài', icon: '▧', href: '#!' },
   { label: 'Quản lý đăng ký đề tài', icon: '▨', href: '#!' },
 ]
@@ -57,6 +58,13 @@ export function DepartmentsPage() {
     success,
     error: showError,
   } = useNotification()
+  const { confirm } = useConfirmation()
+  const currentPath = window.location.pathname
+  const visibleNavItems = user
+    ? navItems.filter(
+        (item) => !item.roles || item.roles.some((role) => user.roles.includes(role)),
+      )
+    : []
 
   useEffect(() => {
     void loadDepartments()
@@ -142,19 +150,23 @@ export function DepartmentsPage() {
 }
 
   async function handleDelete(department: Department) {
-    const shouldDelete = window.confirm(
-      `Bạn có chắc muốn xóa "${department.name}" không?`,
-    )
+    const shouldDelete = await confirm({
+      title: 'Xóa khoa / phòng ban',
+      message: `Bạn có chắc muốn xóa "${department.name}" không? Thao tác này không thể hoàn tác.`,
+      confirmText: 'Xóa',
+      cancelText: 'Hủy',
+      tone: 'danger',
+    })
     if (!shouldDelete) return
 
-    setError('')
     try {
-      await deleteDepartment(department.departmentId)
+      const response = await deleteDepartment(department.departmentId)
       setDepartments((current) =>
         current.filter((item) => item.departmentId !== department.departmentId),
       )
+      success(response.message)
     } catch (requestError) {
-      setError(getErrorMessage(requestError))
+      showError(getErrorMessage(requestError))
     }
   }
 
@@ -181,9 +193,9 @@ export function DepartmentsPage() {
           <p>{getRoleLabel(user.roles)}</p>
         </div>
         <ul className="nav-menu">
-          {navItems.map((item) => (
+          {visibleNavItems.map((item) => (
             <li key={item.label}>
-              <a className={item.href === '/departments' ? 'active' : ''} href={item.href}>
+              <a className={item.href === currentPath ? 'active' : ''} href={item.href}>
                 <span className="nav-icon">{item.icon}</span>
                 {item.label}
               </a>
