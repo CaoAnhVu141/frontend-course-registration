@@ -1,0 +1,1 @@
+export { LecturersPage } from './pages/LecturersPage'

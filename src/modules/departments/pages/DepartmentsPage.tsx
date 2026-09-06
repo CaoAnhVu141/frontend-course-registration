@@ -16,13 +16,13 @@ import { useConfirmation } from '../../confirmation'
 const PAGE_SIZE = 5
 
 const navItems = [
-  { label: 'Chương trình đào tạo', icon: '▤', href: '#!' },
-  { label: 'Quản lý khoa/phòng ban', icon: '▦', href: '/departments' },
-  { label: 'Quản lý chuyên môn', icon: '▣', href: '#!' },
-  { label: 'Quản lý giảng viên', icon: '▥', href: '#!' },
-  { label: 'Quản lý kỳ đăng ký', icon: '◴', href: '#!' },
+  { label: 'Chương trình đào tạo', icon: '▤', href: '/dashboard' },
+  { label: 'Quản lý khoa/phòng ban', icon: '▦', href: '/departments', roles: ['ADMIN' as const] },
+  { label: 'Quản lý chuyên môn', icon: '▣', href: '#!', roles: ['ADMIN' as const] },
+  { label: 'Quản lý giảng viên', icon: '▥', href: '/lecturers', roles: ['ADMIN' as const] },
+  { label: 'Quản lý kỳ đăng ký', icon: '◴', href: '#!', roles: ['ADMIN' as const] },
   { label: 'Quản lý nhóm sinh viên', icon: '★', href: '#!' },
-  { label: 'Quản lý sinh viên', icon: '●', href: '#!' },
+  { label: 'Quản lý sinh viên', icon: '●', href: '#!', roles: ['ADMIN' as const] },
   { label: 'Quản lý đề tài', icon: '▧', href: '#!' },
   { label: 'Quản lý đăng ký đề tài', icon: '▨', href: '#!' },
 ]
@@ -59,6 +59,12 @@ export function DepartmentsPage() {
     error: showError,
   } = useNotification()
   const { confirm } = useConfirmation()
+  const currentPath = window.location.pathname
+  const visibleNavItems = user
+    ? navItems.filter(
+        (item) => !item.roles || item.roles.some((role) => user.roles.includes(role)),
+      )
+    : []
 
   useEffect(() => {
     void loadDepartments()
@@ -187,9 +193,9 @@ export function DepartmentsPage() {
           <p>{getRoleLabel(user.roles)}</p>
         </div>
         <ul className="nav-menu">
-          {navItems.map((item) => (
+          {visibleNavItems.map((item) => (
             <li key={item.label}>
-              <a className={item.href === '/departments' ? 'active' : ''} href={item.href}>
+              <a className={item.href === currentPath ? 'active' : ''} href={item.href}>
                 <span className="nav-icon">{item.icon}</span>
                 {item.label}
               </a>
