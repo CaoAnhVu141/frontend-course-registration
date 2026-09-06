@@ -11,12 +11,23 @@ export async function login(payload: LoginRequest): Promise<LoginResponse> {
         body: JSON.stringify(payload),
     })
 
-    const data = response.data ?? response
+    const data = response.data
+
+    if (!data) {
+        throw new Error(response.message || 'Backend chưa trả dữ liệu đăng nhập.')
+    }
 
     return {
         accessToken: data.accessToken ?? data.access_token ?? data.token,
         refreshToken: data.refreshToken ?? data.refresh_token,
         tokenType: data.tokenType ?? data.token_type,
-        message: data.message,
+        expiresIn: data.expiresIn,
+        message: response.message,
+        user: {
+            id: data.id,
+            username: data.username,
+            email: data.email,
+            roles: data.roles ?? [],
+        },
     }
 }

@@ -1,4 +1,5 @@
 import { tokenStorage } from '../../../shared/services/tokenStorage'
+import { getRoleLabel } from '../../../shared/utils/roleLabel'
 import './DashboardPage.css'
 
 const navItems = [
@@ -14,6 +15,16 @@ const navItems = [
 ]
 
 export function DashboardPage() {
+  const user = tokenStorage.getUser()
+
+  if (!user) {
+    window.location.href = '/'
+    return null
+  }
+
+  const displayEmail = user.email ?? 'Chưa có email'
+  const roleLabel = getRoleLabel(user.roles)
+
   function handleLogout() {
     tokenStorage.clear()
     window.location.href = '/'
@@ -36,8 +47,8 @@ export function DashboardPage() {
             alt="Avatar"
             className="avatar"
           />
-          <h4>Đinh Minh Tâm</h4>
-          <p>GIẢNG VIÊN</p>
+          <h4>{displayEmail}</h4>
+          <p>{roleLabel}</p>
         </div>
 
         <ul className="nav-menu">
