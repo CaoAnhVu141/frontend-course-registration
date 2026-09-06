@@ -22,7 +22,19 @@ export async function apiClient<TResponse>(
     const data = await response.json().catch(() => null)
 
     if (!response.ok) {
-        throw new Error(data?.message || data?.error || 'Có lỗi xảy ra')
+        const details =
+            data?.details && typeof data.details === 'object'
+                ? Object.values(data.details)
+                    .filter((value) => typeof value === 'string')
+                    .join(', ')
+                : ''
+
+        throw new Error(
+            details ||
+            data?.message ||
+            data?.error ||
+            'Có lỗi xảy ra',
+        )
     }
 
     return data as TResponse

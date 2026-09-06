@@ -32,7 +32,9 @@ export function NotificationContainer({
       {notifications.map((notification) => (
         <div
           key={notification.id}
-          className={`notification-item ${notification.type}`}
+          className={`notification-item ${notification.type} ${
+            notification.isClosing ? 'closing' : ''
+          }`}
           role="status"
         >
           <span className="notification-icon">

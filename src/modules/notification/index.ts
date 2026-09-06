@@ -8,4 +8,4 @@ export type {
     NotificationType,
 } from './types/notification.type'
 
-import './Notification.css'
+import './notification.css'

@@ -5,6 +5,7 @@ export type NotificationItem = {
     type: NotificationType
     message: string
     duration: number
+    isClosing?: boolean
 }
 
 export type NotificationContextValue = {

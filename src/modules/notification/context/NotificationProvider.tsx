@@ -25,8 +25,18 @@ export function NotificationProvider({
 
   const remove = useCallback((id: number) => {
     setNotifications((current) =>
-      current.filter((notification) => notification.id !== id),
+      current.map((notification) =>
+        notification.id === id
+          ? { ...notification, isClosing: true }
+          : notification,
+      ),
     )
+
+    window.setTimeout(() => {
+      setNotifications((current) =>
+        current.filter((notification) => notification.id !== id),
+      )
+    }, 280)
   }, [])
 
   const show = useCallback(
@@ -82,6 +92,7 @@ export function NotificationProvider({
   )
 }
 
+// eslint-disable-next-line react-refresh/only-export-components
 export function useNotification() {
   const context = useContext(NotificationContext)
 

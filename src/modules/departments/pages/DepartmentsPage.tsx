@@ -54,10 +54,9 @@ export function DepartmentsPage() {
   )
 
   const {
-  success,
-  error: showError,
-  warning,
-} = useNotification()
+    success,
+    error: showError,
+  } = useNotification()
 
   useEffect(() => {
     void loadDepartments()
@@ -98,36 +97,49 @@ export function DepartmentsPage() {
     setIsFormOpen(false)
   }
 
-  async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
-    event.preventDefault()
-    const name = departmentName.trim()
+  async function handleSubmit(
+  event: React.FormEvent<HTMLFormElement>,
+) {
+  event.preventDefault()
 
-    if (!name) {
-    warning('Tên khoa/phòng ban không được để trống.')
-    return
-  }
+  const name = departmentName.trim()
 
-    setIsSaving(true)
-    setError('')
-    try {
-      if (editingDepartment) {
-        const updated = await updateDepartment(editingDepartment.departmentId, { name })
-        setDepartments((current) =>
-          current.map((item) =>
-            item.departmentId === updated.departmentId ? updated : item,
-          ),
-        )
-      } else {
-        const created = await createDepartment({ name })
-        setDepartments((current) => [...current, created])
-      }
-      setIsFormOpen(false)
-    } catch (requestError) {
-      setError(getErrorMessage(requestError))
-    } finally {
-      setIsSaving(false)
+  setIsSaving(true)
+
+  try {
+    if (editingDepartment) {
+      const response = await updateDepartment(
+        editingDepartment.departmentId,
+        { name },
+      )
+
+      setDepartments((current) =>
+        current.map((item) =>
+          item.departmentId === response.data.departmentId
+            ? response.data
+            : item,
+        ),
+      )
+
+      success(response.message)
+    } else {
+      const response = await createDepartment({ name })
+
+      setDepartments((current) => [
+        ...current,
+        response.data,
+      ])
+
+      success(response.message)
     }
+
+    setIsFormOpen(false)
+  } catch (requestError) {
+    showError(getErrorMessage(requestError))
+  } finally {
+    setIsSaving(false)
   }
+}
 
   async function handleDelete(department: Department) {
     const shouldDelete = window.confirm(
