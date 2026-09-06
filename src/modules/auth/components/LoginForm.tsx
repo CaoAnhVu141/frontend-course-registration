@@ -34,6 +34,10 @@ export function LoginForm({ onLoginSuccess }: LoginFormProps) {
         password,
       })
 
+      if (!data.accessToken) {
+        throw new Error('Đăng nhập thành công nhưng backend chưa trả accessToken.')
+      }
+
       tokenStorage.save(data)
 
       setMessage('Đăng nhập thành công!')
