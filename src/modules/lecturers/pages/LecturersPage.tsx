@@ -1,9 +1,8 @@
 import { useEffect, useMemo, useState } from 'react'
 import { useConfirmation } from '../../confirmation'
-import '../../dashboard/pages/DashboardPage.css'
+import { DashboardLayout } from '../../dashboard/components/DashboardLayout'
 import { useNotification } from '../../notification'
 import { tokenStorage } from '../../../shared/services/tokenStorage'
-import { getRoleLabel } from '../../../shared/utils/roleLabel'
 import {
   createLecturer,
   deleteLecturer,
@@ -17,30 +16,12 @@ import './LecturersPage.css'
 
 const PAGE_SIZE = 5
 
-const navItems = [
-  { label: 'Chương trình đào tạo', icon: '▤', href: '/dashboard' },
-  { label: 'Quản lý khoa/phòng ban', icon: '▦', href: '/departments', roles: ['ADMIN' as const] },
-  { label: 'Quản lý chuyên môn', icon: '▣', href: '#!', roles: ['ADMIN' as const] },
-  { label: 'Quản lý giảng viên', icon: '▥', href: '/lecturers', roles: ['ADMIN' as const] },
-  { label: 'Quản lý kỳ đăng ký', icon: '◴', href: '#!', roles: ['ADMIN' as const] },
-  { label: 'Quản lý nhóm sinh viên', icon: '★', href: '#!' },
-  { label: 'Quản lý sinh viên', icon: '●', href: '#!', roles: ['ADMIN' as const] },
-  { label: 'Quản lý đề tài', icon: '▧', href: '#!' },
-  { label: 'Quản lý đăng ký đề tài', icon: '▨', href: '#!' },
-]
-
 export function LecturersPage() {
   const user = tokenStorage.getUser()
   const { success, error: showError } = useNotification()
   const { confirm } = useConfirmation()
 
   const isAdmin = user?.roles.includes('ADMIN') ?? false
-  const currentPath = window.location.pathname
-  const visibleNavItems = user
-    ? navItems.filter(
-        (item) => !item.roles || item.roles.some((role) => user.roles.includes(role)),
-      )
-    : []
 
   const [lecturers, setLecturers] = useState<Lecturer[]>([])
   const [expertiseTags, setExpertiseTags] = useState<ExpertiseTag[]>([])
@@ -219,11 +200,6 @@ export function LecturersPage() {
     }
   }
 
-  function handleLogout() {
-    tokenStorage.clear()
-    window.location.href = '/'
-  }
-
   if (!user) {
     window.location.href = '/'
     return null
@@ -235,45 +211,8 @@ export function LecturersPage() {
   }
 
   return (
-    <div className="dashboard-shell">
-      <aside className="sidebar">
-        <div className="logo-section">
-          <img src="https://tracuuxettuyen.hcmute.edu.vn/assets/img/logo/ute_logo.png" alt="HCM-UTE" />
-          <h3>HCM-UTE</h3>
-        </div>
-
-        <div className="user-info">
-          <img src="https://www.iconpacks.net/icons/2/free-user-icon-3296-thumb.png" alt="Avatar" className="avatar" />
-          <h4>{user.email ?? 'Chưa có email'}</h4>
-          <p>{getRoleLabel(user.roles)}</p>
-        </div>
-
-        <ul className="nav-menu">
-          {visibleNavItems.map((item) => (
-            <li key={item.label}>
-              <a className={item.href === currentPath ? 'active' : ''} href={item.href}>
-                <span className="nav-icon">{item.icon}</span>
-                {item.label}
-              </a>
-            </li>
-          ))}
-        </ul>
-      </aside>
-
-      <main className="main-content">
-        <header className="top-navbar">
-          <h2>TRƯỜNG ĐẠI HỌC CÔNG NGHỆ KỸ THUẬT TP.HCM</h2>
-          <div className="top-actions">
-            <span className="flag-icon">⚑</span>
-            <span className="bell-icon">●</span>
-            <img src="https://www.iconpacks.net/icons/2/free-user-icon-3296-thumb.png" alt="User" />
-            <button type="button" onClick={handleLogout} aria-label="Đăng xuất" title="Đăng xuất">↪</button>
-          </div>
-        </header>
-
-        <div className="content-body lecturers-content">
-          <div className="page-title">QUẢN LÝ GIẢNG VIÊN</div>
-
+    <DashboardLayout title="QUẢN LÝ GIẢNG VIÊN" contentClassName="lecturers-content">
+      <>
           <section className="lecturers-panel">
             <div className="lecturers-toolbar">
               <label className="lecturer-search">
@@ -351,8 +290,6 @@ export function LecturersPage() {
               </nav>
             )}
           </section>
-        </div>
-      </main>
 
       {isFormOpen && (
         <div className="lecturer-modal-backdrop" role="presentation" onMouseDown={closeForm}>
@@ -399,7 +336,8 @@ export function LecturersPage() {
           </section>
         </div>
       )}
-    </div>
+      </>
+    </DashboardLayout>
   )
 }
 
