@@ -1,5 +1,5 @@
 // const API_BASE_URL = 'http://localhost:8080'
-
+import { tokenStorage } from './tokenStorage'
 const API_BASE_URL =
     import.meta.env.VITE_API_BASE_URL
 
@@ -23,6 +23,14 @@ export async function apiClient<TResponse>(
     })
 
     const data = await response.json().catch(() => null)
+
+    if (response.status === 401 && accessToken) {
+        tokenStorage.clear();
+
+        if (window.location.pathname !== '/') {
+            window.location.href = '/'
+        }
+    }
 
     if (!response.ok) {
         const details =
