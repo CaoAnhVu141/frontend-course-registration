@@ -5,4 +5,5 @@ export const STORAGE_KEYS = {
     authUser: 'authUser',
     logoutMessage: 'logoutMessage',
     loginSuccessMessage: 'loginSuccessMessage',
+    expertiseTagOverrides: 'expertiseTagOverrides',
 } as const
