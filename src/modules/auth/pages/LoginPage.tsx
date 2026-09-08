@@ -1,7 +1,21 @@
+import { useEffect } from 'react'
+import { useNotification } from '../../notification'
+import { STORAGE_KEYS } from '../../../shared/constants/storageKeys'
 import { LoginForm } from '../components/LoginForm'
 import './LoginPage.css'
 
 export function LoginPage() {
+  const { success } = useNotification()
+
+  useEffect(() => {
+    const logoutMessage = sessionStorage.getItem(STORAGE_KEYS.logoutMessage)
+
+    if (!logoutMessage) return
+
+    sessionStorage.removeItem(STORAGE_KEYS.logoutMessage)
+    success(logoutMessage)
+  }, [success])
+
   function handleLoginSuccess() {
     window.location.href = '/dashboard'
   }

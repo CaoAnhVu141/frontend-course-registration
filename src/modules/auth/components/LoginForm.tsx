@@ -2,6 +2,7 @@ import { useState } from 'react'
 import type { FormEvent } from 'react'
 import { login } from '../services/authApi'
 import { tokenStorage } from '../../../shared/services/tokenStorage'
+import { STORAGE_KEYS } from '../../../shared/constants/storageKeys'
 
 type LoginFormProps = {
   onLoginSuccess?: () => void
@@ -39,6 +40,7 @@ export function LoginForm({ onLoginSuccess }: LoginFormProps) {
       }
 
       tokenStorage.save(data)
+      sessionStorage.setItem(STORAGE_KEYS.loginSuccessMessage, 'true')
 
       setMessage('Đăng nhập thành công!')
       setMessageType('success')

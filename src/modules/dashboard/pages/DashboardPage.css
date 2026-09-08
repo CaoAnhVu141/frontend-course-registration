@@ -184,13 +184,26 @@
 }
 
 .success-panel {
-  margin-top: 4px;
+  width: min(620px, calc(100vw - 40px));
   background-color: #222d3a;
   border: 1px solid var(--table-border);
   padding: 24px;
   display: flex;
   align-items: center;
   gap: 16px;
+  border-radius: 8px;
+  box-shadow: 0 20px 55px rgba(15, 23, 42, 0.35);
+  animation: success-modal-in 220ms ease-out;
+}
+
+.success-modal-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 30;
+  display: grid;
+  place-items: center;
+  padding: 20px;
+  background: rgba(15, 23, 42, 0.35);
 }
 
 .success-icon {
@@ -216,6 +229,18 @@
 .success-panel p {
   color: #cbd5e1;
   font-size: 14px;
+}
+
+@keyframes success-modal-in {
+  from {
+    opacity: 0;
+    transform: scale(0.96);
+  }
+
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
 }
 
 @media (max-width: 900px) {

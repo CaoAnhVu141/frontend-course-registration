@@ -5,6 +5,13 @@ import type {
     LoginResponse,
 } from '../types/auth.type'
 
+type ApiResponse<T> = {
+    timestamp: string
+    status: number
+    message: string
+    data: T
+}
+
 export async function login(payload: LoginRequest): Promise<LoginResponse> {
     const response = await apiClient<BackendLoginResponse>('/api/auth/login', {
         method: 'POST',
@@ -30,4 +37,12 @@ export async function login(payload: LoginRequest): Promise<LoginResponse> {
             roles: data.roles ?? [],
         },
     }
+}
+
+
+export async function logout(refreshToken: string): Promise<ApiResponse<null>> {
+    return apiClient<ApiResponse<null>>('/api/auth/logout', {
+        method: 'POST',
+        body: JSON.stringify({ refreshToken }),
+    })
 }
