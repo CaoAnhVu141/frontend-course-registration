@@ -26,10 +26,15 @@ export function DepartmentsPage() {
 
   const filteredDepartments = useMemo(() => {
     const keyword = search.trim().toLocaleLowerCase('vi')
-    if (!keyword) return departments
+    const matchingDepartments = !keyword
+      ? departments
+      : departments.filter((department) =>
+          department.name.toLocaleLowerCase('vi').includes(keyword),
+        )
 
-    return departments.filter((department) =>
-      department.name.toLocaleLowerCase('vi').includes(keyword),
+    return [...matchingDepartments].sort(
+      (firstDepartment, secondDepartment) =>
+        secondDepartment.departmentId - firstDepartment.departmentId,
     )
   }, [departments, search])
 
@@ -174,7 +179,7 @@ export function DepartmentsPage() {
               <table className="department-table">
                 <thead>
                   <tr>
-                    <th>ID</th>
+                    <th>STT</th>
                     <th>Tên khoa / phòng ban</th>
                     <th>Thao tác</th>
                   </tr>
