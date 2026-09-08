@@ -168,5 +168,4 @@ function getStoredChanges(): StoredTagChanges {
   } catch {
     return {}
   }
-
 }
