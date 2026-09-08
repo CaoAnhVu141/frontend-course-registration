@@ -1,0 +1,30 @@
+import type { UserRole } from '../../auth/types/auth.type'
+
+export type Student = {
+  userId: number
+  username: string
+  email: string
+  roles: UserRole[]
+  studentCode: string
+  departmentId: number
+  className: string
+}
+
+export type UpdateStudentRequest = {
+  studentCode: string
+  departmentId?: number
+  className: string
+}
+
+export type RegisterStudentRequest = UpdateStudentRequest & {
+  username: string
+  email: string
+  password: string
+}
+
+export type ApiResponse<T> = {
+  timestamp: string
+  status: number
+  message: string
+  data: T
+}

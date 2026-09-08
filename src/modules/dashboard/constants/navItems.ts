@@ -15,7 +15,7 @@ export const navItems: NavItem[] = [
     { label: 'Quản lý giảng viên', icon: '▥', href: '/lecturers', roles: ['ADMIN'] },
     // { label: 'Quản lý kỳ đăng ký', icon: '◴', href: '#!', roles: ['ADMIN'] },
     // { label: 'Quản lý nhóm sinh viên', icon: '★', href: '#!' },
-    // { label: 'Quản lý sinh viên', icon: '●', href: '#!', roles: ['ADMIN'] },
+    { label: 'Quản lý sinh viên', icon: '●', href: '/students', roles: ['ADMIN', 'LECTURER'] },
     // { label: 'Quản lý đề tài', icon: '▧', href: '#!' },
     // { label: 'Quản lý đăng ký đề tài', icon: '▨', href: '#!' },
 ]
