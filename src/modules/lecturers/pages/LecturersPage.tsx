@@ -44,17 +44,21 @@ export function LecturersPage() {
 
   const filteredLecturers = useMemo(() => {
     const keyword = search.trim().toLocaleLowerCase('vi')
-    if (!keyword) return lecturers
+    const matchingLecturers = !keyword
+      ? lecturers
+      : lecturers.filter((lecturer) =>
+          [
+            lecturer.username,
+            lecturer.email,
+            lecturer.lecturerCode,
+            lecturer.academicTitle,
+          ]
+            .filter(Boolean)
+            .some((value) => value!.toLocaleLowerCase('vi').includes(keyword)),
+        )
 
-    return lecturers.filter((lecturer) =>
-      [
-        lecturer.username,
-        lecturer.email,
-        lecturer.lecturerCode,
-        lecturer.academicTitle,
-      ]
-        .filter(Boolean)
-        .some((value) => value!.toLocaleLowerCase('vi').includes(keyword)),
+    return [...matchingLecturers].sort(
+      (firstLecturer, secondLecturer) => secondLecturer.userId - firstLecturer.userId,
     )
   }, [lecturers, search])
 
@@ -236,7 +240,7 @@ export function LecturersPage() {
               <table className="lecturer-table">
                 <thead>
                   <tr>
-                    <th>ID</th>
+                    <th>STT</th>
                     <th>Mã GV</th>
                     <th>Email</th>
                     <th>Khoa/Phòng ban</th>

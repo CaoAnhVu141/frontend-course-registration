@@ -4,4 +4,5 @@ export const STORAGE_KEYS = {
     tokenType: 'tokenType',
     authUser: 'authUser',
     logoutMessage: 'logoutMessage',
+    loginSuccessMessage: 'loginSuccessMessage',
 } as const
