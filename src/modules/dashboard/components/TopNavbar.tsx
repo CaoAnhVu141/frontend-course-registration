@@ -1,9 +1,28 @@
 import { tokenStorage } from '../../../shared/services/tokenStorage'
+import { STORAGE_KEYS } from '../../../shared/constants/storageKeys'
+import { logout } from '../../auth/services/authApi'
 
 export function TopNavbar() {
-  function handleLogout() {
-    tokenStorage.clear()
-    window.location.href = '/'
+  async function handleLogout() {
+    const refreshToken = localStorage.getItem(STORAGE_KEYS.refreshToken)
+
+    try {
+      if (refreshToken) {
+        const response = await logout(refreshToken)
+        sessionStorage.setItem(
+          STORAGE_KEYS.logoutMessage,
+          response.message,
+        )
+      } else {
+        sessionStorage.setItem(
+          STORAGE_KEYS.logoutMessage,
+          'Đăng xuất thành công',
+        )
+      }
+    } finally {
+      tokenStorage.clear()
+      window.location.href = '/'
+    }
   }
 
   return (
