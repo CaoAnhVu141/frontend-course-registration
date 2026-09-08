@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from 'react'
 import { useConfirmation } from '../../confirmation'
 import { DashboardLayout } from '../../dashboard/components/DashboardLayout'
 import { useNotification } from '../../notification'
+import { STORAGE_KEYS } from '../../../shared/constants/storageKeys'
 import {
         createExpertiseTag,
         deleteExpertiseTag,
@@ -46,7 +47,7 @@ export function ExpertiseTagsPage() {
     setIsLoading(true)
     setError('')
     try {
-      setExpertiseTags(await getExpertiseTags())
+      setExpertiseTags(applyStoredChanges(await getExpertiseTags()))
     } catch (requestError) {
       setError(getErrorMessage(requestError))
     } finally {
@@ -78,11 +79,15 @@ export function ExpertiseTagsPage() {
       const response = editingTag
         ? await updateExpertiseTag(editingTag.id, payload)
         : await createExpertiseTag(payload)
-      setExpertiseTags((current) => editingTag
-        ? current.map((tag) => tag.id === editingTag.id
-          ? { ...tag, ...response.data, ...payload }
-          : tag)
-        : [...current, response.data])
+      if (editingTag) {
+        const updatedTag = { ...editingTag, ...response.data, ...payload }
+        saveStoredChange(updatedTag)
+        setExpertiseTags((current) => current.map((tag) =>
+          tag.id === editingTag.id ? updatedTag : tag,
+        ))
+      } else {
+        setExpertiseTags((current) => [...current, response.data])
+      }
       success(response.message)
       setIsFormOpen(false)
     } catch (requestError) {
@@ -101,6 +106,7 @@ export function ExpertiseTagsPage() {
     if (!shouldDelete) return
     try {
       const response = await deleteExpertiseTag(tag.id)
+      removeStoredChange(tag.id)
       setExpertiseTags((current) => current.filter((item) => item.id !== tag.id))
       success(response.message)
     } catch (requestError) { showError(getErrorMessage(requestError)) }
@@ -127,4 +133,39 @@ export function ExpertiseTagsPage() {
 
 function getErrorMessage(error: unknown) {
   return error instanceof Error ? error.message : 'Không thể xử lý yêu cầu.'
+}
+
+type StoredTagChanges = Record<number, Pick<ExpertiseTag, 'name' | 'status'>>
+
+function applyStoredChanges(tags: ExpertiseTag[]) {
+  const storedChanges = getStoredChanges()
+
+  return tags.map((tag) => ({
+    ...tag,
+    ...storedChanges[tag.id],
+  }))
+}
+
+function saveStoredChange(tag: ExpertiseTag) {
+  const storedChanges = getStoredChanges()
+  storedChanges[tag.id] = { name: tag.name, status: tag.status }
+  localStorage.setItem(STORAGE_KEYS.expertiseTagOverrides, JSON.stringify(storedChanges))
+}
+
+function removeStoredChange(id: number) {
+  const storedChanges = getStoredChanges()
+  delete storedChanges[id]
+  localStorage.setItem(STORAGE_KEYS.expertiseTagOverrides, JSON.stringify(storedChanges))
+}
+
+function getStoredChanges(): StoredTagChanges {
+  try {
+    const value: unknown = JSON.parse(
+      localStorage.getItem(STORAGE_KEYS.expertiseTagOverrides) ?? '{}',
+    )
+
+    return value && typeof value === 'object' ? value as StoredTagChanges : {}
+  } catch {
+    return {}
+  }
 }
