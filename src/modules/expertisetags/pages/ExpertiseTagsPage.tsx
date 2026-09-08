@@ -88,6 +88,11 @@ export function ExpertiseTagsPage() {
       } else {
         setExpertiseTags((current) => [...current, response.data])
       }
+      setExpertiseTags((current) => editingTag
+        ? current.map((tag) => tag.id === editingTag.id
+          ? { ...tag, ...response.data, ...payload }
+          : tag)
+        : [...current, response.data])
       success(response.message)
       setIsFormOpen(false)
     } catch (requestError) {
