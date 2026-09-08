@@ -109,15 +109,22 @@
 .expertise-tag-table th:nth-child(3),
 .expertise-tag-table td:nth-child(3) {
   width: 170px;
+  text-align: center;
 }
 
 .expertise-tag-table th:last-child,
 .expertise-tag-table td:last-child {
   width: 190px;
+  text-align: center;
 }
 
 .expertise-tag-table tbody tr:hover {
   background: #f1f5f9;
+}
+
+.expertise-tag-table tbody tr.inactive-row,
+.expertise-tag-table tbody tr.inactive-row:hover {
+  background: #fff1f2;
 }
 
 .expertise-tag-empty {
@@ -140,12 +147,13 @@
 }
 
 .expertise-tag-status.inactive {
-  background: #fee2e2;
-  color: #b91c1c;
+  background: #dc2626;
+  color: #fff;
 }
 
 .expertise-tag-actions {
   display: flex;
+  justify-content: center;
   gap: 8px;
 }
 
