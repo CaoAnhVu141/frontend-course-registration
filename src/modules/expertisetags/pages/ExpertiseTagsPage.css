@@ -120,6 +120,11 @@
   background: #f1f5f9;
 }
 
+.expertise-tag-table tbody tr.inactive-row,
+.expertise-tag-table tbody tr.inactive-row:hover {
+  background: #fff1f2;
+}
+
 .expertise-tag-empty {
   height: 120px;
   text-align: center !important;
@@ -140,8 +145,8 @@
 }
 
 .expertise-tag-status.inactive {
-  background: #fee2e2;
-  color: #b91c1c;
+  background: #dc2626;
+  color: #fff;
 }
 
 .expertise-tag-actions {
