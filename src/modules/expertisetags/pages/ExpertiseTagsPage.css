@@ -109,11 +109,13 @@
 .expertise-tag-table th:nth-child(3),
 .expertise-tag-table td:nth-child(3) {
   width: 170px;
+  text-align: center;
 }
 
 .expertise-tag-table th:last-child,
 .expertise-tag-table td:last-child {
   width: 190px;
+  text-align: center;
 }
 
 .expertise-tag-table tbody tr:hover {
@@ -151,6 +153,7 @@
 
 .expertise-tag-actions {
   display: flex;
+  justify-content: center;
   gap: 8px;
 }
 
