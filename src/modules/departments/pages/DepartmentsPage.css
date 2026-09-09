@@ -109,6 +109,7 @@
 .department-table th:last-child,
 .department-table td:last-child {
   width: 190px;
+  text-align: center;
 }
 
 .department-table tbody tr:hover {
@@ -123,6 +124,7 @@
 
 .department-actions {
   display: flex;
+  justify-content: center;
   gap: 8px;
 }
 
