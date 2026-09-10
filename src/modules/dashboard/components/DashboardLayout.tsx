@@ -5,7 +5,7 @@ import { TopNavbar } from './TopNavbar'
 import '../pages/DashboardPage.css'
 
 type DashboardLayoutProps = {
-  title: string
+  title?: string
   children: ReactNode
   contentClassName?: string
 }
@@ -30,7 +30,7 @@ export function DashboardLayout({
         <TopNavbar />
 
         <div className={`content-body ${contentClassName}`.trim()}>
-          <div className="page-title">{title}</div>
+          {title && <div className="page-title">{title}</div>}
           {children}
         </div>
       </main>

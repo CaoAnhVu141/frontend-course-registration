@@ -11,9 +11,10 @@
 .student-table { width: 100%; border-collapse: collapse; background: #fff; font-size: 14px; }
 .student-table th, .student-table td { padding: 13px 14px; border: 1px solid #d8dee6; text-align: left; overflow-wrap: anywhere; max-width: 320px; }
 .student-table th { background: #164a76; color: #fff; white-space: nowrap; }
+.student-table th:nth-child(n + 4), .student-table td:nth-child(n + 4) { text-align: center; }
 .student-table tbody tr:hover { background: #f1f5f9; }
 .student-table .student-empty { height: 120px; text-align: center; color: #64748b; }
-.student-actions { display: flex; gap: 8px; }
+.student-actions { display: flex; justify-content: center; gap: 8px; }
 .student-actions button { min-width: 70px; min-height: 34px; padding: 4px 8px; border: 1px solid #bfdbfe; border-radius: 4px; background: #eff6ff; color: #1d4ed8; white-space: nowrap; }
 .student-actions .student-delete { border-color: #fecaca; background: #fff1f2; color: #be123c; }
 .student-pagination { display: flex; justify-content: center; align-items: center; gap: 12px; margin-top: 20px; }

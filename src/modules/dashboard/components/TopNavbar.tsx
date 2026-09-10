@@ -30,6 +30,15 @@ export function TopNavbar() {
       <h2>TRƯỜNG ĐẠI HỌC CÔNG NGHỆ KỸ THUẬT TP.HCM</h2>
 
       <div className="top-actions">
+        <button
+          type="button"
+          className="personal-info-link"
+          onClick={() => {
+            window.location.href = '/dashboard'
+          }}
+          aria-label="Thông tin cá nhân"
+          title="Thông tin cá nhân"
+        />
         <span className="flag-icon">⚑</span>
         <span className="bell-icon">●</span>
         <img

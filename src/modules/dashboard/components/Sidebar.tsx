@@ -1,4 +1,5 @@
 import type { AuthUser } from '../../auth/types/auth.type'
+import hcmuteLogo from '../../../assets/hcmute-logo.png'
 import { getRoleLabel } from '../../../shared/utils/roleLabel'
 import { navItems } from '../constants/navItems'
 
@@ -19,7 +20,7 @@ export function Sidebar({ user }: SidebarProps) {
     <aside className="sidebar">
       <div className="logo-section">
         <img
-          src="https://tracuuxettuyen.hcmute.edu.vn/assets/img/logo/ute_logo.png"
+          src={hcmuteLogo}
           alt="HCM-UTE"
         />
         <h3>HCM-UTE</h3>
