@@ -106,6 +106,11 @@
   text-align: center;
 }
 
+.lecturer-table th:nth-child(n + 4),
+.lecturer-table td:nth-child(n + 4) {
+  text-align: center;
+}
+
 .lecturer-table th:last-child,
 .lecturer-table td:last-child {
   width: 160px;
@@ -123,6 +128,7 @@
 
 .lecturer-actions {
   display: flex;
+  justify-content: center;
   gap: 8px;
 }
 
