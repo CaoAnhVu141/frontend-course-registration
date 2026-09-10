@@ -10,7 +10,7 @@ function App() {
   const path = window.location.pathname
   const isAuthenticated = Boolean(tokenStorage.getAccessToken())
 
-  if (path === '/dashboard' || path === '/departments' || path === '/lecturers' || path === '/students' || path === "/expertisetags" || path === '/topics') {
+  if (path === '/dashboard' || path === '/departments' || path === '/lecturers' || path === '/students' || path === "/expertisetags" ) {
     if (!isAuthenticated) {
       window.location.href = '/'
       return null
@@ -20,7 +20,6 @@ function App() {
     if (path === '/lecturers') return <LecturersPage />
     if (path === '/students') return <StudentsPage />
     if (path === '/expertisetags') return <ExpertiseTagsPage />
-    if (path === '/topics') return <TopicsPage />
     return <DashboardPage />
   }
 
