@@ -29,11 +29,9 @@
 }
 
 .logo-section img {
-  width: 80px;
-  height: 80px;
-  border-radius: 50%;
-  background: #fff;
-  padding: 5px;
+  width: 100px;
+  height: 100px;
+  object-fit: contain;
   margin-bottom: 10px;
 }
 
@@ -119,13 +117,27 @@
 .top-navbar h2 {
   font-size: 18px;
   font-weight: 600;
-  color: #fff;
+  color: #dc2626;
 }
 
 .top-actions {
   display: flex;
   align-items: center;
   gap: 15px;
+  position: relative;
+}
+
+.personal-info-link {
+  position: absolute;
+  z-index: 1;
+  top: 0;
+  left: 0;
+  width: 22px;
+  height: 28px;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  cursor: pointer;
 }
 
 .top-actions img {
@@ -231,6 +243,69 @@
   font-size: 14px;
 }
 
+.personal-information {
+  display: grid;
+  grid-template-columns: minmax(260px, 0.9fr) minmax(360px, 1.4fr) minmax(300px, 1.35fr);
+  gap: 14px;
+  align-items: start;
+}
+
+.profile-card,
+.profile-card-column {
+  min-width: 0;
+}
+
+.profile-card {
+  overflow: hidden;
+  background: #fff;
+  border: 1px solid #d7e0e8;
+  border-radius: 5px;
+  box-shadow: 0 1px 3px rgba(15, 23, 42, 0.08);
+}
+
+.profile-card h2 {
+  margin: 0;
+  padding: 16px;
+  color: #1f2937;
+  font-size: 16px;
+  font-weight: 700;
+  border-bottom: 1px solid #d7e0e8;
+}
+
+.profile-card dl {
+  margin: 0;
+}
+
+.profile-row {
+  display: grid;
+  grid-template-columns: minmax(130px, 40%) 1fr;
+  gap: 12px;
+  min-height: 52px;
+  padding: 13px 15px;
+  border-bottom: 1px solid #e6ebf0;
+}
+
+.profile-row:last-child {
+  border-bottom: 0;
+}
+
+.profile-row dt,
+.profile-row dd {
+  margin: 0;
+  overflow-wrap: anywhere;
+}
+
+.profile-row dt {
+  color: #1f2937;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.profile-row dd {
+  color: #4b78a8;
+  font-size: 13px;
+}
+
 @keyframes success-modal-in {
   from {
     opacity: 0;
@@ -251,6 +326,14 @@
   .sidebar {
     width: 230px;
   }
+
+  .personal-information {
+    grid-template-columns: repeat(2, minmax(260px, 1fr));
+  }
+
+  .profile-card-column {
+    grid-column: span 2;
+  }
 }
 
 @media (max-width: 720px) {
@@ -270,5 +353,17 @@
 
   .top-navbar h2 {
     font-size: 15px;
+  }
+
+  .content-body {
+    padding: 16px;
+  }
+
+  .personal-information {
+    grid-template-columns: 1fr;
+  }
+
+  .profile-card-column {
+    grid-column: auto;
   }
 }

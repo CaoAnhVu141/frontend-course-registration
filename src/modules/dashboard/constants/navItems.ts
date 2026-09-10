@@ -8,7 +8,7 @@ export type NavItem = {
     roles?: UserRole[]
 }
 
-export const navItems: NavItem[] = [
+const navigationItems: NavItem[] = [
     { label: 'Chương trình đào tạo', icon: '▤', href: '/dashboard' },
     { label: 'Quản lý khoa/phòng ban', icon: '▦', href: '/departments', roles: ['ADMIN'] },
     { label: 'Quản lý chuyên môn', icon: '▣', href: '/expertisetags', roles: ['ADMIN'] },
@@ -19,3 +19,14 @@ export const navItems: NavItem[] = [
     // { label: 'Quản lý đề tài', icon: '▧', href: '#!' },
     // { label: 'Quản lý đăng ký đề tài', icon: '▨', href: '#!' },
 ]
+
+export const navItems = navigationItems.map((item) =>
+    item.href === '/dashboard' ? { ...item, label: 'Thông tin cá nhân' } : item,
+)
+
+navItems.push({
+    label: 'Quản lý đề tài',
+    icon: '▧',
+    href: '/topics',
+    roles: ['ADMIN', 'LECTURER'],
+})
