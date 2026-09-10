@@ -35,7 +35,12 @@
 
 .students-content button:disabled { 
   cursor: not-allowed; 
-  opacity: 0.55; 
+  opacity: 0.42; 
+}
+
+.students-content button:disabled:hover {
+  filter: grayscale(0.35);
+  opacity: 0.32;
 }
 
 .students-content .student-primary { 
@@ -50,6 +55,10 @@
 
 .student-primary:hover {
   background: #0064b1; 
+}
+
+.student-primary:disabled:hover {
+  background: #0078d4;
 }
 
 .student-error { 
@@ -121,6 +130,18 @@
   border-color: #fecaca; 
   background: #fff1f2; 
   color: #be123c; 
+}
+
+.student-actions button:disabled {
+  background: #f8fafc;
+  border-color: #cbd5e1;
+  color: #64748b;
+}
+
+.student-actions .student-delete:disabled {
+  background: #fff1f2;
+  border-color: #fecaca;
+  color: #be123c;
 }
 
 .student-pagination { 
