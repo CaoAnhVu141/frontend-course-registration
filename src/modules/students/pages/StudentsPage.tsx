@@ -184,23 +184,43 @@ export function StudentsPage() {
         <div className="students-toolbar">
           <input className="student-search" type="search" aria-label="Tìm kiếm sinh viên" placeholder="Tìm mã sinh viên, email, lớp, khoa..." value={search}
             onChange={(event) => { setSearch(event.target.value); setPage(1) }} />
-          {canManage && <button className="student-primary" disabled={isLoading || Boolean(loadError) || deletingId !== null} onClick={() => openForm(null)}>+ Thêm mới</button>}
+          <button
+            className="student-primary"
+            disabled={!canManage || isLoading || Boolean(loadError) || deletingId !== null}
+            title={canManage ? 'Thêm sinh viên' : 'Bạn không có quyền thêm sinh viên'}
+            onClick={() => openForm(null)}
+          >
+            + Thêm mới
+          </button>
         </div>
         {loadError && <div className="student-error" role="alert">{loadError} <button onClick={() => setReload((value) => value + 1)}>Thử lại</button></div>}
         <div className="student-table-wrap">
           <table className="student-table">
-            <thead><tr><th>ID</th><th>Mã sinh viên</th><th>Email</th><th>Lớp</th><th>Khoa/Phòng ban</th>{canManage && <th>Thao tác</th>}</tr></thead>
+            <thead><tr><th>ID</th><th>Mã sinh viên</th><th>Email</th><th>Lớp</th><th>Khoa/Phòng ban</th><th>Thao tác</th></tr></thead>
             <tbody>
               {isLoading || loadError || visibleStudents.length === 0 ? (
-                <tr><td colSpan={canManage ? 6 : 5} className="student-empty">{isLoading ? 'Đang tải dữ liệu...' : loadError ? 'Không thể tải danh sách sinh viên.' : 'Không tìm thấy sinh viên.'}</td></tr>
+                <tr><td colSpan={6} className="student-empty">{isLoading ? 'Đang tải dữ liệu...' : loadError ? 'Không thể tải danh sách sinh viên.' : 'Không tìm thấy sinh viên.'}</td></tr>
               ) : visibleStudents.map((student) => (
                 <tr key={student.userId}>
                   <td>{student.userId}</td><td>{student.studentCode}</td><td>{student.email}</td><td>{student.className || '-'}</td>
                   <td>{departmentNames.get(student.departmentId) ?? `#${student.departmentId}`}</td>
-                  {canManage && <td><div className="student-actions">
-                    <button title="Sửa sinh viên" disabled={deletingId !== null} onClick={() => openForm(student)}>Sửa</button>
-                    <button className="student-delete" disabled={deletingId !== null} onClick={() => void handleDelete(student)}>{deletingId === student.userId ? 'Đang xử lý...' : 'Xóa'}</button>
-                  </div></td>}
+                  <td><div className="student-actions">
+                    <button
+                      title={canManage ? 'Sửa sinh viên' : 'Bạn không có quyền sửa sinh viên'}
+                      disabled={!canManage || deletingId !== null}
+                      onClick={() => openForm(student)}
+                    >
+                      ✎ <span>Sửa</span>
+                    </button>
+                    <button
+                      className="student-delete"
+                      title={canManage ? 'Xóa sinh viên' : 'Bạn không có quyền xóa sinh viên'}
+                      disabled={!canManage || deletingId !== null}
+                      onClick={() => void handleDelete(student)}
+                    >
+                      × <span>{deletingId === student.userId ? 'Đang xử lý...' : 'Xóa'}</span>
+                    </button>
+                  </div></td>
                 </tr>
               ))}
             </tbody>
