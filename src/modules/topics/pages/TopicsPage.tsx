@@ -1,81 +1,271 @@
-import { useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
+import type { FormEvent, ReactNode } from 'react'
+import { tokenStorage } from '../../../shared/services/tokenStorage'
+import { getDepartments } from '../../departments/services/departmentApi'
+import type { Department } from '../../departments/types/department.type'
+import { useConfirmation } from '../../confirmation'
 import { DashboardLayout } from '../../dashboard/components/DashboardLayout'
+import { useNotification } from '../../notification'
+import {
+  approveTopic,
+  createTopic,
+  deleteTopic,
+  getTopics,
+  publishTopic,
+  rejectTopic,
+  updateTopic,
+} from '../services/topicApi'
+import { getRegistrationPeriods } from '../services/registrationPeriodApi'
+import type { RegistrationPeriod } from '../types/registrationPeriod.type'
+import type { Topic, TopicRequest, TopicStatus } from '../types/topic.type'
 import './TopicsPage.css'
 
-type Topic = {
-  id: number
-  code: string
-  title: string
-  lecturer: string
-  status: 'Đang mở' | 'Đã đóng'
+const PAGE_SIZE = 5
+
+const statusConfig: Record<
+  TopicStatus,
+  { label: string; tone: 'active' | 'inactive' | 'pending' | 'approved' }
+> = {
+  PENDING: { label: 'Chờ duyệt', tone: 'pending' },
+  APPROVED: { label: 'Đã duyệt', tone: 'approved' },
+  REJECTED: { label: 'Bị từ chối', tone: 'inactive' },
+  PUBLISHED: { label: 'Đang hoạt động', tone: 'active' },
+  CLOSED: { label: 'Không còn hoạt động', tone: 'inactive' },
 }
 
-const initialTopics: Topic[] = [
-  { id: 1, code: 'DT001', title: 'Xây dựng hệ thống đăng ký học phần trực tuyến', lecturer: 'TS. Nguyễn Văn An', status: 'Đang mở' },
-  { id: 2, code: 'DT002', title: 'Ứng dụng AI trong quản lý đào tạo', lecturer: 'ThS. Trần Minh Khang', status: 'Đang mở' },
-  { id: 3, code: 'DT003', title: 'Nghiên cứu giải pháp bảo mật dữ liệu sinh viên', lecturer: 'TS. Lê Hoài Nam', status: 'Đã đóng' },
-]
-
 export function TopicsPage() {
-  const [topics, setTopics] = useState(initialTopics)
+  const { success, error: showError } = useNotification()
+  const { confirm } = useConfirmation()
+  const user = useMemo(() => tokenStorage.getUser(), [])
+  const isAdmin = user?.roles.includes('ADMIN') ?? false
+  const isLecturer = user?.roles.includes('LECTURER') ?? false
+  const canManageTopics = isAdmin || isLecturer
+
+  const [topics, setTopics] = useState<Topic[]>([])
+  const [departments, setDepartments] = useState<Department[]>([])
+  const [registrationPeriods, setRegistrationPeriods] = useState<RegistrationPeriod[]>([])
   const [search, setSearch] = useState('')
   const [editingTopic, setEditingTopic] = useState<Topic | null>(null)
   const [isFormOpen, setIsFormOpen] = useState(false)
-  const [code, setCode] = useState('')
+  const [rejectingTopic, setRejectingTopic] = useState<Topic | null>(null)
   const [title, setTitle] = useState('')
-  const [lecturer, setLecturer] = useState('')
-  const [status, setStatus] = useState<Topic['status']>('Đang mở')
+  const [requirements, setRequirements] = useState('')
+  const [departmentId, setDepartmentId] = useState('')
+  const [registrationPeriodId, setRegistrationPeriodId] = useState('')
+  const [rejectReason, setRejectReason] = useState('')
+  const [page, setPage] = useState(1)
+  const [isLoading, setIsLoading] = useState(true)
+  const [isSaving, setIsSaving] = useState(false)
+  const [error, setError] = useState('')
+
+  const departmentNameMap = useMemo(() => {
+    return new Map(departments.map((department) => [
+      department.departmentId,
+      department.name,
+    ]))
+  }, [departments])
+
+  const registrationPeriodNameMap = useMemo(() => {
+    return new Map(registrationPeriods.map((period) => [period.id, period.name]))
+  }, [registrationPeriods])
 
   const visibleTopics = useMemo(() => {
     const keyword = search.trim().toLocaleLowerCase('vi')
-    if (!keyword) return topics
-    return topics.filter((topic) =>
-      [topic.code, topic.title, topic.lecturer].some((value) =>
-        value.toLocaleLowerCase('vi').includes(keyword),
-      ),
-    )
-  }, [search, topics])
+    const sortedTopics = [...topics].sort((first, second) => second.id - first.id)
+
+    if (!keyword) return sortedTopics
+
+    return sortedTopics.filter((topic) => {
+      const statusLabel = statusConfig[topic.status]?.label ?? topic.status
+      const departmentName = departmentNameMap.get(topic.departmentId) ?? ''
+      const periodName = registrationPeriodNameMap.get(topic.registrationPeriodId) ?? ''
+
+      return [
+        topic.id,
+        topic.title,
+        topic.requirements,
+        topic.proposedBy,
+        statusLabel,
+        departmentName,
+        periodName,
+      ].some((value) =>
+        String(value ?? '').toLocaleLowerCase('vi').includes(keyword),
+      )
+    })
+  }, [departmentNameMap, registrationPeriodNameMap, search, topics])
+
+  const totalPages = Math.max(1, Math.ceil(visibleTopics.length / PAGE_SIZE))
+  const pagedTopics = visibleTopics.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE)
+
+  const loadTopics = useCallback(async () => {
+    try {
+      setIsLoading(true)
+      setError('')
+
+      const [topicData, departmentData, periodData] = await Promise.all([
+        getTopics(),
+        getDepartments(),
+        getRegistrationPeriods(),
+      ])
+
+      setTopics(topicData)
+      setDepartments(departmentData)
+      setRegistrationPeriods(periodData)
+    } catch (loadError) {
+      const message = getErrorMessage(loadError)
+      setError(message)
+      showError(message)
+    } finally {
+      setIsLoading(false)
+    }
+  }, [showError])
+
+  useEffect(() => {
+    if (!user) {
+      window.location.href = '/'
+      return
+    }
+
+    if (!canManageTopics) {
+      window.location.href = '/dashboard'
+      return
+    }
+
+    void loadTopics()
+  }, [canManageTopics, loadTopics, user])
+
+  useEffect(() => {
+    setPage(1)
+  }, [search])
+
+  useEffect(() => {
+    if (page > totalPages) setPage(totalPages)
+  }, [page, totalPages])
 
   function openCreateForm() {
     setEditingTopic(null)
-    setCode(`DT${String(topics.length + 1).padStart(3, '0')}`)
     setTitle('')
-    setLecturer('')
-    setStatus('Đang mở')
+    setRequirements('')
+    setDepartmentId('')
+    setRegistrationPeriodId('')
     setIsFormOpen(true)
   }
 
   function openEditForm(topic: Topic) {
     setEditingTopic(topic)
-    setCode(topic.code)
     setTitle(topic.title)
-    setLecturer(topic.lecturer)
-    setStatus(topic.status)
+    setRequirements(topic.requirements ?? '')
+    setDepartmentId(String(topic.departmentId))
+    setRegistrationPeriodId(String(topic.registrationPeriodId))
     setIsFormOpen(true)
   }
 
   function closeForm() {
+    if (isSaving) return
     setIsFormOpen(false)
   }
 
-  function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
+  async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault()
-    const topicData = { code: code.trim(), title: title.trim(), lecturer: lecturer.trim(), status }
 
-    if (!topicData.code || !topicData.title || !topicData.lecturer) return
-
-    if (editingTopic) {
-      setTopics((current) => current.map((topic) =>
-        topic.id === editingTopic.id ? { ...topic, ...topicData } : topic,
-      ))
-    } else {
-      setTopics((current) => [...current, { id: Date.now(), ...topicData }])
+    const payload: TopicRequest = {
+      title: title.trim(),
+      requirements: requirements.trim(),
+      departmentId: departmentId ? Number(departmentId) : undefined,
+      registrationPeriodId: registrationPeriodId
+        ? Number(registrationPeriodId)
+        : undefined,
     }
-    closeForm()
+
+    try {
+      setIsSaving(true)
+      const response = editingTopic
+        ? await updateTopic(editingTopic.id, payload)
+        : await createTopic(payload)
+
+      setTopics((current) => {
+        if (editingTopic) {
+          return current.map((topic) =>
+            topic.id === editingTopic.id ? response.data : topic,
+          )
+        }
+
+        return [response.data, ...current]
+      })
+
+      success(response.message)
+      closeForm()
+    } catch (saveError) {
+      showError(getErrorMessage(saveError))
+    } finally {
+      setIsSaving(false)
+    }
   }
 
-  function deleteTopic(topicId: number) {
-    setTopics((current) => current.filter((topic) => topic.id !== topicId))
+  async function handleDelete(topic: Topic) {
+    const confirmed = await confirm({
+      title: 'Xóa đề tài',
+      message: `Bạn có chắc muốn xóa đề tài "${topic.title}" không?`,
+      confirmText: 'Xóa',
+      cancelText: 'Hủy',
+      tone: 'danger',
+    })
+
+    if (!confirmed) return
+
+    try {
+      const response = await deleteTopic(topic.id)
+      setTopics((current) => current.filter((item) => item.id !== topic.id))
+      success(response.message)
+    } catch (deleteError) {
+      showError(getErrorMessage(deleteError))
+    }
+  }
+
+  async function handleStatusAction(
+    topic: Topic,
+    action: (topicId: number) => Promise<{ message: string; data: Topic }>,
+  ) {
+    try {
+      const response = await action(topic.id)
+      setTopics((current) =>
+        current.map((item) => (item.id === topic.id ? response.data : item)),
+      )
+      success(response.message)
+    } catch (statusError) {
+      showError(getErrorMessage(statusError))
+    }
+  }
+
+  function openRejectForm(topic: Topic) {
+    setRejectingTopic(topic)
+    setRejectReason('')
+  }
+
+  function closeRejectForm() {
+    if (isSaving) return
+    setRejectingTopic(null)
+  }
+
+  async function handleRejectSubmit(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault()
+    if (!rejectingTopic) return
+
+    try {
+      setIsSaving(true)
+      const response = await rejectTopic(rejectingTopic.id, rejectReason.trim())
+      setTopics((current) =>
+        current.map((topic) =>
+          topic.id === rejectingTopic.id ? response.data : topic,
+        ),
+      )
+      success(response.message)
+      closeRejectForm()
+    } catch (rejectError) {
+      showError(getErrorMessage(rejectError))
+    } finally {
+      setIsSaving(false)
+    }
   }
 
   return (
@@ -84,41 +274,293 @@ export function TopicsPage() {
         <div className="topics-toolbar">
           <label className="topic-search">
             <span aria-hidden="true">⌕</span>
-            <input value={search} onChange={(event) => setSearch(event.target.value)} placeholder="Tìm kiếm đề tài..." type="search" />
+            <input
+              value={search}
+              onChange={(event) => setSearch(event.target.value)}
+              placeholder="Tìm kiếm đề tài..."
+              type="search"
+            />
           </label>
-          <button className="topic-add-button" type="button" onClick={openCreateForm}>+ Thêm đề tài</button>
+          {isLecturer && (
+            <button className="topic-add-button" type="button" onClick={openCreateForm}>
+              <span>+</span> Thêm đề tài
+            </button>
+          )}
         </div>
+
+        {error && <div className="topic-message error">{error}</div>}
 
         <div className="topic-table-wrap">
           <table className="topic-table">
-            <thead><tr><th>STT</th><th>Mã đề tài</th><th>Tên đề tài</th><th>Giảng viên hướng dẫn</th><th>Trạng thái</th><th>Thao tác</th></tr></thead>
+            <thead>
+              <tr>
+                <th>STT</th>
+                <th>Tên đề tài</th>
+                <th>Khoa / phòng ban</th>
+                <th>Kỳ đăng ký</th>
+                <th>Người đề xuất</th>
+                <th>Trạng thái</th>
+                <th>Thao tác</th>
+              </tr>
+            </thead>
             <tbody>
-              {visibleTopics.length === 0 ? <tr><td className="topic-empty" colSpan={6}>Không tìm thấy đề tài phù hợp.</td></tr> : visibleTopics.map((topic, index) => (
-                <tr key={topic.id}>
-                  <td>{index + 1}</td><td>{topic.code}</td><td>{topic.title}</td><td>{topic.lecturer}</td>
-                  <td><span className={`topic-status ${topic.status === 'Đang mở' ? 'open' : 'closed'}`}>{topic.status}</span></td>
-                  <td className="topic-actions"><button type="button" onClick={() => openEditForm(topic)}>Sửa</button><button type="button" className="delete" onClick={() => deleteTopic(topic.id)}>Xóa</button></td>
+              {isLoading ? (
+                <tr>
+                  <td className="topic-empty" colSpan={7}>Đang tải dữ liệu...</td>
                 </tr>
-              ))}
+              ) : pagedTopics.length === 0 ? (
+                <tr>
+                  <td className="topic-empty" colSpan={7}>Không tìm thấy đề tài phù hợp.</td>
+                </tr>
+              ) : (
+                pagedTopics.map((topic) => (
+                  <tr key={topic.id} className={isInactiveTopic(topic) ? 'inactive-row' : ''}>
+                    <td>{topic.id}</td>
+                    <td>
+                      <div className="topic-title">{topic.title}</div>
+                      {topic.rejectionReason && (
+                        <div className="topic-reason">Lý do: {topic.rejectionReason}</div>
+                      )}
+                    </td>
+                    <td>{departmentNameMap.get(topic.departmentId) ?? `#${topic.departmentId}`}</td>
+                    <td>{registrationPeriodNameMap.get(topic.registrationPeriodId) ?? `#${topic.registrationPeriodId}`}</td>
+                    <td>{topic.proposedBy}</td>
+                    <td>
+                      <span className={`topic-status ${statusConfig[topic.status].tone}`}>
+                        {statusConfig[topic.status].label}
+                      </span>
+                    </td>
+                    <td className="topic-actions">
+                      {renderActions({
+                        topic,
+                        isAdmin,
+                        isLecturer,
+                        openEditForm,
+                        handleDelete,
+                        handleStatusAction,
+                        openRejectForm,
+                      })}
+                    </td>
+                  </tr>
+                ))
+              )}
             </tbody>
           </table>
         </div>
+
+        {totalPages > 1 && (
+          <nav className="topic-pagination" aria-label="Phân trang">
+            <button
+              type="button"
+              disabled={page === 1}
+              onClick={() => setPage((current) => current - 1)}
+            >
+              ‹
+            </button>
+            {Array.from({ length: totalPages }, (_, index) => index + 1).map((pageNumber) => (
+              <button
+                type="button"
+                className={pageNumber === page ? 'active' : ''}
+                key={pageNumber}
+                onClick={() => setPage(pageNumber)}
+              >
+                {pageNumber}
+              </button>
+            ))}
+            <button
+              type="button"
+              disabled={page === totalPages}
+              onClick={() => setPage((current) => current + 1)}
+            >
+              ›
+            </button>
+          </nav>
+        )}
       </section>
 
       {isFormOpen && (
         <div className="topic-modal-backdrop" onMouseDown={closeForm} role="presentation">
           <section className="topic-modal" onMouseDown={(event) => event.stopPropagation()} role="dialog" aria-modal="true" aria-labelledby="topic-form-title">
-            <div className="topic-modal-header"><h3 id="topic-form-title">{editingTopic ? 'Cập nhật đề tài' : 'Thêm đề tài'}</h3><button type="button" onClick={closeForm} aria-label="Đóng">×</button></div>
-            <form onSubmit={handleSubmit}>
-              <label>Mã đề tài<input value={code} onChange={(event) => setCode(event.target.value)} required /></label>
-              <label>Tên đề tài<input value={title} onChange={(event) => setTitle(event.target.value)} required /></label>
-              <label>Giảng viên hướng dẫn<input value={lecturer} onChange={(event) => setLecturer(event.target.value)} required /></label>
-              <label>Trạng thái<select value={status} onChange={(event) => setStatus(event.target.value as Topic['status'])}><option>Đang mở</option><option>Đã đóng</option></select></label>
-              <div className="topic-modal-actions"><button className="secondary" type="button" onClick={closeForm}>Hủy</button><button type="submit">Lưu</button></div>
+            <div className="topic-modal-header">
+              <h3 id="topic-form-title">{editingTopic ? 'Cập nhật đề tài' : 'Thêm đề tài'}</h3>
+              <button type="button" onClick={closeForm} aria-label="Đóng">×</button>
+            </div>
+            <form onSubmit={(event) => void handleSubmit(event)}>
+              <label htmlFor="topic-title">Tên đề tài</label>
+              <input
+                id="topic-title"
+                autoFocus
+                value={title}
+                onChange={(event) => setTitle(event.target.value)}
+                placeholder="Nhập tên đề tài"
+                maxLength={255}
+              />
+
+              <label htmlFor="topic-requirements">Yêu cầu</label>
+              <textarea
+                id="topic-requirements"
+                value={requirements}
+                onChange={(event) => setRequirements(event.target.value)}
+                placeholder="Nhập yêu cầu đề tài"
+                rows={4}
+              />
+
+              <label htmlFor="topic-department">Khoa / phòng ban</label>
+              <select
+                id="topic-department"
+                value={departmentId}
+                onChange={(event) => setDepartmentId(event.target.value)}
+              >
+                <option value="">Chọn khoa / phòng ban</option>
+                {departments.map((department) => (
+                  <option key={department.departmentId} value={department.departmentId}>
+                    {department.name}
+                  </option>
+                ))}
+              </select>
+
+              <label htmlFor="topic-period">Kỳ đăng ký</label>
+              <select
+                id="topic-period"
+                value={registrationPeriodId}
+                onChange={(event) => setRegistrationPeriodId(event.target.value)}
+              >
+                <option value="">Chọn kỳ đăng ký</option>
+                {registrationPeriods.map((period) => (
+                  <option key={period.id} value={period.id}>
+                    {period.name}
+                  </option>
+                ))}
+              </select>
+
+              <div className="topic-modal-actions">
+                <button className="secondary" type="button" onClick={closeForm}>Hủy</button>
+                <button type="submit" disabled={isSaving}>
+                  {isSaving ? 'Đang lưu...' : 'Lưu'}
+                </button>
+              </div>
+            </form>
+          </section>
+        </div>
+      )}
+
+      {rejectingTopic && (
+        <div className="topic-modal-backdrop" onMouseDown={closeRejectForm} role="presentation">
+          <section className="topic-modal" onMouseDown={(event) => event.stopPropagation()} role="dialog" aria-modal="true" aria-labelledby="topic-reject-title">
+            <div className="topic-modal-header">
+              <h3 id="topic-reject-title">Từ chối đề tài</h3>
+              <button type="button" onClick={closeRejectForm} aria-label="Đóng">×</button>
+            </div>
+            <form onSubmit={(event) => void handleRejectSubmit(event)}>
+              <label htmlFor="topic-reject-reason">Lý do từ chối</label>
+              <textarea
+                id="topic-reject-reason"
+                autoFocus
+                value={rejectReason}
+                onChange={(event) => setRejectReason(event.target.value)}
+                placeholder="Nhập lý do"
+                rows={4}
+              />
+              <div className="topic-modal-actions">
+                <button className="secondary" type="button" onClick={closeRejectForm}>Hủy</button>
+                <button type="submit" disabled={isSaving}>
+                  {isSaving ? 'Đang xử lý...' : 'Từ chối'}
+                </button>
+              </div>
             </form>
           </section>
         </div>
       )}
     </DashboardLayout>
   )
+}
+
+type TopicActionProps = {
+  topic: Topic
+  isAdmin: boolean
+  isLecturer: boolean
+  openEditForm: (topic: Topic) => void
+  handleDelete: (topic: Topic) => Promise<void>
+  handleStatusAction: (
+    topic: Topic,
+    action: (topicId: number) => Promise<{ message: string; data: Topic }>,
+  ) => Promise<void>
+  openRejectForm: (topic: Topic) => void
+}
+
+function renderActions({
+  topic,
+  isAdmin,
+  isLecturer,
+  openEditForm,
+  handleDelete,
+  handleStatusAction,
+  openRejectForm,
+}: TopicActionProps) {
+  const actions: ReactNode[] = []
+
+  if ((isAdmin || isLecturer) && topic.status !== 'PUBLISHED') {
+    actions.push(
+      <button type="button" key="edit" onClick={() => openEditForm(topic)}>
+        ✎ <span>Sửa</span>
+      </button>,
+    )
+  }
+
+  if (isAdmin && topic.status === 'PENDING') {
+    actions.push(
+      <button
+        type="button"
+        className="approve"
+        key="approve"
+        onClick={() => void handleStatusAction(topic, approveTopic)}
+      >
+        ✓ <span>Duyệt</span>
+      </button>,
+      <button
+        type="button"
+        className="reject"
+        key="reject"
+        onClick={() => openRejectForm(topic)}
+      >
+        ! <span>Từ chối</span>
+      </button>,
+    )
+  }
+
+  if (isAdmin && topic.status === 'APPROVED') {
+    actions.push(
+      <button
+        type="button"
+        className="publish"
+        key="publish"
+        onClick={() => void handleStatusAction(topic, publishTopic)}
+      >
+        ↑ <span>Công bố</span>
+      </button>,
+    )
+  }
+
+  if (isAdmin && topic.status !== 'PUBLISHED') {
+    actions.push(
+      <button
+        type="button"
+        className="delete"
+        key="delete"
+        onClick={() => void handleDelete(topic)}
+      >
+        × <span>Xóa</span>
+      </button>,
+    )
+  }
+
+  return actions.length ? actions : <span className="topic-action-empty">-</span>
+}
+
+function isInactiveTopic(topic: Topic) {
+  return topic.status === 'REJECTED' || topic.status === 'CLOSED'
+}
+
+function getErrorMessage(error: unknown) {
+  return error instanceof Error ? error.message : 'Có lỗi xảy ra'
 }
