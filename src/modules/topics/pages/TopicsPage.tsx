@@ -1,376 +1,125 @@
-.topics-content {
-  width: 100%;
+import { useMemo, useState } from 'react'
+import { DashboardLayout } from '../../dashboard/components/DashboardLayout'
+import './TopicsPage.css'
+
+type Topic = {
+  id: number
+  code: string
+  title: string
+  lecturer: string
+  status: 'Đang mở' | 'Đã đóng'
 }
 
-.topics-panel {
-  width: 100%;
-  min-height: 430px;
-  padding: 24px;
-  background: #f7f8fa;
-  border: 1px solid #e1e5ea;
-  border-radius: 8px;
-  color: #1f2937;
-}
+const initialTopics: Topic[] = [
+  { id: 1, code: 'DT001', title: 'Xây dựng hệ thống đăng ký học phần trực tuyến', lecturer: 'TS. Nguyễn Văn An', status: 'Đang mở' },
+  { id: 2, code: 'DT002', title: 'Ứng dụng AI trong quản lý đào tạo', lecturer: 'ThS. Trần Minh Khang', status: 'Đang mở' },
+  { id: 3, code: 'DT003', title: 'Nghiên cứu giải pháp bảo mật dữ liệu sinh viên', lecturer: 'TS. Lê Hoài Nam', status: 'Đã đóng' },
+]
 
-.topics-toolbar {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 16px;
-  margin-bottom: 20px;
-}
+export function TopicsPage() {
+  const [topics, setTopics] = useState(initialTopics)
+  const [search, setSearch] = useState('')
+  const [editingTopic, setEditingTopic] = useState<Topic | null>(null)
+  const [isFormOpen, setIsFormOpen] = useState(false)
+  const [code, setCode] = useState('')
+  const [title, setTitle] = useState('')
+  const [lecturer, setLecturer] = useState('')
+  const [status, setStatus] = useState<Topic['status']>('Đang mở')
 
-.topic-search {
-  width: min(420px, 100%);
-  height: 40px;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  padding: 0 12px;
-  background: #fff;
-  border: 1px solid #cbd5e1;
-  border-radius: 6px;
-}
+  const visibleTopics = useMemo(() => {
+    const keyword = search.trim().toLocaleLowerCase('vi')
+    if (!keyword) return topics
+    return topics.filter((topic) =>
+      [topic.code, topic.title, topic.lecturer].some((value) =>
+        value.toLocaleLowerCase('vi').includes(keyword),
+      ),
+    )
+  }, [search, topics])
 
-.topic-search span {
-  color: #64748b;
-  font-size: 20px;
-}
-
-.topic-search input {
-  width: 100%;
-  border: 0;
-  outline: 0;
-  background: transparent;
-  color: #111827;
-  font-size: 14px;
-}
-
-.topic-add-button,
-.topic-modal-actions button {
-  height: 40px;
-  padding: 0 16px;
-  border: 0;
-  border-radius: 6px;
-  background: #0078d4;
-  color: #fff;
-  cursor: pointer;
-  font-weight: 600;
-}
-
-.topic-add-button:hover,
-.topic-modal-actions button:hover {
-  background: #0064b1;
-}
-
-.topic-message {
-  margin-bottom: 16px;
-  padding: 10px 12px;
-  border-radius: 4px;
-  font-size: 14px;
-}
-
-.topic-message.error {
-  background: #fee2e2;
-  border: 1px solid #fecaca;
-  color: #991b1b;
-}
-
-.topic-table-wrap {
-  width: 100%;
-  overflow-x: auto;
-}
-
-.topic-table {
-  width: 100%;
-  min-width: 1120px;
-  border-collapse: collapse;
-  background: #fff;
-}
-
-.topic-table th,
-.topic-table td {
-  padding: 13px 14px;
-  border: 1px solid #d8dee6;
-  text-align: left;
-  vertical-align: middle;
-}
-
-.topic-table th {
-  background: #164a76;
-  color: #fff;
-  font-size: 14px;
-}
-
-.topic-table th:first-child,
-.topic-table td:first-child {
-  width: 80px;
-  text-align: center;
-}
-
-.topic-table th:nth-child(6),
-.topic-table td:nth-child(6) {
-  width: 170px;
-  text-align: center;
-}
-
-.topic-table th:last-child,
-.topic-table td:last-child {
-  width: 250px;
-  text-align: center;
-}
-
-.topic-table tbody tr:hover {
-  background: #f1f5f9;
-}
-
-.topic-table tbody tr.inactive-row,
-.topic-table tbody tr.inactive-row:hover {
-  background: #fff1f2;
-}
-
-.topic-empty {
-  height: 120px;
-  text-align: center !important;
-  color: #64748b;
-}
-
-.topic-title {
-  font-weight: 600;
-  color: #0f172a;
-}
-
-.topic-reason {
-  margin-top: 5px;
-  color: #be123c;
-  font-size: 13px;
-}
-
-.topic-status {
-  display: inline-block;
-  padding: 4px 9px;
-  border-radius: 999px;
-  font-size: 13px;
-  font-weight: 600;
-}
-
-.topic-status.active {
-  background: #dcfce7;
-  color: #166534;
-}
-
-.topic-status.inactive {
-  background: #dc2626;
-  color: #fff;
-}
-
-.topic-status.pending {
-  background: #fef3c7;
-  color: #92400e;
-}
-
-.topic-status.approved {
-  background: #dbeafe;
-  color: #1d4ed8;
-}
-
-.topic-actions {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: 8px;
-}
-
-.topic-actions button {
-  min-width: 70px;
-  height: 34px;
-  border: 1px solid #bfdbfe;
-  border-radius: 4px;
-  background: #eff6ff;
-  color: #1d4ed8;
-  cursor: pointer;
-}
-
-.topic-actions button.approve,
-.topic-actions button.publish {
-  border-color: #bbf7d0;
-  background: #f0fdf4;
-  color: #15803d;
-}
-
-.topic-actions button.reject,
-.topic-actions button.delete {
-  border-color: #fecaca;
-  background: #fff1f2;
-  color: #be123c;
-}
-
-.topic-action-empty {
-  color: #94a3b8;
-}
-
-.topic-pagination {
-  display: flex;
-  justify-content: center;
-  gap: 4px;
-  margin-top: 20px;
-}
-
-.topic-pagination button {
-  width: 34px;
-  height: 34px;
-  border: 1px solid #cbd5e1;
-  border-radius: 4px;
-  background: #fff;
-  color: #334155;
-  cursor: pointer;
-}
-
-.topic-pagination button.active {
-  border-color: #0078d4;
-  background: #0078d4;
-  color: #fff;
-}
-
-.topic-pagination button:disabled {
-  cursor: not-allowed;
-  opacity: 0.45;
-}
-
-.topic-modal-backdrop {
-  position: fixed;
-  inset: 0;
-  z-index: 20;
-  display: grid;
-  place-items: center;
-  padding: 20px;
-  background: rgba(15, 23, 42, 0.68);
-}
-
-.topic-modal {
-  width: min(520px, 100%);
-  background: #fff;
-  border-radius: 8px;
-  color: #1f2937;
-  box-shadow: 0 18px 50px rgba(0, 0, 0, 0.28);
-}
-
-.topic-modal-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 18px 20px;
-  border-bottom: 1px solid #e2e8f0;
-}
-
-.topic-modal-header h3 {
-  margin: 0;
-  font-size: 18px;
-}
-
-.topic-modal-header button {
-  width: 34px;
-  height: 34px;
-  border: 0;
-  background: transparent;
-  color: #475569;
-  cursor: pointer;
-  font-size: 24px;
-}
-
-.topic-modal form {
-  padding: 20px;
-}
-
-.topic-modal form > label {
-  display: block;
-  margin: 14px 0 8px;
-  font-size: 14px;
-  font-weight: 600;
-}
-
-.topic-modal form > label:first-child {
-  margin-top: 0;
-}
-
-.topic-modal form input,
-.topic-modal form select,
-.topic-modal form textarea {
-  box-sizing: border-box;
-  width: 100%;
-  padding: 0 12px;
-  border: 1px solid #cbd5e1;
-  border-radius: 5px;
-  outline: none;
-  color: #111827;
-  font: inherit;
-}
-
-.topic-modal form input,
-.topic-modal form select {
-  height: 42px;
-}
-
-.topic-modal form select,
-.topic-modal form textarea {
-  background: #fff;
-}
-
-.topic-modal form textarea {
-  min-height: 96px;
-  padding-top: 10px;
-  resize: vertical;
-}
-
-.topic-modal form input:focus,
-.topic-modal form select:focus,
-.topic-modal form textarea:focus {
-  border-color: #0078d4;
-  box-shadow: 0 0 0 3px rgba(0, 120, 212, 0.14);
-}
-
-.topic-modal-actions {
-  display: flex;
-  justify-content: flex-end;
-  gap: 10px;
-  margin-top: 22px;
-}
-
-.topic-modal-actions button.secondary {
-  border: 1px solid #cbd5e1;
-  background: #fff;
-  color: #334155;
-}
-
-.topic-modal-actions button:disabled {
-  cursor: wait;
-  opacity: 0.65;
-}
-
-@media (max-width: 720px) {
-  .topics-panel {
-    padding: 14px;
+  function openCreateForm() {
+    setEditingTopic(null)
+    setCode(`DT${String(topics.length + 1).padStart(3, '0')}`)
+    setTitle('')
+    setLecturer('')
+    setStatus('Đang mở')
+    setIsFormOpen(true)
   }
 
-  .topics-toolbar {
-    align-items: stretch;
-    flex-direction: column;
+  function openEditForm(topic: Topic) {
+    setEditingTopic(topic)
+    setCode(topic.code)
+    setTitle(topic.title)
+    setLecturer(topic.lecturer)
+    setStatus(topic.status)
+    setIsFormOpen(true)
   }
 
-  .topic-search {
-    width: 100%;
+  function closeForm() {
+    setIsFormOpen(false)
   }
 
-  .topic-table th:last-child,
-  .topic-table td:last-child {
-    width: 170px;
+  function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
+    event.preventDefault()
+    const topicData = { code: code.trim(), title: title.trim(), lecturer: lecturer.trim(), status }
+
+    if (!topicData.code || !topicData.title || !topicData.lecturer) return
+
+    if (editingTopic) {
+      setTopics((current) => current.map((topic) =>
+        topic.id === editingTopic.id ? { ...topic, ...topicData } : topic,
+      ))
+    } else {
+      setTopics((current) => [...current, { id: Date.now(), ...topicData }])
+    }
+    closeForm()
   }
 
-  .topic-actions button {
-    min-width: 34px;
+  function deleteTopic(topicId: number) {
+    setTopics((current) => current.filter((topic) => topic.id !== topicId))
   }
 
-  .topic-actions button span {
-    display: none;
-  }
+  return (
+    <DashboardLayout title="QUẢN LÝ ĐỀ TÀI" contentClassName="topics-content">
+      <section className="topics-panel">
+        <div className="topics-toolbar">
+          <label className="topic-search">
+            <span aria-hidden="true">⌕</span>
+            <input value={search} onChange={(event) => setSearch(event.target.value)} placeholder="Tìm kiếm đề tài..." type="search" />
+          </label>
+          <button className="topic-add-button" type="button" onClick={openCreateForm}>+ Thêm đề tài</button>
+        </div>
+
+        <div className="topic-table-wrap">
+          <table className="topic-table">
+            <thead><tr><th>STT</th><th>Mã đề tài</th><th>Tên đề tài</th><th>Giảng viên hướng dẫn</th><th>Trạng thái</th><th>Thao tác</th></tr></thead>
+            <tbody>
+              {visibleTopics.length === 0 ? <tr><td className="topic-empty" colSpan={6}>Không tìm thấy đề tài phù hợp.</td></tr> : visibleTopics.map((topic, index) => (
+                <tr key={topic.id}>
+                  <td>{index + 1}</td><td>{topic.code}</td><td>{topic.title}</td><td>{topic.lecturer}</td>
+                  <td><span className={`topic-status ${topic.status === 'Đang mở' ? 'open' : 'closed'}`}>{topic.status}</span></td>
+                  <td className="topic-actions"><button type="button" onClick={() => openEditForm(topic)}>Sửa</button><button type="button" className="delete" onClick={() => deleteTopic(topic.id)}>Xóa</button></td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      {isFormOpen && (
+        <div className="topic-modal-backdrop" onMouseDown={closeForm} role="presentation">
+          <section className="topic-modal" onMouseDown={(event) => event.stopPropagation()} role="dialog" aria-modal="true" aria-labelledby="topic-form-title">
+            <div className="topic-modal-header"><h3 id="topic-form-title">{editingTopic ? 'Cập nhật đề tài' : 'Thêm đề tài'}</h3><button type="button" onClick={closeForm} aria-label="Đóng">×</button></div>
+            <form onSubmit={handleSubmit}>
+              <label>Mã đề tài<input value={code} onChange={(event) => setCode(event.target.value)} required /></label>
+              <label>Tên đề tài<input value={title} onChange={(event) => setTitle(event.target.value)} required /></label>
+              <label>Giảng viên hướng dẫn<input value={lecturer} onChange={(event) => setLecturer(event.target.value)} required /></label>
+              <label>Trạng thái<select value={status} onChange={(event) => setStatus(event.target.value as Topic['status'])}><option>Đang mở</option><option>Đã đóng</option></select></label>
+              <div className="topic-modal-actions"><button className="secondary" type="button" onClick={closeForm}>Hủy</button><button type="submit">Lưu</button></div>
+            </form>
+          </section>
+        </div>
+      )}
+    </DashboardLayout>
+  )
 }
+>>>>>>> e335342 (feat: add Topics management page and integrate with navigation)
