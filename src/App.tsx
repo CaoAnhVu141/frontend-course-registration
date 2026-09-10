@@ -5,7 +5,6 @@ import { tokenStorage } from './shared/services/tokenStorage'
 import { LecturersPage } from './modules/lecturers'
 import { StudentsPage } from './modules/students'
 import { ExpertiseTagsPage } from './modules/expertisetags'
-import { TopicsPage } from './modules/topics'
 
 function App() {
   const path = window.location.pathname
