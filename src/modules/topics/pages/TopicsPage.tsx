@@ -1,376 +1,566 @@
-.topics-content {
-  width: 100%;
+import { useCallback, useEffect, useMemo, useState } from 'react'
+import type { FormEvent, ReactNode } from 'react'
+import { tokenStorage } from '../../../shared/services/tokenStorage'
+import { getDepartments } from '../../departments/services/departmentApi'
+import type { Department } from '../../departments/types/department.type'
+import { useConfirmation } from '../../confirmation'
+import { DashboardLayout } from '../../dashboard/components/DashboardLayout'
+import { useNotification } from '../../notification'
+import {
+  approveTopic,
+  createTopic,
+  deleteTopic,
+  getTopics,
+  publishTopic,
+  rejectTopic,
+  updateTopic,
+} from '../services/topicApi'
+import { getRegistrationPeriods } from '../services/registrationPeriodApi'
+import type { RegistrationPeriod } from '../types/registrationPeriod.type'
+import type { Topic, TopicRequest, TopicStatus } from '../types/topic.type'
+import './TopicsPage.css'
+
+const PAGE_SIZE = 5
+
+const statusConfig: Record<
+  TopicStatus,
+  { label: string; tone: 'active' | 'inactive' | 'pending' | 'approved' }
+> = {
+  PENDING: { label: 'Chờ duyệt', tone: 'pending' },
+  APPROVED: { label: 'Đã duyệt', tone: 'approved' },
+  REJECTED: { label: 'Bị từ chối', tone: 'inactive' },
+  PUBLISHED: { label: 'Đang hoạt động', tone: 'active' },
+  CLOSED: { label: 'Không còn hoạt động', tone: 'inactive' },
 }
 
-.topics-panel {
-  width: 100%;
-  min-height: 430px;
-  padding: 24px;
-  background: #f7f8fa;
-  border: 1px solid #e1e5ea;
-  border-radius: 8px;
-  color: #1f2937;
-}
+export function TopicsPage() {
+  const { success, error: showError } = useNotification()
+  const { confirm } = useConfirmation()
+  const user = useMemo(() => tokenStorage.getUser(), [])
+  const isAdmin = user?.roles.includes('ADMIN') ?? false
+  const isLecturer = user?.roles.includes('LECTURER') ?? false
+  const canManageTopics = isAdmin || isLecturer
 
-.topics-toolbar {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 16px;
-  margin-bottom: 20px;
-}
+  const [topics, setTopics] = useState<Topic[]>([])
+  const [departments, setDepartments] = useState<Department[]>([])
+  const [registrationPeriods, setRegistrationPeriods] = useState<RegistrationPeriod[]>([])
+  const [search, setSearch] = useState('')
+  const [editingTopic, setEditingTopic] = useState<Topic | null>(null)
+  const [isFormOpen, setIsFormOpen] = useState(false)
+  const [rejectingTopic, setRejectingTopic] = useState<Topic | null>(null)
+  const [title, setTitle] = useState('')
+  const [requirements, setRequirements] = useState('')
+  const [departmentId, setDepartmentId] = useState('')
+  const [registrationPeriodId, setRegistrationPeriodId] = useState('')
+  const [rejectReason, setRejectReason] = useState('')
+  const [page, setPage] = useState(1)
+  const [isLoading, setIsLoading] = useState(true)
+  const [isSaving, setIsSaving] = useState(false)
+  const [error, setError] = useState('')
 
-.topic-search {
-  width: min(420px, 100%);
-  height: 40px;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  padding: 0 12px;
-  background: #fff;
-  border: 1px solid #cbd5e1;
-  border-radius: 6px;
-}
+  const departmentNameMap = useMemo(() => {
+    return new Map(departments.map((department) => [
+      department.departmentId,
+      department.name,
+    ]))
+  }, [departments])
 
-.topic-search span {
-  color: #64748b;
-  font-size: 20px;
-}
+  const registrationPeriodNameMap = useMemo(() => {
+    return new Map(registrationPeriods.map((period) => [period.id, period.name]))
+  }, [registrationPeriods])
 
-.topic-search input {
-  width: 100%;
-  border: 0;
-  outline: 0;
-  background: transparent;
-  color: #111827;
-  font-size: 14px;
-}
+  const visibleTopics = useMemo(() => {
+    const keyword = search.trim().toLocaleLowerCase('vi')
+    const sortedTopics = [...topics].sort((first, second) => second.id - first.id)
 
-.topic-add-button,
-.topic-modal-actions button {
-  height: 40px;
-  padding: 0 16px;
-  border: 0;
-  border-radius: 6px;
-  background: #0078d4;
-  color: #fff;
-  cursor: pointer;
-  font-weight: 600;
-}
+    if (!keyword) return sortedTopics
 
-.topic-add-button:hover,
-.topic-modal-actions button:hover {
-  background: #0064b1;
-}
+    return sortedTopics.filter((topic) => {
+      const statusLabel = statusConfig[topic.status]?.label ?? topic.status
+      const departmentName = departmentNameMap.get(topic.departmentId) ?? ''
+      const periodName = registrationPeriodNameMap.get(topic.registrationPeriodId) ?? ''
 
-.topic-message {
-  margin-bottom: 16px;
-  padding: 10px 12px;
-  border-radius: 4px;
-  font-size: 14px;
-}
+      return [
+        topic.id,
+        topic.title,
+        topic.requirements,
+        topic.proposedBy,
+        statusLabel,
+        departmentName,
+        periodName,
+      ].some((value) =>
+        String(value ?? '').toLocaleLowerCase('vi').includes(keyword),
+      )
+    })
+  }, [departmentNameMap, registrationPeriodNameMap, search, topics])
 
-.topic-message.error {
-  background: #fee2e2;
-  border: 1px solid #fecaca;
-  color: #991b1b;
-}
+  const totalPages = Math.max(1, Math.ceil(visibleTopics.length / PAGE_SIZE))
+  const pagedTopics = visibleTopics.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE)
 
-.topic-table-wrap {
-  width: 100%;
-  overflow-x: auto;
-}
+  const loadTopics = useCallback(async () => {
+    try {
+      setIsLoading(true)
+      setError('')
 
-.topic-table {
-  width: 100%;
-  min-width: 1120px;
-  border-collapse: collapse;
-  background: #fff;
-}
+      const [topicData, departmentData, periodData] = await Promise.all([
+        getTopics(),
+        getDepartments(),
+        getRegistrationPeriods(),
+      ])
 
-.topic-table th,
-.topic-table td {
-  padding: 13px 14px;
-  border: 1px solid #d8dee6;
-  text-align: left;
-  vertical-align: middle;
-}
+      setTopics(topicData)
+      setDepartments(departmentData)
+      setRegistrationPeriods(periodData)
+    } catch (loadError) {
+      const message = getErrorMessage(loadError)
+      setError(message)
+      showError(message)
+    } finally {
+      setIsLoading(false)
+    }
+  }, [showError])
 
-.topic-table th {
-  background: #164a76;
-  color: #fff;
-  font-size: 14px;
-}
+  useEffect(() => {
+    if (!user) {
+      window.location.href = '/'
+      return
+    }
 
-.topic-table th:first-child,
-.topic-table td:first-child {
-  width: 80px;
-  text-align: center;
-}
+    if (!canManageTopics) {
+      window.location.href = '/dashboard'
+      return
+    }
 
-.topic-table th:nth-child(6),
-.topic-table td:nth-child(6) {
-  width: 170px;
-  text-align: center;
-}
+    void loadTopics()
+  }, [canManageTopics, loadTopics, user])
 
-.topic-table th:last-child,
-.topic-table td:last-child {
-  width: 250px;
-  text-align: center;
-}
+  useEffect(() => {
+    setPage(1)
+  }, [search])
 
-.topic-table tbody tr:hover {
-  background: #f1f5f9;
-}
+  useEffect(() => {
+    if (page > totalPages) setPage(totalPages)
+  }, [page, totalPages])
 
-.topic-table tbody tr.inactive-row,
-.topic-table tbody tr.inactive-row:hover {
-  background: #fff1f2;
-}
-
-.topic-empty {
-  height: 120px;
-  text-align: center !important;
-  color: #64748b;
-}
-
-.topic-title {
-  font-weight: 600;
-  color: #0f172a;
-}
-
-.topic-reason {
-  margin-top: 5px;
-  color: #be123c;
-  font-size: 13px;
-}
-
-.topic-status {
-  display: inline-block;
-  padding: 4px 9px;
-  border-radius: 999px;
-  font-size: 13px;
-  font-weight: 600;
-}
-
-.topic-status.active {
-  background: #dcfce7;
-  color: #166534;
-}
-
-.topic-status.inactive {
-  background: #dc2626;
-  color: #fff;
-}
-
-.topic-status.pending {
-  background: #fef3c7;
-  color: #92400e;
-}
-
-.topic-status.approved {
-  background: #dbeafe;
-  color: #1d4ed8;
-}
-
-.topic-actions {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: 8px;
-}
-
-.topic-actions button {
-  min-width: 70px;
-  height: 34px;
-  border: 1px solid #bfdbfe;
-  border-radius: 4px;
-  background: #eff6ff;
-  color: #1d4ed8;
-  cursor: pointer;
-}
-
-.topic-actions button.approve,
-.topic-actions button.publish {
-  border-color: #bbf7d0;
-  background: #f0fdf4;
-  color: #15803d;
-}
-
-.topic-actions button.reject,
-.topic-actions button.delete {
-  border-color: #fecaca;
-  background: #fff1f2;
-  color: #be123c;
-}
-
-.topic-action-empty {
-  color: #94a3b8;
-}
-
-.topic-pagination {
-  display: flex;
-  justify-content: center;
-  gap: 4px;
-  margin-top: 20px;
-}
-
-.topic-pagination button {
-  width: 34px;
-  height: 34px;
-  border: 1px solid #cbd5e1;
-  border-radius: 4px;
-  background: #fff;
-  color: #334155;
-  cursor: pointer;
-}
-
-.topic-pagination button.active {
-  border-color: #0078d4;
-  background: #0078d4;
-  color: #fff;
-}
-
-.topic-pagination button:disabled {
-  cursor: not-allowed;
-  opacity: 0.45;
-}
-
-.topic-modal-backdrop {
-  position: fixed;
-  inset: 0;
-  z-index: 20;
-  display: grid;
-  place-items: center;
-  padding: 20px;
-  background: rgba(15, 23, 42, 0.68);
-}
-
-.topic-modal {
-  width: min(520px, 100%);
-  background: #fff;
-  border-radius: 8px;
-  color: #1f2937;
-  box-shadow: 0 18px 50px rgba(0, 0, 0, 0.28);
-}
-
-.topic-modal-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 18px 20px;
-  border-bottom: 1px solid #e2e8f0;
-}
-
-.topic-modal-header h3 {
-  margin: 0;
-  font-size: 18px;
-}
-
-.topic-modal-header button {
-  width: 34px;
-  height: 34px;
-  border: 0;
-  background: transparent;
-  color: #475569;
-  cursor: pointer;
-  font-size: 24px;
-}
-
-.topic-modal form {
-  padding: 20px;
-}
-
-.topic-modal form > label {
-  display: block;
-  margin: 14px 0 8px;
-  font-size: 14px;
-  font-weight: 600;
-}
-
-.topic-modal form > label:first-child {
-  margin-top: 0;
-}
-
-.topic-modal form input,
-.topic-modal form select,
-.topic-modal form textarea {
-  box-sizing: border-box;
-  width: 100%;
-  padding: 0 12px;
-  border: 1px solid #cbd5e1;
-  border-radius: 5px;
-  outline: none;
-  color: #111827;
-  font: inherit;
-}
-
-.topic-modal form input,
-.topic-modal form select {
-  height: 42px;
-}
-
-.topic-modal form select,
-.topic-modal form textarea {
-  background: #fff;
-}
-
-.topic-modal form textarea {
-  min-height: 96px;
-  padding-top: 10px;
-  resize: vertical;
-}
-
-.topic-modal form input:focus,
-.topic-modal form select:focus,
-.topic-modal form textarea:focus {
-  border-color: #0078d4;
-  box-shadow: 0 0 0 3px rgba(0, 120, 212, 0.14);
-}
-
-.topic-modal-actions {
-  display: flex;
-  justify-content: flex-end;
-  gap: 10px;
-  margin-top: 22px;
-}
-
-.topic-modal-actions button.secondary {
-  border: 1px solid #cbd5e1;
-  background: #fff;
-  color: #334155;
-}
-
-.topic-modal-actions button:disabled {
-  cursor: wait;
-  opacity: 0.65;
-}
-
-@media (max-width: 720px) {
-  .topics-panel {
-    padding: 14px;
+  function openCreateForm() {
+    setEditingTopic(null)
+    setTitle('')
+    setRequirements('')
+    setDepartmentId('')
+    setRegistrationPeriodId('')
+    setIsFormOpen(true)
   }
 
-  .topics-toolbar {
-    align-items: stretch;
-    flex-direction: column;
+  function openEditForm(topic: Topic) {
+    setEditingTopic(topic)
+    setTitle(topic.title)
+    setRequirements(topic.requirements ?? '')
+    setDepartmentId(String(topic.departmentId))
+    setRegistrationPeriodId(String(topic.registrationPeriodId))
+    setIsFormOpen(true)
   }
 
-  .topic-search {
-    width: 100%;
+  function closeForm() {
+    if (isSaving) return
+    setIsFormOpen(false)
   }
 
-  .topic-table th:last-child,
-  .topic-table td:last-child {
-    width: 170px;
+  async function handleSubmit(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault()
+
+    const payload: TopicRequest = {
+      title: title.trim(),
+      requirements: requirements.trim(),
+      departmentId: departmentId ? Number(departmentId) : undefined,
+      registrationPeriodId: registrationPeriodId
+        ? Number(registrationPeriodId)
+        : undefined,
+    }
+
+    try {
+      setIsSaving(true)
+      const response = editingTopic
+        ? await updateTopic(editingTopic.id, payload)
+        : await createTopic(payload)
+
+      setTopics((current) => {
+        if (editingTopic) {
+          return current.map((topic) =>
+            topic.id === editingTopic.id ? response.data : topic,
+          )
+        }
+
+        return [response.data, ...current]
+      })
+
+      success(response.message)
+      closeForm()
+    } catch (saveError) {
+      showError(getErrorMessage(saveError))
+    } finally {
+      setIsSaving(false)
+    }
   }
 
-  .topic-actions button {
-    min-width: 34px;
+  async function handleDelete(topic: Topic) {
+    const confirmed = await confirm({
+      title: 'Xóa đề tài',
+      message: `Bạn có chắc muốn xóa đề tài "${topic.title}" không?`,
+      confirmText: 'Xóa',
+      cancelText: 'Hủy',
+      tone: 'danger',
+    })
+
+    if (!confirmed) return
+
+    try {
+      const response = await deleteTopic(topic.id)
+      setTopics((current) => current.filter((item) => item.id !== topic.id))
+      success(response.message)
+    } catch (deleteError) {
+      showError(getErrorMessage(deleteError))
+    }
   }
 
-  .topic-actions button span {
-    display: none;
+  async function handleStatusAction(
+    topic: Topic,
+    action: (topicId: number) => Promise<{ message: string; data: Topic }>,
+  ) {
+    try {
+      const response = await action(topic.id)
+      setTopics((current) =>
+        current.map((item) => (item.id === topic.id ? response.data : item)),
+      )
+      success(response.message)
+    } catch (statusError) {
+      showError(getErrorMessage(statusError))
+    }
   }
+
+  function openRejectForm(topic: Topic) {
+    setRejectingTopic(topic)
+    setRejectReason('')
+  }
+
+  function closeRejectForm() {
+    if (isSaving) return
+    setRejectingTopic(null)
+  }
+
+  async function handleRejectSubmit(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault()
+    if (!rejectingTopic) return
+
+    try {
+      setIsSaving(true)
+      const response = await rejectTopic(rejectingTopic.id, rejectReason.trim())
+      setTopics((current) =>
+        current.map((topic) =>
+          topic.id === rejectingTopic.id ? response.data : topic,
+        ),
+      )
+      success(response.message)
+      closeRejectForm()
+    } catch (rejectError) {
+      showError(getErrorMessage(rejectError))
+    } finally {
+      setIsSaving(false)
+    }
+  }
+
+  return (
+    <DashboardLayout title="QUẢN LÝ ĐỀ TÀI" contentClassName="topics-content">
+      <section className="topics-panel">
+        <div className="topics-toolbar">
+          <label className="topic-search">
+            <span aria-hidden="true">⌕</span>
+            <input
+              value={search}
+              onChange={(event) => setSearch(event.target.value)}
+              placeholder="Tìm kiếm đề tài..."
+              type="search"
+            />
+          </label>
+          {isLecturer && (
+            <button className="topic-add-button" type="button" onClick={openCreateForm}>
+              <span>+</span> Thêm đề tài
+            </button>
+          )}
+        </div>
+
+        {error && <div className="topic-message error">{error}</div>}
+
+        <div className="topic-table-wrap">
+          <table className="topic-table">
+            <thead>
+              <tr>
+                <th>STT</th>
+                <th>Tên đề tài</th>
+                <th>Khoa / phòng ban</th>
+                <th>Kỳ đăng ký</th>
+                <th>Người đề xuất</th>
+                <th>Trạng thái</th>
+                <th>Thao tác</th>
+              </tr>
+            </thead>
+            <tbody>
+              {isLoading ? (
+                <tr>
+                  <td className="topic-empty" colSpan={7}>Đang tải dữ liệu...</td>
+                </tr>
+              ) : pagedTopics.length === 0 ? (
+                <tr>
+                  <td className="topic-empty" colSpan={7}>Không tìm thấy đề tài phù hợp.</td>
+                </tr>
+              ) : (
+                pagedTopics.map((topic) => (
+                  <tr key={topic.id} className={isInactiveTopic(topic) ? 'inactive-row' : ''}>
+                    <td>{topic.id}</td>
+                    <td>
+                      <div className="topic-title">{topic.title}</div>
+                      {topic.rejectionReason && (
+                        <div className="topic-reason">Lý do: {topic.rejectionReason}</div>
+                      )}
+                    </td>
+                    <td>{departmentNameMap.get(topic.departmentId) ?? `#${topic.departmentId}`}</td>
+                    <td>{registrationPeriodNameMap.get(topic.registrationPeriodId) ?? `#${topic.registrationPeriodId}`}</td>
+                    <td>{topic.proposedBy}</td>
+                    <td>
+                      <span className={`topic-status ${statusConfig[topic.status].tone}`}>
+                        {statusConfig[topic.status].label}
+                      </span>
+                    </td>
+                    <td className="topic-actions">
+                      {renderActions({
+                        topic,
+                        isAdmin,
+                        isLecturer,
+                        openEditForm,
+                        handleDelete,
+                        handleStatusAction,
+                        openRejectForm,
+                      })}
+                    </td>
+                  </tr>
+                ))
+              )}
+            </tbody>
+          </table>
+        </div>
+
+        {totalPages > 1 && (
+          <nav className="topic-pagination" aria-label="Phân trang">
+            <button
+              type="button"
+              disabled={page === 1}
+              onClick={() => setPage((current) => current - 1)}
+            >
+              ‹
+            </button>
+            {Array.from({ length: totalPages }, (_, index) => index + 1).map((pageNumber) => (
+              <button
+                type="button"
+                className={pageNumber === page ? 'active' : ''}
+                key={pageNumber}
+                onClick={() => setPage(pageNumber)}
+              >
+                {pageNumber}
+              </button>
+            ))}
+            <button
+              type="button"
+              disabled={page === totalPages}
+              onClick={() => setPage((current) => current + 1)}
+            >
+              ›
+            </button>
+          </nav>
+        )}
+      </section>
+
+      {isFormOpen && (
+        <div className="topic-modal-backdrop" onMouseDown={closeForm} role="presentation">
+          <section className="topic-modal" onMouseDown={(event) => event.stopPropagation()} role="dialog" aria-modal="true" aria-labelledby="topic-form-title">
+            <div className="topic-modal-header">
+              <h3 id="topic-form-title">{editingTopic ? 'Cập nhật đề tài' : 'Thêm đề tài'}</h3>
+              <button type="button" onClick={closeForm} aria-label="Đóng">×</button>
+            </div>
+            <form onSubmit={(event) => void handleSubmit(event)}>
+              <label htmlFor="topic-title">Tên đề tài</label>
+              <input
+                id="topic-title"
+                autoFocus
+                value={title}
+                onChange={(event) => setTitle(event.target.value)}
+                placeholder="Nhập tên đề tài"
+                maxLength={255}
+              />
+
+              <label htmlFor="topic-requirements">Yêu cầu</label>
+              <textarea
+                id="topic-requirements"
+                value={requirements}
+                onChange={(event) => setRequirements(event.target.value)}
+                placeholder="Nhập yêu cầu đề tài"
+                rows={4}
+              />
+
+              <label htmlFor="topic-department">Khoa / phòng ban</label>
+              <select
+                id="topic-department"
+                value={departmentId}
+                onChange={(event) => setDepartmentId(event.target.value)}
+              >
+                <option value="">Chọn khoa / phòng ban</option>
+                {departments.map((department) => (
+                  <option key={department.departmentId} value={department.departmentId}>
+                    {department.name}
+                  </option>
+                ))}
+              </select>
+
+              <label htmlFor="topic-period">Kỳ đăng ký</label>
+              <select
+                id="topic-period"
+                value={registrationPeriodId}
+                onChange={(event) => setRegistrationPeriodId(event.target.value)}
+              >
+                <option value="">Chọn kỳ đăng ký</option>
+                {registrationPeriods.map((period) => (
+                  <option key={period.id} value={period.id}>
+                    {period.name}
+                  </option>
+                ))}
+              </select>
+
+              <div className="topic-modal-actions">
+                <button className="secondary" type="button" onClick={closeForm}>Hủy</button>
+                <button type="submit" disabled={isSaving}>
+                  {isSaving ? 'Đang lưu...' : 'Lưu'}
+                </button>
+              </div>
+            </form>
+          </section>
+        </div>
+      )}
+
+      {rejectingTopic && (
+        <div className="topic-modal-backdrop" onMouseDown={closeRejectForm} role="presentation">
+          <section className="topic-modal" onMouseDown={(event) => event.stopPropagation()} role="dialog" aria-modal="true" aria-labelledby="topic-reject-title">
+            <div className="topic-modal-header">
+              <h3 id="topic-reject-title">Từ chối đề tài</h3>
+              <button type="button" onClick={closeRejectForm} aria-label="Đóng">×</button>
+            </div>
+            <form onSubmit={(event) => void handleRejectSubmit(event)}>
+              <label htmlFor="topic-reject-reason">Lý do từ chối</label>
+              <textarea
+                id="topic-reject-reason"
+                autoFocus
+                value={rejectReason}
+                onChange={(event) => setRejectReason(event.target.value)}
+                placeholder="Nhập lý do"
+                rows={4}
+              />
+              <div className="topic-modal-actions">
+                <button className="secondary" type="button" onClick={closeRejectForm}>Hủy</button>
+                <button type="submit" disabled={isSaving}>
+                  {isSaving ? 'Đang xử lý...' : 'Từ chối'}
+                </button>
+              </div>
+            </form>
+          </section>
+        </div>
+      )}
+    </DashboardLayout>
+  )
+}
+
+type TopicActionProps = {
+  topic: Topic
+  isAdmin: boolean
+  isLecturer: boolean
+  openEditForm: (topic: Topic) => void
+  handleDelete: (topic: Topic) => Promise<void>
+  handleStatusAction: (
+    topic: Topic,
+    action: (topicId: number) => Promise<{ message: string; data: Topic }>,
+  ) => Promise<void>
+  openRejectForm: (topic: Topic) => void
+}
+
+function renderActions({
+  topic,
+  isAdmin,
+  isLecturer,
+  openEditForm,
+  handleDelete,
+  handleStatusAction,
+  openRejectForm,
+}: TopicActionProps) {
+  const actions: ReactNode[] = []
+
+  if ((isAdmin || isLecturer) && topic.status !== 'PUBLISHED') {
+    actions.push(
+      <button type="button" key="edit" onClick={() => openEditForm(topic)}>
+        ✎ <span>Sửa</span>
+      </button>,
+    )
+  }
+
+  if (isAdmin && topic.status === 'PENDING') {
+    actions.push(
+      <button
+        type="button"
+        className="approve"
+        key="approve"
+        onClick={() => void handleStatusAction(topic, approveTopic)}
+      >
+        ✓ <span>Duyệt</span>
+      </button>,
+      <button
+        type="button"
+        className="reject"
+        key="reject"
+        onClick={() => openRejectForm(topic)}
+      >
+        ! <span>Từ chối</span>
+      </button>,
+    )
+  }
+
+  if (isAdmin && topic.status === 'APPROVED') {
+    actions.push(
+      <button
+        type="button"
+        className="publish"
+        key="publish"
+        onClick={() => void handleStatusAction(topic, publishTopic)}
+      >
+        ↑ <span>Công bố</span>
+      </button>,
+    )
+  }
+
+  if (isAdmin && topic.status !== 'PUBLISHED') {
+    actions.push(
+      <button
+        type="button"
+        className="delete"
+        key="delete"
+        onClick={() => void handleDelete(topic)}
+      >
+        × <span>Xóa</span>
+      </button>,
+    )
+  }
+
+  return actions.length ? actions : <span className="topic-action-empty">-</span>
+}
+
+function isInactiveTopic(topic: Topic) {
+  return topic.status === 'REJECTED' || topic.status === 'CLOSED'
+}
+
+function getErrorMessage(error: unknown) {
+  return error instanceof Error ? error.message : 'Có lỗi xảy ra'
 }
