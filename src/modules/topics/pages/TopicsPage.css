@@ -1,0 +1,18 @@
+.topics-content { padding-top: 25px; }
+.topics-panel { background: #fff; border: 1px solid #d7e0e8; border-radius: 6px; box-shadow: 0 1px 3px rgba(15, 23, 42, .08); padding: 18px; }
+.topics-toolbar { display: flex; justify-content: space-between; gap: 14px; margin-bottom: 18px; }
+.topic-search { display: flex; align-items: center; gap: 8px; width: min(360px, 100%); padding: 0 12px; border: 1px solid #cbd5e1; border-radius: 5px; color: #64748b; }
+.topic-search input { width: 100%; padding: 10px 0; border: 0; outline: 0; font: inherit; }
+.topic-add-button, .topic-modal-actions button { border: 0; border-radius: 5px; padding: 10px 14px; background: #0078d4; color: #fff; font-weight: 700; cursor: pointer; }
+.topic-table-wrap { overflow-x: auto; }
+.topic-table { width: 100%; min-width: 760px; border-collapse: collapse; color: #334155; font-size: 14px; }
+.topic-table th { padding: 12px; background: #edf4fa; color: #1e3a5f; text-align: left; white-space: nowrap; }
+.topic-table td { padding: 13px 12px; border-top: 1px solid #e2e8f0; vertical-align: middle; }
+.topic-table td:first-child, .topic-table th:first-child { text-align: center; width: 58px; }
+.topic-empty { text-align: center; color: #64748b; }
+.topic-status { display: inline-block; padding: 4px 9px; border-radius: 99px; font-size: 12px; font-weight: 700; }
+.topic-status.open { background: #dcfce7; color: #15803d; }.topic-status.closed { background: #fee2e2; color: #b91c1c; }
+.topic-actions { display: flex; gap: 7px; white-space: nowrap; }.topic-actions button { border: 0; border-radius: 4px; padding: 6px 9px; background: #e0f2fe; color: #0369a1; cursor: pointer; }.topic-actions .delete { background: #fee2e2; color: #b91c1c; }
+.topic-modal-backdrop { position: fixed; inset: 0; z-index: 30; display: grid; place-items: center; padding: 20px; background: rgba(15,23,42,.38); }
+.topic-modal { width: min(500px, 100%); border-radius: 7px; overflow: hidden; background: #fff; color: #1f2937; box-shadow: 0 20px 55px rgba(15,23,42,.35); }.topic-modal-header { display: flex; justify-content: space-between; align-items: center; padding: 16px 20px; border-bottom: 1px solid #e2e8f0; }.topic-modal-header h3 { margin: 0; font-size: 18px; }.topic-modal-header button { border: 0; background: transparent; font-size: 25px; cursor: pointer; }.topic-modal form { display: grid; gap: 14px; padding: 20px; }.topic-modal label { display: grid; gap: 6px; font-weight: 600; font-size: 14px; }.topic-modal input, .topic-modal select { box-sizing: border-box; width: 100%; padding: 10px; border: 1px solid #cbd5e1; border-radius: 4px; font: inherit; }.topic-modal-actions { display: flex; justify-content: flex-end; gap: 10px; margin-top: 6px; }.topic-modal-actions .secondary { background: #64748b; }
+@media (max-width: 720px) { .topics-panel { padding: 12px; }.topics-toolbar { align-items: stretch; flex-direction: column; }.topic-add-button { align-self: flex-end; } }

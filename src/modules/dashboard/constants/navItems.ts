@@ -23,3 +23,10 @@ const navigationItems: NavItem[] = [
 export const navItems = navigationItems.map((item) =>
     item.href === '/dashboard' ? { ...item, label: 'Thông tin cá nhân' } : item,
 )
+
+navItems.push({
+    label: 'Quản lý đề tài',
+    icon: '▧',
+    href: '/topics',
+    roles: ['ADMIN', 'LECTURER'],
+})
