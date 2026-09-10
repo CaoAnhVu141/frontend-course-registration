@@ -23,3 +23,5 @@ const navigationItems: NavItem[] = [
 export const navItems = navigationItems.map((item) =>
     item.href === '/dashboard' ? { ...item, label: 'Thông tin cá nhân' } : item,
 )
+
+
