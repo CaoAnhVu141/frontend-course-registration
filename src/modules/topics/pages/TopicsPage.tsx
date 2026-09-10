@@ -564,3 +564,4 @@ function isInactiveTopic(topic: Topic) {
 function getErrorMessage(error: unknown) {
   return error instanceof Error ? error.message : 'Có lỗi xảy ra'
 }
+
