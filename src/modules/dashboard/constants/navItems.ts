@@ -16,7 +16,7 @@ const navigationItems: NavItem[] = [
     // { label: 'Quản lý kỳ đăng ký', icon: '◴', href: '#!', roles: ['ADMIN'] },
     // { label: 'Quản lý nhóm sinh viên', icon: '★', href: '#!' },
     { label: 'Quản lý sinh viên', icon: '●', href: '/students', roles: ['ADMIN', 'LECTURER'] },
-    // { label: 'Quản lý đề tài', icon: '▧', href: '#!' },
+    { label: 'Quản lý đề tài', icon: '▧', href: '/topics', roles: ['ADMIN', 'LECTURER'] },
     // { label: 'Quản lý đăng ký đề tài', icon: '▨', href: '#!' },
 ]
 
