@@ -29,20 +29,11 @@
 }
 
 .logo-section img {
-  width: 100px;
-  height: 100px;
+  width: 150px;
+  height: 150px;
   object-fit: contain;
-  margin-bottom: 10px;
 }
 
-.logo-section h3,
-.user-info h4 {
-  color: #fff;
-}
-
-.logo-section h3 {
-  margin-top: 10px;
-}
 
 .user-info {
   padding: 15px;

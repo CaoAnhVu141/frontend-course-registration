@@ -23,7 +23,6 @@ export function Sidebar({ user }: SidebarProps) {
           src={hcmuteLogo}
           alt="HCM-UTE"
         />
-        <h3>HCM-UTE</h3>
       </div>
 
       <div className="user-info">
