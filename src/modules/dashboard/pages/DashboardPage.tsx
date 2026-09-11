@@ -1,5 +1,6 @@
-import { useEffect, useState } from 'react'
+import { useEffect } from 'react'
 import { STORAGE_KEYS } from '../../../shared/constants/storageKeys'
+import { useNotification } from '../../notification'
 import { DashboardLayout } from '../components/DashboardLayout'
 
 const studentDetails = [
@@ -57,27 +58,18 @@ function DetailCard({ title, details }: DetailCardProps) {
 }
 
 export function DashboardPage() {
-  const [isLoginMessageVisible, setIsLoginMessageVisible] = useState(false)
+  const { success } = useNotification()
 
   useEffect(() => {
-    const shouldShowMessage =
-      sessionStorage.getItem(STORAGE_KEYS.loginSuccessMessage) === 'true'
+    const loginMessage = sessionStorage.getItem(
+      STORAGE_KEYS.loginSuccessMessage,
+    )
 
-    if (!shouldShowMessage) return
+    if (!loginMessage) return
 
     sessionStorage.removeItem(STORAGE_KEYS.loginSuccessMessage)
-    setIsLoginMessageVisible(true)
-  }, [])
-
-  useEffect(() => {
-    if (!isLoginMessageVisible) return
-
-    const timeoutId = window.setTimeout(() => {
-      setIsLoginMessageVisible(false)
-    }, 3000)
-
-    return () => window.clearTimeout(timeoutId)
-  }, [isLoginMessageVisible])
+    success(loginMessage)
+  }, [success])
 
   return (
     <DashboardLayout>
@@ -90,18 +82,6 @@ export function DashboardPage() {
 
         <DetailCard title="Thông tin khóa dạy" details={courseDetails} />
       </div>
-
-      {isLoginMessageVisible && (
-        <div className="success-modal-backdrop">
-          <section className="success-panel" role="status">
-            <div className="success-icon">✓</div>
-            <div>
-              <h1>Đăng nhập thành công</h1>
-              <p>Bạn đã đăng nhập vào hệ thống Course Registration.</p>
-            </div>
-          </section>
-        </div>
-      )}
     </DashboardLayout>
   )
 }

@@ -13,7 +13,7 @@ export function LoginForm({ onLoginSuccess }: LoginFormProps) {
   const [password, setPassword] = useState('')
   const [showPassword, setShowPassword] = useState(false)
   const [message, setMessage] = useState('')
-  const [messageType, setMessageType] = useState<'success' | 'error' | ''>('')
+  const [messageType, setMessageType] = useState<'error' | ''>('')
   const [isLoading, setIsLoading] = useState(false)
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
@@ -40,14 +40,12 @@ export function LoginForm({ onLoginSuccess }: LoginFormProps) {
       }
 
       tokenStorage.save(data)
-      sessionStorage.setItem(STORAGE_KEYS.loginSuccessMessage, 'true')
+      sessionStorage.setItem(
+        STORAGE_KEYS.loginSuccessMessage,
+        data.message || 'Đăng nhập thành công',
+      )
 
-      setMessage('Đăng nhập thành công!')
-      setMessageType('success')
-
-      setTimeout(() => {
-        onLoginSuccess?.()
-      }, 700)
+      onLoginSuccess?.()
     } catch (error) {
       setMessage(
         error instanceof Error
