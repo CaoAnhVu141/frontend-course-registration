@@ -23,18 +23,13 @@
   padding: 0 12px; 
   border: 1px solid #cbd5e1; 
   border-radius: 6px; 
-  background: #fff; 
-  color: #111827; 
-  font: inherit; 
 }
 
 .students-content button {
   cursor: pointer; 
-  font: inherit; 
 }
 
 .students-content button:disabled { 
-  cursor: not-allowed; 
   opacity: 0.42; 
 }
 
@@ -50,7 +45,6 @@
   border-radius: 6px; 
   background: #0078d4; 
   color: #fff; 
-  font-weight: 600; 
 }
 
 .student-primary:hover {
@@ -223,8 +217,6 @@
 .student-modal label { 
   display: block; 
   margin: 14px 0 8px; 
-  font-size: 14px; 
-  font-weight: 600; 
 
 }
 .student-modal label:first-child { 
@@ -238,13 +230,6 @@
   padding: 0 12px; 
   border: 1px solid #cbd5e1; 
   border-radius: 5px; 
-  background: #fff; 
-  color: #111827; 
-  font: inherit; 
-}
-.students-content :is(input, select, button):focus-visible { 
-  outline: 2px solid #0078d4; 
-  outline-offset: 2px; 
 }
 
 .student-modal-actions { 

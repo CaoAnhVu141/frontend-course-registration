@@ -40,10 +40,7 @@
 .topic-search input {
   width: 100%;
   border: 0;
-  outline: 0;
   background: transparent;
-  color: #111827;
-  font-size: 14px;
 }
 
 .topic-add-button,
@@ -55,7 +52,6 @@
   background: #0078d4;
   color: #fff;
   cursor: pointer;
-  font-weight: 600;
 }
 
 .topic-add-button:hover,
@@ -285,8 +281,6 @@
 .topic-modal form > label {
   display: block;
   margin: 14px 0 8px;
-  font-size: 14px;
-  font-weight: 600;
 }
 
 .topic-modal form > label:first-child {
@@ -301,9 +295,6 @@
   padding: 0 12px;
   border: 1px solid #cbd5e1;
   border-radius: 5px;
-  outline: none;
-  color: #111827;
-  font: inherit;
 }
 
 .topic-modal form input,
@@ -311,22 +302,10 @@
   height: 42px;
 }
 
-.topic-modal form select,
-.topic-modal form textarea {
-  background: #fff;
-}
-
 .topic-modal form textarea {
   min-height: 96px;
   padding-top: 10px;
   resize: vertical;
-}
-
-.topic-modal form input:focus,
-.topic-modal form select:focus,
-.topic-modal form textarea:focus {
-  border-color: #0078d4;
-  box-shadow: 0 0 0 3px rgba(0, 120, 212, 0.14);
 }
 
 .topic-modal-actions {
