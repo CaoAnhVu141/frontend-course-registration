@@ -40,10 +40,7 @@
 .expertise-tag-search input {
   width: 100%;
   border: 0;
-  outline: 0;
   background: transparent;
-  color: #111827;
-  font-size: 14px;
 }
 
 .expertise-tag-add-button,
@@ -55,7 +52,6 @@
   background: #0078d4;
   color: #fff;
   cursor: pointer;
-  font-weight: 600;
 }
 
 .expertise-tag-add-button:hover,
@@ -248,8 +244,6 @@
 .expertise-tag-modal form > label:not(.expertise-tag-status-input) {
   display: block;
   margin-bottom: 8px;
-  font-size: 14px;
-  font-weight: 600;
 }
 
 .expertise-tag-modal form input[type='text'],
@@ -260,17 +254,6 @@
   padding: 0 12px;
   border: 1px solid #cbd5e1;
   border-radius: 5px;
-  outline: none;
-  color: #111827;
-}
-
-.expertise-tag-modal form select {
-  background: #fff;
-}
-
-.expertise-tag-modal form input:focus {
-  border-color: #0078d4;
-  box-shadow: 0 0 0 3px rgba(0, 120, 212, 0.14);
 }
 
 .expertise-tag-modal-actions {
