@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import type { FormEvent } from 'react'
 import { tokenStorage } from '../../../shared/services/tokenStorage'
+import { hasRole } from '../../../shared/utils/roleLabel'
 import { DashboardLayout } from '../../dashboard/components/DashboardLayout'
 import { useConfirmation } from '../../confirmation'
 import { useNotification } from '../../notification'
@@ -16,8 +17,8 @@ const emptyForm = { username: '', email: '', password: '', studentCode: '', depa
 export function StudentsPage() {
   const user = tokenStorage.getUser()
   const hasUser = Boolean(user)
-  const canManage = user?.roles.includes('ADMIN') ?? false
-  const canView = canManage || (user?.roles.includes('LECTURER') ?? false)
+  const canManage = hasRole(user?.roles, 'ADMIN')
+  const canView = canManage || hasRole(user?.roles, 'LECTURER')
   const { success, error: showError } = useNotification()
   const { confirm } = useConfirmation()
   const [students, setStudents] = useState<Student[]>([])

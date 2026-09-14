@@ -3,6 +3,7 @@ import { useConfirmation } from '../../confirmation'
 import { DashboardLayout } from '../../dashboard/components/DashboardLayout'
 import { useNotification } from '../../notification'
 import { tokenStorage } from '../../../shared/services/tokenStorage'
+import { hasRole } from '../../../shared/utils/roleLabel'
 import {
   createLecturer,
   deleteLecturer,
@@ -21,7 +22,7 @@ export function LecturersPage() {
   const { success, error: showError } = useNotification()
   const { confirm } = useConfirmation()
 
-  const isAdmin = user?.roles.includes('ADMIN') ?? false
+  const isAdmin = hasRole(user?.roles, 'ADMIN')
 
   const [lecturers, setLecturers] = useState<Lecturer[]>([])
   const [expertiseTags, setExpertiseTags] = useState<ExpertiseTag[]>([])

@@ -4,6 +4,7 @@ import type {
     LoginRequest,
     LoginResponse,
 } from '../types/auth.type'
+import { normalizeRoles } from '../../../shared/utils/roleLabel'
 
 type ApiResponse<T> = {
     timestamp: string
@@ -34,7 +35,7 @@ export async function login(payload: LoginRequest): Promise<LoginResponse> {
             id: data.id,
             username: data.username,
             email: data.email,
-            roles: data.roles ?? [],
+            roles: normalizeRoles(data.roles),
         },
     }
 }

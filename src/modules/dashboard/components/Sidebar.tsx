@@ -1,6 +1,6 @@
 import type { AuthUser } from '../../auth/types/auth.type'
 import hcmuteLogo from '../../../assets/hcmute-logo.png'
-import { getRoleLabel } from '../../../shared/utils/roleLabel'
+import { getRoleLabel, hasRole } from '../../../shared/utils/roleLabel'
 import { navItems } from '../constants/navItems'
 
 type SidebarProps = {
@@ -13,7 +13,7 @@ export function Sidebar({ user }: SidebarProps) {
   const visibleNavItems = navItems.filter(
     (item) =>
       !item.roles ||
-      item.roles.some((role) => user.roles.includes(role)),
+      item.roles.some((role) => hasRole(user.roles, role)),
   )
 
   return (

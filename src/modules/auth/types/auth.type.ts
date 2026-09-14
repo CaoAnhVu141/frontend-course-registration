@@ -39,7 +39,7 @@ export type BackendLoginPayload = {
     id?: string | number
     username?: string
     email?: string
-    roles?: UserRole[]
+    roles?: string[]
     expiresIn?: number
     user?: AuthUser
 }
