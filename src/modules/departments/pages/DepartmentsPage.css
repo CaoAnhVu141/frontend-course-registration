@@ -140,34 +140,6 @@
   color: #be123c;
 }
 
-.department-pagination {
-  display: flex;
-  justify-content: center;
-  gap: 4px;
-  margin-top: 20px;
-}
-
-.department-pagination button {
-  width: 34px;
-  height: 34px;
-  border: 1px solid #cbd5e1;
-  border-radius: 4px;
-  background: #fff;
-  color: #334155;
-  cursor: pointer;
-}
-
-.department-pagination button.active {
-  border-color: #0078d4;
-  background: #0078d4;
-  color: #fff;
-}
-
-.department-pagination button:disabled {
-  cursor: not-allowed;
-  opacity: 0.45;
-}
-
 .department-modal-backdrop {
   position: fixed;
   inset: 0;

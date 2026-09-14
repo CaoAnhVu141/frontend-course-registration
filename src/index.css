@@ -157,6 +157,48 @@ textarea.form-control {
   line-height: 1.45;
 }
 
+.app-pagination {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 4px;
+  margin-top: 20px;
+}
+
+.app-pagination button {
+  width: 30px;
+  height: 30px;
+  padding: 0;
+  border: 1px solid #cbd5e1;
+  border-radius: 5px;
+  background: #fff;
+  color: #0f2f57;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 600;
+  transition:
+    background-color 160ms ease,
+    border-color 160ms ease,
+    color 160ms ease,
+    opacity 160ms ease;
+}
+
+.app-pagination button:hover:not(:disabled, .active) {
+  border-color: #93c5fd;
+  background: #eff6ff;
+  color: #0078d4;
+}
+
+.app-pagination button.active {
+  border-color: #0078d4;
+  background: #0078d4;
+  color: #fff;
+}
+
+.app-pagination button:disabled {
+  opacity: 0.45;
+}
+
 button:focus,
 button:focus-visible {
   outline: 3px solid rgba(79, 70, 229, 0.35);

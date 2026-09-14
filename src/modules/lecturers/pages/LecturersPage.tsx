@@ -278,7 +278,7 @@ export function LecturersPage() {
             </div>
 
             {totalPages > 1 && (
-              <nav className="lecturer-pagination" aria-label="Phân trang">
+              <nav className="app-pagination" aria-label="Phân trang">
                 <button type="button" disabled={page === 1} onClick={() => setPage((current) => current - 1)}>‹</button>
                 {Array.from({ length: totalPages }, (_, index) => index + 1).map((pageNumber) => (
                   <button

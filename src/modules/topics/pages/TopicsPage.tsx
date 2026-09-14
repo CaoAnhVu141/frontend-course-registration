@@ -349,7 +349,7 @@ export function TopicsPage() {
         </div>
 
         {totalPages > 1 && (
-          <nav className="topic-pagination" aria-label="Phân trang">
+          <nav className="app-pagination" aria-label="Phân trang">
             <button
               type="button"
               disabled={page === 1}
@@ -564,4 +564,3 @@ function isInactiveTopic(topic: Topic) {
 function getErrorMessage(error: unknown) {
   return error instanceof Error ? error.message : 'Có lỗi xảy ra'
 }
-

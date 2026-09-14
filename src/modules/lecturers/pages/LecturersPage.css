@@ -144,34 +144,6 @@
   color: #be123c;
 }
 
-.lecturer-pagination {
-  display: flex;
-  justify-content: center;
-  gap: 4px;
-  margin-top: 20px;
-}
-
-.lecturer-pagination button {
-  width: 34px;
-  height: 34px;
-  border: 1px solid #cbd5e1;
-  border-radius: 4px;
-  background: #fff;
-  color: #334155;
-  cursor: pointer;
-}
-
-.lecturer-pagination button.active {
-  border-color: #0078d4;
-  background: #0078d4;
-  color: #fff;
-}
-
-.lecturer-pagination button:disabled {
-  cursor: not-allowed;
-  opacity: 0.45;
-}
-
 .lecturer-modal-backdrop {
   position: fixed;
   inset: 0;

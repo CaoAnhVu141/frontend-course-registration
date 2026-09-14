@@ -138,24 +138,6 @@
   color: #be123c;
 }
 
-.student-pagination { 
-  display: flex; 
-  justify-content: center; 
-  align-items: center; 
-  gap: 12px; 
-  margin-top: 20px; 
-}
-
-.student-pagination button { 
-  width: 36px; 
-  height: 36px; 
-  padding: 0; 
-  border: 1px solid #cbd5e1; 
-  border-radius: 4px; 
-  background: #fff; 
-  color: #334155; 
-}
-
 .student-modal-backdrop { 
   position: fixed; 
   inset: 0; 
