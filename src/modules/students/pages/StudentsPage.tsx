@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import type { FormEvent } from 'react'
 import { tokenStorage } from '../../../shared/services/tokenStorage'
+import { hasRole } from '../../../shared/utils/roleLabel'
 import { DashboardLayout } from '../../dashboard/components/DashboardLayout'
 import { useConfirmation } from '../../confirmation'
 import { useNotification } from '../../notification'
@@ -16,8 +17,8 @@ const emptyForm = { username: '', email: '', password: '', studentCode: '', depa
 export function StudentsPage() {
   const user = tokenStorage.getUser()
   const hasUser = Boolean(user)
-  const canManage = user?.roles.includes('ADMIN') ?? false
-  const canView = canManage || (user?.roles.includes('LECTURER') ?? false)
+  const canManage = hasRole(user?.roles, 'ADMIN')
+  const canView = canManage || hasRole(user?.roles, 'LECTURER')
   const { success, error: showError } = useNotification()
   const { confirm } = useConfirmation()
   const [students, setStudents] = useState<Student[]>([])
@@ -226,9 +227,18 @@ export function StudentsPage() {
             </tbody>
           </table>
         </div>
-        {!isLoading && !loadError && totalPages > 1 && <nav className="student-pagination" aria-label="Phân trang sinh viên">
+        {!isLoading && !loadError && totalPages > 1 && <nav className="app-pagination" aria-label="Phân trang sinh viên">
           <button aria-label="Trang trước" disabled={currentPage === 1} onClick={() => setPage(currentPage - 1)}>‹</button>
-          <span>{currentPage} / {totalPages}</span>
+          {Array.from({ length: totalPages }, (_, index) => index + 1).map((pageNumber) => (
+            <button
+              type="button"
+              className={pageNumber === currentPage ? 'active' : ''}
+              key={pageNumber}
+              onClick={() => setPage(pageNumber)}
+            >
+              {pageNumber}
+            </button>
+          ))}
           <button aria-label="Trang sau" disabled={currentPage === totalPages} onClick={() => setPage(currentPage + 1)}>›</button>
         </nav>}
       </section>
