@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from 'react'
 import { useConfirmation } from '../../confirmation'
 import { DashboardLayout } from '../../dashboard/components/DashboardLayout'
 import { useNotification } from '../../notification'
+import { AppLoading } from '../../ui'
 import { tokenStorage } from '../../../shared/services/tokenStorage'
 import { hasRole } from '../../../shared/utils/roleLabel'
 import {
@@ -254,7 +255,7 @@ export function LecturersPage() {
 
                 <tbody>
                   {isLoading ? (
-                    <tr><td colSpan={8} className="lecturer-empty">Đang tải dữ liệu...</td></tr>
+                    <tr><td colSpan={8} className="lecturer-empty"><AppLoading /></td></tr>
                   ) : visibleLecturers.length === 0 ? (
                     <tr><td colSpan={8} className="lecturer-empty">Không tìm thấy giảng viên.</td></tr>
                   ) : (

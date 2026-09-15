@@ -7,6 +7,7 @@ import type { Department } from '../../departments/types/department.type'
 import { useConfirmation } from '../../confirmation'
 import { DashboardLayout } from '../../dashboard/components/DashboardLayout'
 import { useNotification } from '../../notification'
+import { AppLoading } from '../../ui'
 import {
   approveTopic,
   createTopic,
@@ -313,7 +314,7 @@ export function TopicsPage() {
             <tbody>
               {isLoading ? (
                 <tr>
-                  <td className="topic-empty" colSpan={7}>Đang tải dữ liệu...</td>
+                  <td className="topic-empty" colSpan={7}><AppLoading /></td>
                 </tr>
               ) : pagedTopics.length === 0 ? (
                 <tr>

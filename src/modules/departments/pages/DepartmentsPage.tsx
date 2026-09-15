@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from 'react'
 import { DashboardLayout } from '../../dashboard/components/DashboardLayout'
+import { AppLoading } from '../../ui'
 import {
   createDepartment,
   deleteDepartment,
@@ -186,7 +187,7 @@ export function DepartmentsPage() {
                 </thead>
                 <tbody>
                   {isLoading ? (
-                    <tr><td colSpan={3} className="department-empty">Đang tải dữ liệu...</td></tr>
+                    <tr><td colSpan={3} className="department-empty"><AppLoading /></td></tr>
                   ) : visibleDepartments.length === 0 ? (
                     <tr><td colSpan={3} className="department-empty">Không tìm thấy khoa/phòng ban.</td></tr>
                   ) : (

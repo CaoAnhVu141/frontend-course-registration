@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from 'react'
 import { useConfirmation } from '../../confirmation'
 import { DashboardLayout } from '../../dashboard/components/DashboardLayout'
 import { useNotification } from '../../notification'
+import { AppLoading } from '../../ui'
 import { STORAGE_KEYS } from '../../../shared/constants/storageKeys'
 import {
         createExpertiseTag,
@@ -122,7 +123,7 @@ export function ExpertiseTagsPage() {
         {error && <div className="expertise-tag-message error">{error}</div>}
         <div className="expertise-tag-table-wrap"><table className="expertise-tag-table">
           <thead><tr><th>STT</th><th>Tên chuyên môn</th><th>Trạng thái</th><th>Thao tác</th></tr></thead>
-          <tbody>{isLoading ? <tr><td colSpan={4} className="expertise-tag-empty">Đang tải dữ liệu...</td></tr> : visibleTags.length === 0 ? <tr><td colSpan={4} className="expertise-tag-empty">Không tìm thấy chuyên môn.</td></tr> : visibleTags.map((tag) => <tr key={tag.id} className={tag.status ? '' : 'inactive-row'}><td>{tag.id}</td><td>{tag.name}</td><td><span className={`expertise-tag-status ${tag.status ? 'active' : 'inactive'}`}>{tag.status ? 'Đang hoạt động' : 'Không còn hoạt động'}</span></td><td className="expertise-tag-actions"><button type="button" onClick={() => openEditForm(tag)}>✎ <span>Sửa</span></button><button type="button" className="delete" onClick={() => void handleDelete(tag)}>× <span>Xóa</span></button></td></tr>)}</tbody>
+          <tbody>{isLoading ? <tr><td colSpan={4} className="expertise-tag-empty"><AppLoading /></td></tr> : visibleTags.length === 0 ? <tr><td colSpan={4} className="expertise-tag-empty">Không tìm thấy chuyên môn.</td></tr> : visibleTags.map((tag) => <tr key={tag.id} className={tag.status ? '' : 'inactive-row'}><td>{tag.id}</td><td>{tag.name}</td><td><span className={`expertise-tag-status ${tag.status ? 'active' : 'inactive'}`}>{tag.status ? 'Đang hoạt động' : 'Không còn hoạt động'}</span></td><td className="expertise-tag-actions"><button type="button" onClick={() => openEditForm(tag)}>✎ <span>Sửa</span></button><button type="button" className="delete" onClick={() => void handleDelete(tag)}>× <span>Xóa</span></button></td></tr>)}</tbody>
         </table></div>
         {totalPages > 1 && <nav className="app-pagination" aria-label="Phân trang"><button type="button" disabled={page === 1} onClick={() => setPage((current) => current - 1)}>‹</button>{Array.from({ length: totalPages }, (_, index) => index + 1).map((pageNumber) => <button type="button" className={pageNumber === page ? 'active' : ''} key={pageNumber} onClick={() => setPage(pageNumber)}>{pageNumber}</button>)}<button type="button" disabled={page === totalPages} onClick={() => setPage((current) => current + 1)}>›</button></nav>}
       </section>
