@@ -5,7 +5,7 @@ import { hasRole } from '../../../shared/utils/roleLabel'
 import { DashboardLayout } from '../../dashboard/components/DashboardLayout'
 import { useConfirmation } from '../../confirmation'
 import { useNotification } from '../../notification'
-import { AppLoading } from '../../ui'
+import { AppLoading, Pagination } from '../../ui'
 import { getDepartments } from '../../departments/services/departmentApi'
 import type { Department } from '../../departments/types/department.type'
 import { createStudent, deleteStudent, getStudents, updateStudent } from '../services/studentApi'
@@ -228,20 +228,14 @@ export function StudentsPage() {
             </tbody>
           </table>
         </div>
-        {!isLoading && !loadError && totalPages > 1 && <nav className="app-pagination" aria-label="Phân trang sinh viên">
-          <button aria-label="Trang trước" disabled={currentPage === 1} onClick={() => setPage(currentPage - 1)}>‹</button>
-          {Array.from({ length: totalPages }, (_, index) => index + 1).map((pageNumber) => (
-            <button
-              type="button"
-              className={pageNumber === currentPage ? 'active' : ''}
-              key={pageNumber}
-              onClick={() => setPage(pageNumber)}
-            >
-              {pageNumber}
-            </button>
-          ))}
-          <button aria-label="Trang sau" disabled={currentPage === totalPages} onClick={() => setPage(currentPage + 1)}>›</button>
-        </nav>}
+        {!isLoading && !loadError && (
+          <Pagination
+            currentPage={currentPage}
+            totalPages={totalPages}
+            onPageChange={setPage}
+            ariaLabel="Phân trang sinh viên"
+          />
+        )}
       </section>
       {canManage && isFormOpen && <div className="student-modal-backdrop" onMouseDown={(event) => { if (event.target === event.currentTarget) closeForm() }}>
       <section ref={dialogRef} role="dialog" aria-modal="true" className="student-modal" aria-labelledby="student-form-title">
