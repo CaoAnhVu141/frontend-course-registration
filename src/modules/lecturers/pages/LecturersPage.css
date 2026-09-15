@@ -109,7 +109,7 @@
 
 .lecturer-table th:last-child,
 .lecturer-table td:last-child {
-  width: 160px;
+  width: 250px;
 }
 
 .lecturer-table tbody tr:hover {
@@ -124,18 +124,25 @@
 
 .lecturer-actions {
   display: flex;
+  flex-wrap: wrap;
   justify-content: center;
   gap: 8px;
 }
 
 .lecturer-actions button {
-  min-width: 70px;
-  height: 34px;
+  min-width: 72px;
+  min-height: 34px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 4px 8px;
   border: 1px solid #bfdbfe;
   border-radius: 4px;
   background: #eff6ff;
   color: #1d4ed8;
   cursor: pointer;
+  white-space: nowrap;
 }
 
 .lecturer-actions button.delete {
@@ -162,6 +169,10 @@
   border-radius: 8px;
   color: #1f2937;
   box-shadow: 0 18px 50px rgba(0, 0, 0, 0.28);
+}
+
+.lecturer-detail-modal {
+  width: min(640px, 100%);
 }
 
 .lecturer-modal-header {
@@ -227,6 +238,43 @@
 .lecturer-modal-actions button:disabled {
   cursor: wait;
   opacity: 0.65;
+}
+
+.lecturer-detail {
+  padding: 20px;
+}
+
+.lecturer-detail-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 12px;
+  margin: 0;
+}
+
+.lecturer-detail-grid dt,
+.lecturer-detail-grid dd {
+  margin: 0;
+  overflow-wrap: anywhere;
+}
+
+.lecturer-detail-grid dt {
+  color: #1f2937;
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 1.35;
+}
+
+.lecturer-detail-grid dd {
+  min-height: 42px;
+  display: flex;
+  align-items: center;
+  padding: 10px 12px;
+  border: 1px solid #cbd5e1;
+  border-radius: 6px;
+  background: #fff;
+  color: #0f172a;
+  font-size: 14px;
+  line-height: 1.45;
 }
 
 @media (max-width: 720px) {

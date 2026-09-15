@@ -5,9 +5,12 @@ import { useNotification } from '../../notification'
 import { AppLoading, Pagination } from '../../ui'
 import { tokenStorage } from '../../../shared/services/tokenStorage'
 import { hasRole } from '../../../shared/utils/roleLabel'
+import { getDepartments } from '../../departments/services/departmentApi'
+import type { Department } from '../../departments/types/department.type'
 import {
   createLecturer,
   deleteLecturer,
+  getLecturer,
   getLecturers,
   updateLecturer,
 } from '../services/lecturerApi'
@@ -27,6 +30,7 @@ export function LecturersPage() {
 
   const [lecturers, setLecturers] = useState<Lecturer[]>([])
   const [expertiseTags, setExpertiseTags] = useState<ExpertiseTag[]>([])
+  const [departments, setDepartments] = useState<Department[]>([])
   const [search, setSearch] = useState('')
   const [page, setPage] = useState(1)
   const [isLoading, setIsLoading] = useState(true)
@@ -34,6 +38,8 @@ export function LecturersPage() {
   const [error, setError] = useState('')
   const [isFormOpen, setIsFormOpen] = useState(false)
   const [editingLecturer, setEditingLecturer] = useState<Lecturer | null>(null)
+  const [detailLecturer, setDetailLecturer] = useState<Lecturer | null>(null)
+  const [isDetailLoading, setIsDetailLoading] = useState(false)
 
   const [username, setUsername] = useState('')
   const [email, setEmail] = useState('')
@@ -72,6 +78,14 @@ export function LecturersPage() {
   const expertiseTagNameMap = useMemo(() => {
     return new Map(expertiseTags.map((tag) => [tag.id, tag.name]))
   }, [expertiseTags])
+  const departmentNameMap = useMemo(() => {
+    return new Map(
+      departments.map((department) => [
+        department.departmentId,
+        department.name,
+      ]),
+    )
+  }, [departments])
 
   useEffect(() => {
     if (!isAdmin) {
@@ -91,13 +105,15 @@ export function LecturersPage() {
     setError('')
 
     try {
-      const [lecturerData, expertiseTagData] = await Promise.all([
+      const [lecturerData, expertiseTagData, departmentData] = await Promise.all([
         getLecturers(),
         getExpertiseTags(),
+        getDepartments(),
       ])
 
       setLecturers(lecturerData)
       setExpertiseTags(expertiseTagData)
+      setDepartments(departmentData)
     } catch (requestError) {
       setError(getErrorMessage(requestError))
     } finally {
@@ -206,6 +222,24 @@ export function LecturersPage() {
     }
   }
 
+  async function openDetail(lecturer: Lecturer) {
+    try {
+      setIsDetailLoading(true)
+      setDetailLecturer(lecturer)
+      const response = await getLecturer(lecturer.userId)
+      setDetailLecturer(response.data)
+    } catch (requestError) {
+      showError(getErrorMessage(requestError))
+    } finally {
+      setIsDetailLoading(false)
+    }
+  }
+
+  function closeDetail() {
+    if (isDetailLoading) return
+    setDetailLecturer(null)
+  }
+
   if (!user) {
     window.location.href = '/'
     return null
@@ -264,13 +298,14 @@ export function LecturersPage() {
                         <td>{lecturer.userId}</td>
                         <td>{lecturer.lecturerCode}</td>
                         <td>{lecturer.email}</td>
-                        <td>{lecturer.departmentId}</td>
+                        <td>{departmentNameMap.get(lecturer.departmentId) ?? `#${lecturer.departmentId}`}</td>
                         <td>{lecturer.academicTitle || '-'}</td>
                         <td>{lecturer.maxReviewLoad}</td>
                         <td>{getExpertiseNames(lecturer.expertiseTagIds, expertiseTagNameMap)}</td>
                         <td className="lecturer-actions">
-                          <button type="button" onClick={() => openEditForm(lecturer)} title="Sửa">✎ <span>Sửa</span></button>
-                          <button type="button" className="delete" onClick={() => void handleDelete(lecturer)} title="Xóa">× <span>Xóa</span></button>
+                          <button type="button" onClick={() => void openDetail(lecturer)} title="Chi tiết"><span className="app-view-icon" aria-hidden="true" /><span>Chi tiết</span></button>
+                          <button type="button" onClick={() => openEditForm(lecturer)} title="Sửa"><span className="app-action-icon edit" aria-hidden="true" /><span>Sửa</span></button>
+                          <button type="button" className="delete" onClick={() => void handleDelete(lecturer)} title="Xóa"><span className="app-action-icon delete" aria-hidden="true" /><span>Xóa</span></button>
                         </td>
                       </tr>
                     ))
@@ -328,6 +363,40 @@ export function LecturersPage() {
                 <button type="submit" disabled={isSaving}>{isSaving ? 'Đang lưu...' : 'Lưu'}</button>
               </div>
             </form>
+          </section>
+        </div>
+      )}
+      {detailLecturer && (
+        <div className="lecturer-modal-backdrop" role="presentation" onMouseDown={closeDetail}>
+          <section className="lecturer-modal lecturer-detail-modal" role="dialog" aria-modal="true" onMouseDown={(event) => event.stopPropagation()}>
+            <div className="lecturer-modal-header">
+              <h3>Chi tiết giảng viên</h3>
+              <button type="button" onClick={closeDetail} aria-label="Đóng" title="Đóng">×</button>
+            </div>
+            <div className="lecturer-detail">
+              {isDetailLoading ? (
+                <AppLoading />
+              ) : (
+                <dl className="lecturer-detail-grid">
+                  <dt>User ID</dt>
+                  <dd>{detailLecturer.userId}</dd>
+                  <dt>Tên đăng nhập</dt>
+                  <dd>{detailLecturer.username}</dd>
+                  <dt>Email</dt>
+                  <dd>{detailLecturer.email}</dd>
+                  <dt>Mã giảng viên</dt>
+                  <dd>{detailLecturer.lecturerCode}</dd>
+                  <dt>Khoa/Phòng ban</dt>
+                  <dd>{departmentNameMap.get(detailLecturer.departmentId) ?? `#${detailLecturer.departmentId}`}</dd>
+                  <dt>Học hàm/học vị</dt>
+                  <dd>{detailLecturer.academicTitle || '-'}</dd>
+                  <dt>Tải phản biện tối đa</dt>
+                  <dd>{detailLecturer.maxReviewLoad}</dd>
+                  <dt>Chuyên môn</dt>
+                  <dd>{getExpertiseNames(detailLecturer.expertiseTagIds, expertiseTagNameMap)}</dd>
+                </dl>
+              )}
+            </div>
           </section>
         </div>
       )}

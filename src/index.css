@@ -308,6 +308,30 @@ button:focus-visible {
   transform: rotate(42deg);
 }
 
+.app-action-icon.edit::before {
+  content: '';
+  position: absolute;
+  left: 2px;
+  top: 7px;
+  width: 12px;
+  height: 3px;
+  border-radius: 999px;
+  background: currentColor;
+  transform: rotate(-45deg);
+}
+
+.app-action-icon.edit::after {
+  content: '';
+  position: absolute;
+  left: 1px;
+  top: 11px;
+  width: 5px;
+  height: 2px;
+  border-radius: 999px;
+  background: currentColor;
+  transform: rotate(-45deg);
+}
+
 .app-action-icon.reject::before,
 .app-action-icon.reject::after,
 .app-action-icon.delete::before,

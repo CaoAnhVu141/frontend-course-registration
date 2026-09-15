@@ -8,7 +8,7 @@ import { useNotification } from '../../notification'
 import { AppLoading, Pagination } from '../../ui'
 import { getDepartments } from '../../departments/services/departmentApi'
 import type { Department } from '../../departments/types/department.type'
-import { createStudent, deleteStudent, getStudents, updateStudent } from '../services/studentApi'
+import { createStudent, deleteStudent, getStudent, getStudents, updateStudent } from '../services/studentApi'
 import type { Student } from '../types/student.type'
 import './StudentsPage.css'
 
@@ -32,6 +32,8 @@ export function StudentsPage() {
   const [isSaving, setIsSaving] = useState(false)
   const [deletingId, setDeletingId] = useState<number | null>(null)
   const [editingStudent, setEditingStudent] = useState<Student | null>(null)
+  const [detailStudent, setDetailStudent] = useState<Student | null>(null)
+  const [isDetailLoading, setIsDetailLoading] = useState(false)
   const [isFormOpen, setIsFormOpen] = useState(false)
   const [form, setForm] = useState(emptyForm)
   const dialogRef = useRef<HTMLElement>(null)
@@ -178,6 +180,24 @@ export function StudentsPage() {
     }
   }
 
+  async function openDetail(student: Student) {
+    try {
+      setIsDetailLoading(true)
+      setDetailStudent(student)
+      const response = await getStudent(student.userId)
+      setDetailStudent(response.data)
+    } catch (error) {
+      showError(getErrorMessage(error))
+    } finally {
+      setIsDetailLoading(false)
+    }
+  }
+
+  function closeDetail() {
+    if (isDetailLoading) return
+    setDetailStudent(null)
+  }
+
   if (!canView) return null
 
   return (
@@ -208,11 +228,17 @@ export function StudentsPage() {
                   <td>{departmentNames.get(student.departmentId) ?? `#${student.departmentId}`}</td>
                   <td><div className="student-actions">
                     <button
+                      title="Chi tiết sinh viên"
+                      onClick={() => void openDetail(student)}
+                    >
+                      <span className="app-view-icon" aria-hidden="true" /><span>Chi tiết</span>
+                    </button>
+                    <button
                       title={canManage ? 'Sửa sinh viên' : 'Bạn không có quyền sửa sinh viên'}
                       disabled={!canManage || deletingId !== null}
                       onClick={() => openForm(student)}
                     >
-                      ✎ <span>Sửa</span>
+                      <span className="app-action-icon edit" aria-hidden="true" /><span>Sửa</span>
                     </button>
                     <button
                       className="student-delete"
@@ -220,7 +246,7 @@ export function StudentsPage() {
                       disabled={!canManage || deletingId !== null}
                       onClick={() => void handleDelete(student)}
                     >
-                      × <span>{deletingId === student.userId ? 'Đang xử lý...' : 'Xóa'}</span>
+                      <span className="app-action-icon delete" aria-hidden="true" /><span>{deletingId === student.userId ? 'Đang xử lý...' : 'Xóa'}</span>
                     </button>
                   </div></td>
                 </tr>
@@ -237,6 +263,34 @@ export function StudentsPage() {
           />
         )}
       </section>
+      {detailStudent && <div className="student-modal-backdrop" onMouseDown={(event) => { if (event.target === event.currentTarget) closeDetail() }}>
+      <section role="dialog" aria-modal="true" className="student-modal student-detail-modal" aria-labelledby="student-detail-title">
+        <div className="student-modal-header">
+          <h3 id="student-detail-title">Chi tiết sinh viên</h3>
+          <button type="button" title="Đóng" aria-label="Đóng" disabled={isDetailLoading} onClick={closeDetail}>×</button>
+        </div>
+        <div className="student-detail">
+          {isDetailLoading ? (
+            <AppLoading />
+          ) : (
+            <dl className="student-detail-grid">
+              <dt>User ID</dt>
+              <dd>{detailStudent.userId}</dd>
+              <dt>Tên đăng nhập</dt>
+              <dd>{detailStudent.username}</dd>
+              <dt>Email</dt>
+              <dd>{detailStudent.email}</dd>
+              <dt>Mã sinh viên</dt>
+              <dd>{detailStudent.studentCode}</dd>
+              <dt>Lớp</dt>
+              <dd>{detailStudent.className || '-'}</dd>
+              <dt>Khoa/Phòng ban</dt>
+              <dd>{departmentNames.get(detailStudent.departmentId) ?? `#${detailStudent.departmentId}`}</dd>
+            </dl>
+          )}
+        </div>
+      </section>
+      </div>}
       {canManage && isFormOpen && <div className="student-modal-backdrop" onMouseDown={(event) => { if (event.target === event.currentTarget) closeForm() }}>
       <section ref={dialogRef} role="dialog" aria-modal="true" className="student-modal" aria-labelledby="student-form-title">
         <div className="student-modal-header">

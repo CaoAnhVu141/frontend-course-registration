@@ -13,6 +13,10 @@ export async function getLecturers(): Promise<Lecturer[]> {
     return response.data
 }
 
+export async function getLecturer(userId: number): Promise<ApiResponse<Lecturer>> {
+    return apiClient<ApiResponse<Lecturer>>(`${LECTURERS_PATH}/${userId}`)
+}
+
 export async function getMyLecturerProfile(): Promise<ApiResponse<Lecturer>> {
     return apiClient<ApiResponse<Lecturer>>(`${LECTURERS_PATH}/me`)
 }
