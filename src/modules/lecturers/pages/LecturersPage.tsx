@@ -2,7 +2,9 @@ import { useEffect, useMemo, useState } from 'react'
 import { useConfirmation } from '../../confirmation'
 import { DashboardLayout } from '../../dashboard/components/DashboardLayout'
 import { useNotification } from '../../notification'
+import { AppLoading } from '../../ui'
 import { tokenStorage } from '../../../shared/services/tokenStorage'
+import { hasRole } from '../../../shared/utils/roleLabel'
 import {
   createLecturer,
   deleteLecturer,
@@ -21,7 +23,7 @@ export function LecturersPage() {
   const { success, error: showError } = useNotification()
   const { confirm } = useConfirmation()
 
-  const isAdmin = user?.roles.includes('ADMIN') ?? false
+  const isAdmin = hasRole(user?.roles, 'ADMIN')
 
   const [lecturers, setLecturers] = useState<Lecturer[]>([])
   const [expertiseTags, setExpertiseTags] = useState<ExpertiseTag[]>([])
@@ -253,7 +255,7 @@ export function LecturersPage() {
 
                 <tbody>
                   {isLoading ? (
-                    <tr><td colSpan={8} className="lecturer-empty">Đang tải dữ liệu...</td></tr>
+                    <tr><td colSpan={8} className="lecturer-empty"><AppLoading /></td></tr>
                   ) : visibleLecturers.length === 0 ? (
                     <tr><td colSpan={8} className="lecturer-empty">Không tìm thấy giảng viên.</td></tr>
                   ) : (
@@ -278,7 +280,7 @@ export function LecturersPage() {
             </div>
 
             {totalPages > 1 && (
-              <nav className="lecturer-pagination" aria-label="Phân trang">
+              <nav className="app-pagination" aria-label="Phân trang">
                 <button type="button" disabled={page === 1} onClick={() => setPage((current) => current - 1)}>‹</button>
                 {Array.from({ length: totalPages }, (_, index) => index + 1).map((pageNumber) => (
                   <button

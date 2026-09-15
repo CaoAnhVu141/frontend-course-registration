@@ -1,9 +1,11 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import type { FormEvent } from 'react'
 import { tokenStorage } from '../../../shared/services/tokenStorage'
+import { hasRole } from '../../../shared/utils/roleLabel'
 import { DashboardLayout } from '../../dashboard/components/DashboardLayout'
 import { useConfirmation } from '../../confirmation'
 import { useNotification } from '../../notification'
+import { AppLoading } from '../../ui'
 import { getDepartments } from '../../departments/services/departmentApi'
 import type { Department } from '../../departments/types/department.type'
 import { createStudent, deleteStudent, getStudents, updateStudent } from '../services/studentApi'
@@ -16,8 +18,8 @@ const emptyForm = { username: '', email: '', password: '', studentCode: '', depa
 export function StudentsPage() {
   const user = tokenStorage.getUser()
   const hasUser = Boolean(user)
-  const canManage = user?.roles.includes('ADMIN') ?? false
-  const canView = canManage || (user?.roles.includes('LECTURER') ?? false)
+  const canManage = hasRole(user?.roles, 'ADMIN')
+  const canView = canManage || hasRole(user?.roles, 'LECTURER')
   const { success, error: showError } = useNotification()
   const { confirm } = useConfirmation()
   const [students, setStudents] = useState<Student[]>([])
@@ -199,7 +201,7 @@ export function StudentsPage() {
             <thead><tr><th>ID</th><th>Mã sinh viên</th><th>Email</th><th>Lớp</th><th>Khoa/Phòng ban</th><th>Thao tác</th></tr></thead>
             <tbody>
               {isLoading || loadError || visibleStudents.length === 0 ? (
-                <tr><td colSpan={6} className="student-empty">{isLoading ? 'Đang tải dữ liệu...' : loadError ? 'Không thể tải danh sách sinh viên.' : 'Không tìm thấy sinh viên.'}</td></tr>
+                <tr><td colSpan={6} className="student-empty">{isLoading ? <AppLoading /> : loadError ? 'Không thể tải danh sách sinh viên.' : 'Không tìm thấy sinh viên.'}</td></tr>
               ) : visibleStudents.map((student) => (
                 <tr key={student.userId}>
                   <td>{student.userId}</td><td>{student.studentCode}</td><td>{student.email}</td><td>{student.className || '-'}</td>
@@ -226,9 +228,18 @@ export function StudentsPage() {
             </tbody>
           </table>
         </div>
-        {!isLoading && !loadError && totalPages > 1 && <nav className="student-pagination" aria-label="Phân trang sinh viên">
+        {!isLoading && !loadError && totalPages > 1 && <nav className="app-pagination" aria-label="Phân trang sinh viên">
           <button aria-label="Trang trước" disabled={currentPage === 1} onClick={() => setPage(currentPage - 1)}>‹</button>
-          <span>{currentPage} / {totalPages}</span>
+          {Array.from({ length: totalPages }, (_, index) => index + 1).map((pageNumber) => (
+            <button
+              type="button"
+              className={pageNumber === currentPage ? 'active' : ''}
+              key={pageNumber}
+              onClick={() => setPage(pageNumber)}
+            >
+              {pageNumber}
+            </button>
+          ))}
           <button aria-label="Trang sau" disabled={currentPage === totalPages} onClick={() => setPage(currentPage + 1)}>›</button>
         </nav>}
       </section>

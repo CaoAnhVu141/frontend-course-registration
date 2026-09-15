@@ -59,6 +59,13 @@
   background: #0064b1;
 }
 
+.topic-add-button:disabled,
+.topic-add-button:disabled:hover {
+  background: #94a3b8;
+  cursor: not-allowed;
+  opacity: 0.72;
+}
+
 .topic-message {
   margin-bottom: 16px;
   padding: 10px 12px;
@@ -205,34 +212,6 @@
   color: #94a3b8;
 }
 
-.topic-pagination {
-  display: flex;
-  justify-content: center;
-  gap: 4px;
-  margin-top: 20px;
-}
-
-.topic-pagination button {
-  width: 34px;
-  height: 34px;
-  border: 1px solid #cbd5e1;
-  border-radius: 4px;
-  background: #fff;
-  color: #334155;
-  cursor: pointer;
-}
-
-.topic-pagination button.active {
-  border-color: #0078d4;
-  background: #0078d4;
-  color: #fff;
-}
-
-.topic-pagination button:disabled {
-  cursor: not-allowed;
-  opacity: 0.45;
-}
-
 .topic-modal-backdrop {
   position: fixed;
   inset: 0;
@@ -275,37 +254,19 @@
 }
 
 .topic-modal form {
+  display: grid;
+  gap: 16px;
   padding: 20px;
-}
-
-.topic-modal form > label {
-  display: block;
-  margin: 14px 0 8px;
-}
-
-.topic-modal form > label:first-child {
-  margin-top: 0;
 }
 
 .topic-modal form input,
 .topic-modal form select,
 .topic-modal form textarea {
-  box-sizing: border-box;
-  width: 100%;
-  padding: 0 12px;
-  border: 1px solid #cbd5e1;
-  border-radius: 5px;
-}
-
-.topic-modal form input,
-.topic-modal form select {
-  height: 42px;
+  min-height: 42px;
 }
 
 .topic-modal form textarea {
   min-height: 96px;
-  padding-top: 10px;
-  resize: vertical;
 }
 
 .topic-modal-actions {

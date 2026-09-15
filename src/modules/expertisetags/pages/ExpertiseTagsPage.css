@@ -169,34 +169,6 @@
   color: #be123c;
 }
 
-.expertise-tag-pagination {
-  display: flex;
-  justify-content: center;
-  gap: 4px;
-  margin-top: 20px;
-}
-
-.expertise-tag-pagination button {
-  width: 34px;
-  height: 34px;
-  border: 1px solid #cbd5e1;
-  border-radius: 4px;
-  background: #fff;
-  color: #334155;
-  cursor: pointer;
-}
-
-.expertise-tag-pagination button.active {
-  border-color: #0078d4;
-  background: #0078d4;
-  color: #fff;
-}
-
-.expertise-tag-pagination button:disabled {
-  cursor: not-allowed;
-  opacity: 0.45;
-}
-
 .expertise-tag-modal-backdrop {
   position: fixed;
   inset: 0;

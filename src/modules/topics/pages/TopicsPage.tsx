@@ -1,11 +1,13 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import type { FormEvent, ReactNode } from 'react'
 import { tokenStorage } from '../../../shared/services/tokenStorage'
+import { hasRole } from '../../../shared/utils/roleLabel'
 import { getDepartments } from '../../departments/services/departmentApi'
 import type { Department } from '../../departments/types/department.type'
 import { useConfirmation } from '../../confirmation'
 import { DashboardLayout } from '../../dashboard/components/DashboardLayout'
 import { useNotification } from '../../notification'
+import { AppLoading } from '../../ui'
 import {
   approveTopic,
   createTopic,
@@ -37,8 +39,8 @@ export function TopicsPage() {
   const { success, error: showError } = useNotification()
   const { confirm } = useConfirmation()
   const user = useMemo(() => tokenStorage.getUser(), [])
-  const isAdmin = user?.roles.includes('ADMIN') ?? false
-  const isLecturer = user?.roles.includes('LECTURER') ?? false
+  const isAdmin = hasRole(user?.roles, 'ADMIN')
+  const isLecturer = hasRole(user?.roles, 'LECTURER')
   const canManageTopics = isAdmin || isLecturer
 
   const [topics, setTopics] = useState<Topic[]>([])
@@ -281,8 +283,14 @@ export function TopicsPage() {
               type="search"
             />
           </label>
-          {isLecturer && (
-            <button className="topic-add-button" type="button" onClick={openCreateForm}>
+          {canManageTopics && (
+            <button
+              className="topic-add-button"
+              type="button"
+              disabled={!isLecturer}
+              onClick={openCreateForm}
+              title={isLecturer ? 'Thêm đề tài' : 'Chỉ giảng viên mới được tạo đề tài'}
+            >
               <span>+</span> Thêm đề tài
             </button>
           )}
@@ -306,7 +314,7 @@ export function TopicsPage() {
             <tbody>
               {isLoading ? (
                 <tr>
-                  <td className="topic-empty" colSpan={7}>Đang tải dữ liệu...</td>
+                  <td className="topic-empty" colSpan={7}><AppLoading /></td>
                 </tr>
               ) : pagedTopics.length === 0 ? (
                 <tr>
@@ -349,7 +357,7 @@ export function TopicsPage() {
         </div>
 
         {totalPages > 1 && (
-          <nav className="topic-pagination" aria-label="Phân trang">
+          <nav className="app-pagination" aria-label="Phân trang">
             <button
               type="button"
               disabled={page === 1}
@@ -386,57 +394,73 @@ export function TopicsPage() {
               <button type="button" onClick={closeForm} aria-label="Đóng">×</button>
             </div>
             <form onSubmit={(event) => void handleSubmit(event)}>
-              <label htmlFor="topic-title">Tên đề tài</label>
-              <input
-                id="topic-title"
-                autoFocus
-                value={title}
-                onChange={(event) => setTitle(event.target.value)}
-                placeholder="Nhập tên đề tài"
-                maxLength={255}
-              />
+              <div className="form-field">
+                <label className="form-label" htmlFor="topic-title">Tên đề tài</label>
+                <input
+                  className="form-control"
+                  id="topic-title"
+                  autoFocus
+                  value={title}
+                  onChange={(event) => setTitle(event.target.value)}
+                  placeholder="Nhập tên đề tài"
+                  maxLength={255}
+                />
+              </div>
 
-              <label htmlFor="topic-requirements">Yêu cầu</label>
-              <textarea
-                id="topic-requirements"
-                value={requirements}
-                onChange={(event) => setRequirements(event.target.value)}
-                placeholder="Nhập yêu cầu đề tài"
-                rows={4}
-              />
+              <div className="form-field">
+                <label className="form-label" htmlFor="topic-requirements">Yêu cầu</label>
+                <textarea
+                  className="form-control"
+                  id="topic-requirements"
+                  value={requirements}
+                  onChange={(event) => setRequirements(event.target.value)}
+                  placeholder="Nhập yêu cầu đề tài"
+                  rows={4}
+                />
+              </div>
 
-              <label htmlFor="topic-department">Khoa / phòng ban</label>
-              <select
-                id="topic-department"
-                value={departmentId}
-                onChange={(event) => setDepartmentId(event.target.value)}
-              >
-                <option value="">Chọn khoa / phòng ban</option>
-                {departments.map((department) => (
-                  <option key={department.departmentId} value={department.departmentId}>
-                    {department.name}
-                  </option>
-                ))}
-              </select>
+              <div className="form-field">
+                <label className="form-label" htmlFor="topic-department">Khoa / phòng ban</label>
+                <select
+                  className="form-control"
+                  id="topic-department"
+                  value={departmentId}
+                  onChange={(event) => setDepartmentId(event.target.value)}
+                >
+                  <option value="">Chọn khoa / phòng ban</option>
+                  {departments.map((department) => (
+                    <option key={department.departmentId} value={department.departmentId}>
+                      {department.name}
+                    </option>
+                  ))}
+                </select>
+              </div>
 
-              <label htmlFor="topic-period">Kỳ đăng ký</label>
-              <select
-                id="topic-period"
-                value={registrationPeriodId}
-                onChange={(event) => setRegistrationPeriodId(event.target.value)}
-              >
-                <option value="">Chọn kỳ đăng ký</option>
-                {registrationPeriods.map((period) => (
-                  <option key={period.id} value={period.id}>
-                    {period.name}
-                  </option>
-                ))}
-              </select>
+              <div className="form-field">
+                <label className="form-label" htmlFor="topic-period">Kỳ đăng ký</label>
+                <select
+                  className="form-control"
+                  id="topic-period"
+                  value={registrationPeriodId}
+                  onChange={(event) => setRegistrationPeriodId(event.target.value)}
+                >
+                  <option value="">Chọn kỳ đăng ký</option>
+                  {registrationPeriods.map((period) => (
+                    <option key={period.id} value={period.id}>
+                      {period.name}
+                    </option>
+                  ))}
+                </select>
+              </div>
 
               <div className="topic-modal-actions">
                 <button className="secondary" type="button" onClick={closeForm}>Hủy</button>
                 <button type="submit" disabled={isSaving}>
-                  {isSaving ? 'Đang lưu...' : 'Lưu'}
+                  {isSaving
+                    ? 'Đang lưu...'
+                    : editingTopic
+                      ? 'Cập nhật'
+                      : 'Tạo đề tài'}
                 </button>
               </div>
             </form>
@@ -564,4 +588,3 @@ function isInactiveTopic(topic: Topic) {
 function getErrorMessage(error: unknown) {
   return error instanceof Error ? error.message : 'Có lỗi xảy ra'
 }
-
