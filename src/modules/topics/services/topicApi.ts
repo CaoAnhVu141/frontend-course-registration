@@ -8,6 +8,14 @@ export async function getTopics(): Promise<Topic[]> {
   return response.data
 }
 
+export async function getPublishedTopics(): Promise<Topic[]> {
+  const response = await apiClient<ApiResponse<Topic[]>>(
+    `${TOPICS_PATH}/published`,
+  )
+
+  return response.data
+}
+
 export async function createTopic(
   payload: TopicRequest,
 ): Promise<ApiResponse<Topic>> {

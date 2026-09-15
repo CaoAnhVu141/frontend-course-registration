@@ -42,12 +42,28 @@ export function Sidebar({ user }: SidebarProps) {
               className={item.href === currentPath ? 'active' : ''}
               href={item.href}
             >
-              <span className="nav-icon">{item.icon}</span>
+              <span className="nav-icon">
+                {item.href === '/dashboard' ? <UserNavIcon /> : item.icon}
+              </span>
               {item.label}
             </a>
           </li>
         ))}
       </ul>
     </aside>
+  )
+}
+
+function UserNavIcon() {
+  return (
+    <svg
+      aria-hidden="true"
+      fill="none"
+      viewBox="0 0 24 24"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <circle cx="12" cy="8" r="4" />
+      <path d="M4.5 20c1.25-4.2 4-6.3 7.5-6.3s6.25 2.1 7.5 6.3" />
+    </svg>
   )
 }

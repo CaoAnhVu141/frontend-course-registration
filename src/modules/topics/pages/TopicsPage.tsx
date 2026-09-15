@@ -86,6 +86,7 @@ export function TopicsPage() {
         topic.id,
         topic.title,
         topic.requirements,
+        topic.rejectionReason,
         topic.proposedBy,
         statusLabel,
         departmentName,
@@ -308,17 +309,18 @@ export function TopicsPage() {
                 <th>Kỳ đăng ký</th>
                 <th>Người đề xuất</th>
                 <th>Trạng thái</th>
+                <th>Lý do</th>
                 <th>Thao tác</th>
               </tr>
             </thead>
             <tbody>
               {isLoading ? (
                 <tr>
-                  <td className="topic-empty" colSpan={7}><AppLoading /></td>
+                  <td className="topic-empty" colSpan={8}><AppLoading /></td>
                 </tr>
               ) : pagedTopics.length === 0 ? (
                 <tr>
-                  <td className="topic-empty" colSpan={7}>Không tìm thấy đề tài phù hợp.</td>
+                  <td className="topic-empty" colSpan={8}>Không tìm thấy đề tài phù hợp.</td>
                 </tr>
               ) : (
                 pagedTopics.map((topic) => (
@@ -326,9 +328,6 @@ export function TopicsPage() {
                     <td>{topic.id}</td>
                     <td>
                       <div className="topic-title">{topic.title}</div>
-                      {topic.rejectionReason && (
-                        <div className="topic-reason">Lý do: {topic.rejectionReason}</div>
-                      )}
                     </td>
                     <td>{departmentNameMap.get(topic.departmentId) ?? `#${topic.departmentId}`}</td>
                     <td>{registrationPeriodNameMap.get(topic.registrationPeriodId) ?? `#${topic.registrationPeriodId}`}</td>
@@ -338,6 +337,11 @@ export function TopicsPage() {
                     <td>
                       <span className={`topic-status ${statusConfig[topic.status].tone}`}>
                         {statusConfig[topic.status].label}
+                      </span>
+                    </td>
+                    <td>
+                      <span className={`topic-reason ${topic.rejectionReason ? '' : 'empty'}`.trim()}>
+                        {topic.rejectionReason || '-'}
                       </span>
                     </td>
                     <td className="topic-actions">

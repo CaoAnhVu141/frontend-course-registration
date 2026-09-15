@@ -166,16 +166,16 @@ button:focus-visible {
 .app-pagination {
   display: flex;
   align-items: center;
-  justify-content: center;
-  gap: 10px;
+  justify-content: flex-end;
+  gap: 9px;
   margin-top: 22px;
   flex-wrap: wrap;
 }
 
 .app-pagination button,
 .app-pagination-ellipsis {
-  width: 46px;
-  height: 46px;
+  width: 40px;
+  height: 40px;
   border: 1px solid #e5e7eb;
   border-radius: 7px;
   background: #fff;
@@ -184,7 +184,7 @@ button:focus-visible {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  font-size: 19px;
+  font-size: 17px;
   font-weight: 700;
   line-height: 1;
   transition:
@@ -200,18 +200,18 @@ button:focus-visible {
 }
 
 .app-pagination button:hover:not(:disabled):not(.active) {
-  border-color: #c7d2fe;
-  background: #fbfaff;
-  color: #4f46e5;
+  border-color: #164a76;
+  background: #f8fbff;
+  color: #164a76;
   transform: translateY(-1px);
 }
 
 .app-pagination button.active {
-  border-color: #5b21ff;
-  color: #4f21ff;
+  border-color: #164a76;
+  color: #164a76;
   box-shadow:
-    0 0 0 1px #5b21ff,
-    0 6px 16px rgba(91, 33, 255, 0.12);
+    0 0 0 1px #164a76,
+    0 6px 16px rgba(22, 74, 118, 0.12);
 }
 
 .app-pagination button:disabled {
@@ -224,7 +224,7 @@ button:focus-visible {
 
 .app-pagination-arrow {
   color: #94a3b8;
-  font-size: 30px;
+  font-size: 26px;
   font-weight: 600;
 }
 
@@ -235,17 +235,17 @@ button:focus-visible {
 
 @media (max-width: 520px) {
   .app-pagination {
-    gap: 8px;
+    gap: 7px;
   }
 
   .app-pagination button,
   .app-pagination-ellipsis {
-    width: 40px;
-    height: 40px;
-    font-size: 17px;
+    width: 36px;
+    height: 36px;
+    font-size: 16px;
   }
 
   .app-pagination-arrow {
-    font-size: 27px;
+    font-size: 24px;
   }
 }
