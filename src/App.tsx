@@ -7,12 +7,14 @@ import { StudentsPage } from './modules/students'
 import { ExpertiseTagsPage } from './modules/expertisetags'
 import { TopicsPage } from './modules/topics'
 import { StudentGroupsPage } from './modules/studentgroups'
+import { RegistrationPeriodsPage } from './modules/registrationperiods'
+import { TopicRegistrationsPage } from './modules/topicregistrations'
 
 function App() {
   const path = window.location.pathname
   const isAuthenticated = Boolean(tokenStorage.getAccessToken())
 
-  if (path === '/dashboard' || path === '/departments' || path === '/lecturers' || path === '/students' || path === "/expertisetags" || path === '/topics' || path === '/student-groups') {
+  if (path === '/dashboard' || path === '/departments' || path === '/lecturers' || path === '/students' || path === "/expertisetags" || path === '/topics' || path === '/student-groups' || path === '/registration-periods' || path === '/topic-registrations') {
     if (!isAuthenticated) {
       window.location.href = '/'
       return null
@@ -24,6 +26,8 @@ function App() {
     if (path === '/expertisetags') return <ExpertiseTagsPage />
     if (path === '/topics') return <TopicsPage />
     if (path === '/student-groups') return <StudentGroupsPage />
+    if (path === '/registration-periods') return <RegistrationPeriodsPage />
+    if (path === '/topic-registrations') return <TopicRegistrationsPage />
     return <DashboardPage />
   }
 

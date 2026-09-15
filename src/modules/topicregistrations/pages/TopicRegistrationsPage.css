@@ -1,0 +1,477 @@
+.topic-registrations-content {
+  width: 100%;
+}
+
+.topic-registrations-panel {
+  width: 100%;
+  min-height: 430px;
+  padding: 24px;
+  background: #f7f8fa;
+  border: 1px solid #e1e5ea;
+  border-radius: 8px;
+  color: #1f2937;
+}
+
+.topic-registrations-toolbar {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 14px;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+}
+
+.topic-registration-filter {
+  width: min(245px, 100%);
+  display: grid;
+  gap: 6px;
+  color: #334155;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.topic-registration-search {
+  width: min(360px, 100%);
+  height: 40px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 0 12px;
+  background: #fff;
+  border: 1px solid #cbd5e1;
+  border-radius: 6px;
+}
+
+.topic-registration-search span {
+  color: #64748b;
+  font-size: 20px;
+}
+
+.topic-registration-search input {
+  width: 100%;
+  border: 0;
+  background: transparent;
+}
+
+.topic-registration-add-button,
+.topic-registration-modal-actions button {
+  height: 40px;
+  padding: 0 16px;
+  border: 0;
+  border-radius: 6px;
+  background: #0078d4;
+  color: #fff;
+  cursor: pointer;
+  font-weight: 700;
+}
+
+.topic-registration-add-button:hover,
+.topic-registration-modal-actions button:hover {
+  background: #0064b1;
+}
+
+.topic-registration-add-button span {
+  margin-right: 4px;
+  font-size: 18px;
+  line-height: 1;
+}
+
+.topic-registration-message {
+  margin-bottom: 16px;
+  padding: 10px 12px;
+  border-radius: 4px;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.topic-registration-message.error {
+  background: #fee2e2;
+  border: 1px solid #fecaca;
+  color: #991b1b;
+}
+
+.topic-registration-message.info {
+  background: #eff6ff;
+  border: 1px solid #bfdbfe;
+  color: #164a76;
+}
+
+.topic-registration-table-wrap {
+  width: 100%;
+  overflow-x: auto;
+}
+
+.topic-registration-table {
+  width: 100%;
+  min-width: 1540px;
+  border-collapse: collapse;
+  background: #fff;
+  table-layout: fixed;
+}
+
+.topic-registration-table th,
+.topic-registration-table td {
+  padding: 15px 16px;
+  border: 1px solid #d8dee6;
+  text-align: left;
+  vertical-align: middle;
+  line-height: 1.45;
+  overflow-wrap: anywhere;
+}
+
+.topic-registration-table th {
+  background: #0078d4;
+  color: #fff;
+  font-size: 14px;
+  font-weight: 700;
+  line-height: 1.45;
+}
+
+.topic-registration-table th:first-child,
+.topic-registration-table td:first-child {
+  width: 72px;
+  text-align: center;
+}
+
+.topic-registration-table th:nth-child(2),
+.topic-registration-table td:nth-child(2) {
+  width: 200px;
+}
+
+.topic-registration-table th:nth-child(3),
+.topic-registration-table td:nth-child(3) {
+  width: 300px;
+}
+
+.topic-registration-table th:nth-child(4),
+.topic-registration-table td:nth-child(4) {
+  width: 210px;
+}
+
+.topic-registration-table th:nth-child(5),
+.topic-registration-table td:nth-child(5) {
+  width: 165px;
+  text-align: center;
+  white-space: nowrap;
+}
+
+.topic-registration-table th:nth-child(6),
+.topic-registration-table td:nth-child(6) {
+  width: 150px;
+  text-align: center;
+}
+
+.topic-registration-table th:nth-child(7),
+.topic-registration-table td:nth-child(7) {
+  width: 230px;
+}
+
+.topic-registration-table th:nth-child(8),
+.topic-registration-table td:nth-child(8) {
+  width: 180px;
+}
+
+.topic-registration-table th:last-child,
+.topic-registration-table td:last-child {
+  width: 160px;
+  text-align: center;
+}
+
+.topic-registration-table tbody tr:hover {
+  background: #f1f5f9;
+}
+
+.topic-registration-table tbody tr.inactive-row,
+.topic-registration-table tbody tr.inactive-row:hover {
+  background: #fff1f2;
+}
+
+.topic-registration-empty {
+  height: 120px;
+  text-align: center !important;
+  color: #64748b;
+}
+
+.topic-registration-title {
+  display: block;
+  color: #0f172a;
+  font-weight: 700;
+  line-height: 1.45;
+  overflow-wrap: anywhere;
+}
+
+.topic-registration-reason {
+  display: block;
+  color: #be123c;
+  font-size: 13px;
+  font-weight: 700;
+  line-height: 1.45;
+  overflow-wrap: anywhere;
+}
+
+.topic-registration-reason.empty {
+  color: #94a3b8;
+  font-weight: 500;
+}
+
+.topic-registration-status {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 34px;
+  padding: 6px 12px;
+  border-radius: 999px;
+  font-size: 13px;
+  font-weight: 700;
+  line-height: 1;
+  white-space: nowrap;
+}
+
+.topic-registration-status.pending {
+  background: #fef3c7;
+  color: #92400e;
+}
+
+.topic-registration-status.approved {
+  background: #dcfce7;
+  color: #166534;
+}
+
+.topic-registration-status.rejected {
+  background: #dc2626;
+  color: #fff;
+}
+
+.topic-registration-status.cancelled {
+  background: #e2e8f0;
+  color: #475569;
+}
+
+.topic-registration-actions-cell {
+  text-align: center;
+}
+
+.topic-registration-actions {
+  display: grid;
+  grid-template-columns: minmax(0, 112px);
+  justify-content: center;
+  justify-items: center;
+  align-items: center;
+  gap: 10px;
+  min-height: 42px;
+}
+
+.topic-registration-actions button {
+  width: 112px;
+  min-width: 0;
+  height: 42px;
+  padding: 0 12px;
+  border: 1px solid #bfdbfe;
+  border-radius: 5px;
+  background: #eff6ff;
+  color: #1d4ed8;
+  cursor: pointer;
+  font-weight: 700;
+  line-height: 1;
+  white-space: nowrap;
+  transition:
+    background-color 160ms ease,
+    border-color 160ms ease,
+    transform 160ms ease;
+}
+
+.topic-registration-actions button:hover {
+  transform: translateY(-1px);
+}
+
+.topic-registration-actions button:disabled {
+  cursor: wait;
+  opacity: 0.65;
+  transform: none;
+}
+
+.topic-registration-actions button.approve {
+  border-color: #bbf7d0;
+  background: #f0fdf4;
+  color: #15803d;
+}
+
+.topic-registration-actions button.reject,
+.topic-registration-actions button.cancel {
+  border-color: #fecaca;
+  background: #fff1f2;
+  color: #be123c;
+}
+
+.topic-registration-modal-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 20;
+  display: grid;
+  place-items: center;
+  padding: 20px;
+  background: rgba(15, 23, 42, 0.68);
+}
+
+.topic-registration-modal {
+  width: min(540px, 100%);
+  max-height: min(720px, calc(100vh - 40px));
+  overflow: auto;
+  background: #fff;
+  border-radius: 8px;
+  color: #1f2937;
+  box-shadow: 0 18px 50px rgba(0, 0, 0, 0.28);
+}
+
+.topic-registration-detail-modal {
+  width: min(620px, 100%);
+}
+
+.topic-registration-modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 18px 20px;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.topic-registration-modal-header h3 {
+  margin: 0;
+  font-size: 18px;
+}
+
+.topic-registration-modal-header button {
+  width: 34px;
+  height: 34px;
+  border: 0;
+  background: transparent;
+  color: #475569;
+  cursor: pointer;
+  font-size: 24px;
+}
+
+.topic-registration-modal form {
+  display: grid;
+  gap: 16px;
+  padding: 20px;
+}
+
+.topic-registration-modal form input,
+.topic-registration-modal form select,
+.topic-registration-modal form textarea {
+  min-height: 42px;
+}
+
+.topic-registration-modal form textarea {
+  min-height: 96px;
+}
+
+.topic-registration-note {
+  padding: 10px 12px;
+  border: 1px solid #bfdbfe;
+  border-radius: 6px;
+  background: #eff6ff;
+  color: #164a76;
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.topic-registration-modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 12px;
+}
+
+.topic-registration-modal-actions button.secondary {
+  border: 1px solid #cbd5e1;
+  background: #fff;
+  color: #334155;
+}
+
+.topic-registration-modal-actions button:disabled {
+  cursor: wait;
+  opacity: 0.65;
+}
+
+.topic-registration-detail {
+  padding: 20px;
+}
+
+.topic-registration-detail-grid {
+  display: grid;
+  grid-template-columns: minmax(150px, 34%) minmax(0, 1fr);
+  margin: 0;
+  border: 1px solid #e2e8f0;
+  border-radius: 6px;
+  overflow: hidden;
+}
+
+.topic-registration-detail-grid dt,
+.topic-registration-detail-grid dd {
+  min-height: 46px;
+  margin: 0;
+  padding: 13px 14px;
+  border-bottom: 1px solid #e2e8f0;
+  overflow-wrap: anywhere;
+}
+
+.topic-registration-detail-grid dt {
+  background: #f8fafc;
+  color: #1f2937;
+  font-size: 13px;
+  font-weight: 800;
+}
+
+.topic-registration-detail-grid dd {
+  color: #475569;
+  font-size: 13px;
+}
+
+.topic-registration-detail-grid dt:last-of-type,
+.topic-registration-detail-grid dd:last-of-type {
+  border-bottom: 0;
+}
+
+@media (max-width: 720px) {
+  .topic-registrations-panel {
+    padding: 14px;
+  }
+
+  .topic-registrations-toolbar {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .topic-registration-filter,
+  .topic-registration-search,
+  .topic-registration-add-button {
+    width: 100%;
+  }
+
+  .topic-registration-table th:last-child,
+  .topic-registration-table td:last-child {
+    width: 175px;
+  }
+
+  .topic-registration-actions {
+    grid-template-columns: repeat(2, 42px);
+  }
+
+  .topic-registration-actions button {
+    width: 42px;
+    padding: 0;
+  }
+
+  .topic-registration-actions button span {
+    display: none;
+  }
+
+  .topic-registration-detail-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .topic-registration-detail-grid dt {
+    border-bottom: 0;
+  }
+}

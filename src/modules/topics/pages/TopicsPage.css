@@ -86,7 +86,7 @@
 
 .topic-table {
   width: 100%;
-  min-width: 1120px;
+  min-width: 1320px;
   border-collapse: collapse;
   background: #fff;
   table-layout: fixed;
@@ -101,7 +101,7 @@
 }
 
 .topic-table th {
-  background: #015599;
+  background: #0078d4;
   color: #fff;
   font-size: 14px;
   font-weight: 700;
@@ -117,6 +117,12 @@
 .topic-table th:nth-child(6),
 .topic-table td:nth-child(6) {
   width: 180px;
+  text-align: center;
+}
+
+.topic-table th:nth-child(7),
+.topic-table td:nth-child(7) {
+  width: 160px;
   text-align: center;
 }
 
@@ -153,10 +159,17 @@
 }
 
 .topic-reason {
-  margin-top: 6px;
+  display: block;
   color: #be123c;
   font-size: 13px;
+  font-weight: 600;
   line-height: 1.45;
+  overflow-wrap: anywhere;
+}
+
+.topic-reason.empty {
+  color: #94a3b8;
+  font-weight: 500;
 }
 
 .topic-proposed-by {

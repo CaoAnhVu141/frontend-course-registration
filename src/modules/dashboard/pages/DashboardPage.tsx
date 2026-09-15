@@ -30,11 +30,11 @@ type Profile =
   | { kind: 'lecturer'; data: Lecturer }
   | { kind: 'admin'; data: AuthUser }
 
-function DetailCard({ title, details }: DetailCardData) {
+function ProfileSection({ title, details }: DetailCardData) {
   return (
-    <section className="profile-card">
+    <section className="profile-section">
       <h2>{title}</h2>
-      <dl>
+      <dl className="profile-details">
         {details.map(({ label, value }) => (
           <div className="profile-row" key={label}>
             <dt>{label}</dt>
@@ -114,9 +114,10 @@ export function DashboardPage() {
     () => getProfileCards(profile, departments, expertiseTags),
     [departments, expertiseTags, profile],
   )
+  const profileSummary = useMemo(() => getProfileSummary(profile), [profile])
 
   return (
-    <DashboardLayout title="THÔNG TIN CÁ NHÂN">
+    <DashboardLayout contentClassName="personal-page">
       {isLoading ? (
         <section className="profile-card profile-loading">
           <AppLoading label="Đang tải thông tin cá nhân" />
@@ -129,11 +130,30 @@ export function DashboardPage() {
           </button>
         </section>
       ) : (
-        <div className="personal-information">
-          {cards.map((card) => (
-            <DetailCard key={card.title} {...card} />
-          ))}
-        </div>
+        <section
+          className="personal-profile"
+          aria-labelledby="personal-profile-title"
+        >
+          <aside className="personal-profile-summary">
+            <span className="personal-profile-eyebrow">Trang cá nhân</span>
+            <h2>{profileSummary.name}</h2>
+            <p>{profileSummary.role}</p>
+            <span>{profileSummary.email}</span>
+          </aside>
+
+          <div className="personal-profile-content">
+            <span className="personal-profile-kicker">
+              Personal information
+            </span>
+            <h1 id="personal-profile-title">THÔNG TIN CÁ NHÂN</h1>
+
+            <div className="personal-profile-sections">
+              {cards.map((card) => (
+                <ProfileSection key={card.title} {...card} />
+              ))}
+            </div>
+          </div>
+        </section>
       )}
     </DashboardLayout>
   )
@@ -228,6 +248,22 @@ function getAccountDetails(user: AuthUser | Student | Lecturer): DetailItem[] {
     { label: 'Email', value: user.email },
     { label: 'Vai trò', value: getRoleLabel(user.roles) },
   ]
+}
+
+function getProfileSummary(profile: Profile | null) {
+  if (!profile) {
+    return {
+      name: 'Chưa có dữ liệu',
+      role: 'Chưa có dữ liệu',
+      email: 'Chưa có dữ liệu',
+    }
+  }
+
+  return {
+    name: String(formatValue(profile.data.username)),
+    role: getRoleLabel(profile.data.roles),
+    email: String(formatValue(profile.data.email)),
+  }
 }
 
 function getDepartmentName(
