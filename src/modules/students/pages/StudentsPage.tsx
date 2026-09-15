@@ -5,6 +5,7 @@ import { hasRole } from '../../../shared/utils/roleLabel'
 import { DashboardLayout } from '../../dashboard/components/DashboardLayout'
 import { useConfirmation } from '../../confirmation'
 import { useNotification } from '../../notification'
+import { AppLoading } from '../../ui'
 import { getDepartments } from '../../departments/services/departmentApi'
 import type { Department } from '../../departments/types/department.type'
 import { createStudent, deleteStudent, getStudents, updateStudent } from '../services/studentApi'
@@ -200,7 +201,7 @@ export function StudentsPage() {
             <thead><tr><th>ID</th><th>Mã sinh viên</th><th>Email</th><th>Lớp</th><th>Khoa/Phòng ban</th><th>Thao tác</th></tr></thead>
             <tbody>
               {isLoading || loadError || visibleStudents.length === 0 ? (
-                <tr><td colSpan={6} className="student-empty">{isLoading ? 'Đang tải dữ liệu...' : loadError ? 'Không thể tải danh sách sinh viên.' : 'Không tìm thấy sinh viên.'}</td></tr>
+                <tr><td colSpan={6} className="student-empty">{isLoading ? <AppLoading /> : loadError ? 'Không thể tải danh sách sinh viên.' : 'Không tìm thấy sinh viên.'}</td></tr>
               ) : visibleStudents.map((student) => (
                 <tr key={student.userId}>
                   <td>{student.userId}</td><td>{student.studentCode}</td><td>{student.email}</td><td>{student.className || '-'}</td>
