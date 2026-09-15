@@ -387,21 +387,19 @@ export function TopicRegistrationsPage() {
                 <th>Người đăng ký</th>
                 <th>Ngày đăng ký</th>
                 <th>Trạng thái</th>
-                <th>Người quyết định</th>
-                <th>Lý do</th>
                 <th>Thao tác</th>
               </tr>
             </thead>
             <tbody>
               {isLoading ? (
                 <tr>
-                  <td className="topic-registration-empty" colSpan={9}>
+                  <td className="topic-registration-empty" colSpan={7}>
                     <AppLoading />
                   </td>
                 </tr>
               ) : pagedRegistrations.length === 0 ? (
                 <tr>
-                  <td className="topic-registration-empty" colSpan={9}>
+                  <td className="topic-registration-empty" colSpan={7}>
                     {canReviewRegistrations
                       ? 'Không tìm thấy đăng ký đề tài.'
                       : 'Chưa có đăng ký đề tài trong phiên này.'}
@@ -430,6 +428,11 @@ export function TopicRegistrationsPage() {
                           registration.topicTitle ??
                           `#${registration.topicId}`}
                       </span>
+                      {registration.rejectionReason && (
+                        <span className="topic-registration-reason">
+                          Lý do: {registration.rejectionReason}
+                        </span>
+                      )}
                     </td>
                     <td>{registration.registeredBy}</td>
                     <td>{formatDateTime(registration.registeredAt)}</td>
@@ -440,16 +443,6 @@ export function TopicRegistrationsPage() {
                         }`}
                       >
                         {statusConfig[registration.status].label}
-                      </span>
-                    </td>
-                    <td>{registration.decidedBy || '-'}</td>
-                    <td>
-                      <span
-                        className={`topic-registration-reason ${
-                          registration.rejectionReason ? '' : 'empty'
-                        }`.trim()}
-                      >
-                        {registration.rejectionReason || '-'}
                       </span>
                     </td>
                     <td className="topic-registration-actions-cell">
@@ -716,7 +709,8 @@ function renderActions({
       key="detail"
       onClick={() => void openDetail(registration)}
     >
-      ◉ <span>Chi tiết</span>
+      <span className="app-view-icon" aria-hidden="true" />
+      <span>Chi tiết</span>
     </button>,
   ]
 
@@ -729,7 +723,8 @@ function renderActions({
         key="approve"
         onClick={() => void handleApprove(registration)}
       >
-        ✓ <span>Duyệt</span>
+        <span className="app-action-icon approve" aria-hidden="true" />
+        <span>Duyệt</span>
       </button>,
       <button
         type="button"
@@ -738,7 +733,8 @@ function renderActions({
         key="reject"
         onClick={() => openRejectForm(registration)}
       >
-        ! <span>Từ chối</span>
+        <span className="app-action-icon reject" aria-hidden="true" />
+        <span>Từ chối</span>
       </button>,
     )
   }
@@ -752,7 +748,8 @@ function renderActions({
         key="cancel"
         onClick={() => void handleCancel(registration)}
       >
-        × <span>Hủy</span>
+        <span className="app-action-icon cancel" aria-hidden="true" />
+        <span>Hủy</span>
       </button>,
     )
   }

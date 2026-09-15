@@ -299,7 +299,8 @@ export function StudentGroupsPage() {
                         <div className="student-group-actions">
                           {canViewGroups && (
                             <button type="button" onClick={() => void openDetail(group)}>
-                              ◉ <span>Chi tiết</span>
+                              <span className="app-view-icon" aria-hidden="true" />
+                              <span>Chi tiết</span>
                             </button>
                           )}
                           {canDeleteGroup && (

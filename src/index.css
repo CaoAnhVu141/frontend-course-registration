@@ -16,6 +16,7 @@
   --form-focus-ring: rgba(0, 120, 212, 0.16);
   --form-disabled-bg: #f1f5f9;
   --form-disabled-text: #94a3b8;
+  --table-header-bg: #164a76;
 
   font-family: var(--font-sans);
   color: var(--text-color);
@@ -104,10 +105,6 @@ textarea:disabled {
   color: var(--form-disabled-text);
 }
 
-button {
-  font-weight: 600;
-}
-
 .form-field {
   display: flex;
   flex-direction: column;
@@ -157,6 +154,41 @@ textarea.form-control {
   line-height: 1.45;
 }
 
+.app-loading-state {
+  min-height: 64px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  color: #164a76;
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: 0;
+}
+
+.app-loading-dots {
+  display: inline-flex;
+  align-items: flex-end;
+  gap: 4px;
+  height: 14px;
+}
+
+.app-loading-dots span {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: #164a76;
+  animation: app-loading-dot 900ms ease-in-out infinite;
+}
+
+.app-loading-dots span:nth-child(2) {
+  animation-delay: 120ms;
+}
+
+.app-loading-dots span:nth-child(3) {
+  animation-delay: 240ms;
+}
+
 button:focus,
 button:focus-visible {
   outline: 3px solid rgba(79, 70, 229, 0.35);
@@ -167,32 +199,30 @@ button:focus-visible {
   display: flex;
   align-items: center;
   justify-content: flex-end;
-  gap: 9px;
-  margin-top: 22px;
+  gap: 4px;
+  margin-top: 20px;
   flex-wrap: wrap;
 }
 
 .app-pagination button,
 .app-pagination-ellipsis {
-  width: 40px;
-  height: 40px;
-  border: 1px solid #e5e7eb;
-  border-radius: 7px;
+  width: 30px;
+  height: 30px;
+  border: 1px solid #cbd5e1;
+  border-radius: 5px;
   background: #fff;
-  color: #1f2937;
-  box-shadow: 0 1px 3px rgba(15, 23, 42, 0.08);
+  color: #0f2f57;
+  box-shadow: none;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  font-size: 17px;
-  font-weight: 700;
+  font-size: 14px;
+  font-weight: 600;
   line-height: 1;
   transition:
     border-color 160ms ease,
-    box-shadow 160ms ease,
     color 160ms ease,
-    background-color 160ms ease,
-    transform 160ms ease;
+    background-color 160ms ease;
 }
 
 .app-pagination button {
@@ -200,32 +230,23 @@ button:focus-visible {
 }
 
 .app-pagination button:hover:not(:disabled):not(.active) {
-  border-color: #164a76;
-  background: #f8fbff;
-  color: #164a76;
-  transform: translateY(-1px);
+  border-color: #93c5fd;
+  background: #eff6ff;
+  color: #0078d4;
 }
 
 .app-pagination button.active {
-  border-color: #164a76;
-  color: #164a76;
-  box-shadow:
-    0 0 0 1px #164a76,
-    0 6px 16px rgba(22, 74, 118, 0.12);
+  border-color: #0078d4;
+  background: #0078d4;
+  color: #fff;
 }
 
 .app-pagination button:disabled {
-  border-color: #cbd5e1;
-  background: #cbd5e1;
-  color: #fff;
-  box-shadow: none;
-  opacity: 1;
+  opacity: 0.45;
 }
 
 .app-pagination-arrow {
-  color: #94a3b8;
-  font-size: 26px;
-  font-weight: 600;
+  color: #334155;
 }
 
 .app-pagination-ellipsis {
@@ -235,17 +256,96 @@ button:focus-visible {
 
 @media (max-width: 520px) {
   .app-pagination {
-    gap: 7px;
+    gap: 4px;
   }
 
   .app-pagination button,
   .app-pagination-ellipsis {
-    width: 36px;
-    height: 36px;
-    font-size: 16px;
+    width: 30px;
+    height: 30px;
+  }
+}
+
+.app-view-icon {
+  position: relative;
+  display: inline-block;
+  width: 15px;
+  height: 10px;
+  border: 1.8px solid currentColor;
+  border-radius: 999px / 75%;
+  flex-shrink: 0;
+}
+
+.app-view-icon::after {
+  content: '';
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: currentColor;
+  transform: translate(-50%, -50%);
+}
+
+.app-action-icon {
+  position: relative;
+  display: inline-block;
+  width: 15px;
+  height: 15px;
+  flex: 0 0 15px;
+}
+
+.app-action-icon.approve::before {
+  content: '';
+  position: absolute;
+  left: 3px;
+  top: 2px;
+  width: 6px;
+  height: 10px;
+  border-right: 2px solid currentColor;
+  border-bottom: 2px solid currentColor;
+  transform: rotate(42deg);
+}
+
+.app-action-icon.reject::before,
+.app-action-icon.reject::after,
+.app-action-icon.delete::before,
+.app-action-icon.delete::after,
+.app-action-icon.cancel::before,
+.app-action-icon.cancel::after {
+  content: '';
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 12px;
+  height: 2px;
+  border-radius: 999px;
+  background: currentColor;
+  transform: translate(-50%, -50%) rotate(45deg);
+}
+
+.app-action-icon.reject::after,
+.app-action-icon.delete::after,
+.app-action-icon.cancel::after {
+  transform: translate(-50%, -50%) rotate(-45deg);
+}
+
+.app-action-icon.reject::before,
+.app-action-icon.reject::after {
+  width: 11px;
+}
+
+@keyframes app-loading-dot {
+  0%,
+  80%,
+  100% {
+    opacity: 0.35;
+    transform: translateY(0);
   }
 
-  .app-pagination-arrow {
-    font-size: 24px;
+  40% {
+    opacity: 1;
+    transform: translateY(-5px);
   }
 }

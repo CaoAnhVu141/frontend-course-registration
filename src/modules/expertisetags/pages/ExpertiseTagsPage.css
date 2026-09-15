@@ -91,7 +91,7 @@
 }
 
 .expertise-tag-table th {
-  background: #0078d4;
+  background: var(--table-header-bg);
   color: #fff;
   font-size: 14px;
 }

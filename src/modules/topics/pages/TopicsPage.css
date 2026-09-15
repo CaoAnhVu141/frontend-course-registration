@@ -101,7 +101,7 @@
 }
 
 .topic-table th {
-  background: #0078d4;
+  background: var(--table-header-bg);
   color: #fff;
   font-size: 14px;
   font-weight: 700;
@@ -231,13 +231,17 @@
   width: 110px;
   min-width: 0;
   height: 42px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
   padding: 0 14px;
   border: 1px solid #bfdbfe;
   border-radius: 5px;
   background: #eff6ff;
   color: #1d4ed8;
   cursor: pointer;
-  font-weight: 700;
+  font-weight: 500;
   line-height: 1;
   white-space: nowrap;
   transition:

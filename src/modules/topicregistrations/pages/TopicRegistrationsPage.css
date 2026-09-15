@@ -15,7 +15,7 @@
 .topic-registrations-toolbar {
   display: flex;
   align-items: flex-end;
-  justify-content: space-between;
+  justify-content: flex-start;
   gap: 14px;
   margin-bottom: 20px;
   flex-wrap: wrap;
@@ -31,7 +31,7 @@
 }
 
 .topic-registration-search {
-  width: min(360px, 100%);
+  width: min(420px, 100%);
   height: 40px;
   display: flex;
   align-items: center;
@@ -40,6 +40,10 @@
   background: #fff;
   border: 1px solid #cbd5e1;
   border-radius: 6px;
+}
+
+.topic-registration-add-button {
+  margin-left: auto;
 }
 
 .topic-registration-search span {
@@ -62,7 +66,8 @@
   background: #0078d4;
   color: #fff;
   cursor: pointer;
-  font-weight: 700;
+  font-weight: 600;
+  white-space: nowrap;
 }
 
 .topic-registration-add-button:hover,
@@ -103,7 +108,7 @@
 
 .topic-registration-table {
   width: 100%;
-  min-width: 1540px;
+  min-width: 1180px;
   border-collapse: collapse;
   background: #fff;
   table-layout: fixed;
@@ -111,7 +116,7 @@
 
 .topic-registration-table th,
 .topic-registration-table td {
-  padding: 15px 16px;
+  padding: 13px 14px;
   border: 1px solid #d8dee6;
   text-align: left;
   vertical-align: middle;
@@ -120,7 +125,7 @@
 }
 
 .topic-registration-table th {
-  background: #0078d4;
+  background: var(--table-header-bg);
   color: #fff;
   font-size: 14px;
   font-weight: 700;
@@ -129,28 +134,28 @@
 
 .topic-registration-table th:first-child,
 .topic-registration-table td:first-child {
-  width: 72px;
+  width: 76px;
   text-align: center;
 }
 
 .topic-registration-table th:nth-child(2),
 .topic-registration-table td:nth-child(2) {
-  width: 200px;
+  width: 190px;
 }
 
 .topic-registration-table th:nth-child(3),
 .topic-registration-table td:nth-child(3) {
-  width: 300px;
+  width: 330px;
 }
 
 .topic-registration-table th:nth-child(4),
 .topic-registration-table td:nth-child(4) {
-  width: 210px;
+  width: 220px;
 }
 
 .topic-registration-table th:nth-child(5),
 .topic-registration-table td:nth-child(5) {
-  width: 165px;
+  width: 150px;
   text-align: center;
   white-space: nowrap;
 }
@@ -161,19 +166,9 @@
   text-align: center;
 }
 
-.topic-registration-table th:nth-child(7),
-.topic-registration-table td:nth-child(7) {
-  width: 230px;
-}
-
-.topic-registration-table th:nth-child(8),
-.topic-registration-table td:nth-child(8) {
-  width: 180px;
-}
-
 .topic-registration-table th:last-child,
 .topic-registration-table td:last-child {
-  width: 160px;
+  width: 185px;
   text-align: center;
 }
 
@@ -195,16 +190,17 @@
 .topic-registration-title {
   display: block;
   color: #0f172a;
-  font-weight: 700;
+  font-weight: 600;
   line-height: 1.45;
   overflow-wrap: anywhere;
 }
 
 .topic-registration-reason {
   display: block;
+  margin-top: 5px;
   color: #be123c;
   font-size: 13px;
-  font-weight: 700;
+  font-weight: 500;
   line-height: 1.45;
   overflow-wrap: anywhere;
 }
@@ -218,11 +214,11 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  min-height: 34px;
-  padding: 6px 12px;
+  min-height: 28px;
+  padding: 5px 10px;
   border-radius: 999px;
   font-size: 13px;
-  font-weight: 700;
+  font-weight: 600;
   line-height: 1;
   white-space: nowrap;
 }
@@ -252,32 +248,39 @@
 }
 
 .topic-registration-actions {
-  display: grid;
-  grid-template-columns: minmax(0, 112px);
+  display: flex;
+  flex-wrap: wrap;
   justify-content: center;
-  justify-items: center;
   align-items: center;
-  gap: 10px;
-  min-height: 42px;
+  gap: 8px;
+  min-height: 34px;
 }
 
 .topic-registration-actions button {
-  width: 112px;
-  min-width: 0;
-  height: 42px;
+  min-width: 78px;
+  height: 34px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
   padding: 0 12px;
   border: 1px solid #bfdbfe;
   border-radius: 5px;
   background: #eff6ff;
   color: #1d4ed8;
   cursor: pointer;
-  font-weight: 700;
+  font-weight: 500;
   line-height: 1;
   white-space: nowrap;
   transition:
     background-color 160ms ease,
     border-color 160ms ease,
-    transform 160ms ease;
+  transform 160ms ease;
+}
+
+.topic-registration-actions .app-view-icon,
+.topic-registration-actions .app-action-icon {
+  margin-right: 1px;
 }
 
 .topic-registration-actions button:hover {
@@ -314,7 +317,7 @@
 }
 
 .topic-registration-modal {
-  width: min(540px, 100%);
+  width: min(520px, 100%);
   max-height: min(720px, calc(100vh - 40px));
   overflow: auto;
   background: #fff;
@@ -324,7 +327,7 @@
 }
 
 .topic-registration-detail-modal {
-  width: min(620px, 100%);
+  width: min(640px, 100%);
 }
 
 .topic-registration-modal-header {
@@ -400,37 +403,35 @@
 
 .topic-registration-detail-grid {
   display: grid;
-  grid-template-columns: minmax(150px, 34%) minmax(0, 1fr);
+  grid-template-columns: 1fr;
+  gap: 12px;
   margin: 0;
-  border: 1px solid #e2e8f0;
-  border-radius: 6px;
-  overflow: hidden;
 }
 
 .topic-registration-detail-grid dt,
 .topic-registration-detail-grid dd {
-  min-height: 46px;
   margin: 0;
-  padding: 13px 14px;
-  border-bottom: 1px solid #e2e8f0;
   overflow-wrap: anywhere;
 }
 
 .topic-registration-detail-grid dt {
-  background: #f8fafc;
   color: #1f2937;
-  font-size: 13px;
-  font-weight: 800;
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 1.35;
 }
 
 .topic-registration-detail-grid dd {
-  color: #475569;
-  font-size: 13px;
-}
-
-.topic-registration-detail-grid dt:last-of-type,
-.topic-registration-detail-grid dd:last-of-type {
-  border-bottom: 0;
+  min-height: 42px;
+  display: flex;
+  align-items: center;
+  padding: 10px 12px;
+  border: 1px solid #cbd5e1;
+  border-radius: 6px;
+  background: #fff;
+  color: #0f172a;
+  font-size: 14px;
+  line-height: 1.45;
 }
 
 @media (max-width: 720px) {
@@ -451,15 +452,16 @@
 
   .topic-registration-table th:last-child,
   .topic-registration-table td:last-child {
-    width: 175px;
+    width: 150px;
   }
 
   .topic-registration-actions {
-    grid-template-columns: repeat(2, 42px);
+    gap: 6px;
   }
 
   .topic-registration-actions button {
-    width: 42px;
+    min-width: 34px;
+    width: 34px;
     padding: 0;
   }
 
@@ -467,11 +469,4 @@
     display: none;
   }
 
-  .topic-registration-detail-grid {
-    grid-template-columns: 1fr;
-  }
-
-  .topic-registration-detail-grid dt {
-    border-bottom: 0;
-  }
 }
