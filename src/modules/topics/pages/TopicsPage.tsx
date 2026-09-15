@@ -7,7 +7,7 @@ import type { Department } from '../../departments/types/department.type'
 import { useConfirmation } from '../../confirmation'
 import { DashboardLayout } from '../../dashboard/components/DashboardLayout'
 import { useNotification } from '../../notification'
-import { AppLoading } from '../../ui'
+import { AppLoading, Pagination } from '../../ui'
 import {
   approveTopic,
   createTopic,
@@ -332,22 +332,26 @@ export function TopicsPage() {
                     </td>
                     <td>{departmentNameMap.get(topic.departmentId) ?? `#${topic.departmentId}`}</td>
                     <td>{registrationPeriodNameMap.get(topic.registrationPeriodId) ?? `#${topic.registrationPeriodId}`}</td>
-                    <td>{topic.proposedBy}</td>
+                    <td>
+                      <span className="topic-proposed-by">{topic.proposedBy}</span>
+                    </td>
                     <td>
                       <span className={`topic-status ${statusConfig[topic.status].tone}`}>
                         {statusConfig[topic.status].label}
                       </span>
                     </td>
                     <td className="topic-actions">
-                      {renderActions({
-                        topic,
-                        isAdmin,
-                        isLecturer,
-                        openEditForm,
-                        handleDelete,
-                        handleStatusAction,
-                        openRejectForm,
-                      })}
+                      <div className="topic-action-list">
+                        {renderActions({
+                          topic,
+                          isAdmin,
+                          isLecturer,
+                          openEditForm,
+                          handleDelete,
+                          handleStatusAction,
+                          openRejectForm,
+                        })}
+                      </div>
                     </td>
                   </tr>
                 ))
@@ -356,34 +360,11 @@ export function TopicsPage() {
           </table>
         </div>
 
-        {totalPages > 1 && (
-          <nav className="app-pagination" aria-label="Phân trang">
-            <button
-              type="button"
-              disabled={page === 1}
-              onClick={() => setPage((current) => current - 1)}
-            >
-              ‹
-            </button>
-            {Array.from({ length: totalPages }, (_, index) => index + 1).map((pageNumber) => (
-              <button
-                type="button"
-                className={pageNumber === page ? 'active' : ''}
-                key={pageNumber}
-                onClick={() => setPage(pageNumber)}
-              >
-                {pageNumber}
-              </button>
-            ))}
-            <button
-              type="button"
-              disabled={page === totalPages}
-              onClick={() => setPage((current) => current + 1)}
-            >
-              ›
-            </button>
-          </nav>
-        )}
+        <Pagination
+          currentPage={page}
+          totalPages={totalPages}
+          onPageChange={setPage}
+        />
       </section>
 
       {isFormOpen && (

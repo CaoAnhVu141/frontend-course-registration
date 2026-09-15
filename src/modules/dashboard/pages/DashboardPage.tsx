@@ -1,55 +1,44 @@
-import { useEffect } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import { STORAGE_KEYS } from '../../../shared/constants/storageKeys'
+import { tokenStorage } from '../../../shared/services/tokenStorage'
+import { getRoleLabel, hasRole } from '../../../shared/utils/roleLabel'
+import type { AuthUser } from '../../auth/types/auth.type'
+import { getDepartments } from '../../departments/services/departmentApi'
+import type { Department } from '../../departments/types/department.type'
+import { getExpertiseTags } from '../../expertisetags/services/expertiseTagApi'
+import type { ExpertiseTag } from '../../expertisetags/types/expertiseTag.type'
+import { getMyLecturerProfile } from '../../lecturers/services/lecturerApi'
+import type { Lecturer } from '../../lecturers/types/lecturer.type'
 import { useNotification } from '../../notification'
+import { getMyStudentProfile } from '../../students/services/studentApi'
+import type { Student } from '../../students/types/student.type'
+import { AppLoading } from '../../ui'
 import { DashboardLayout } from '../components/DashboardLayout'
 
-const studentDetails = [
-  ['Mã sinh viên', '2212223'],
-  ['Họ tên', 'Nguyễn Văn A'],
-  ['Ngày sinh', '24/05/2004'],
-  ['Nơi sinh', 'Thành phố Hồ Chí Minh'],
-  ['Nơi đăng ký khai sinh', ''],
-  ['Giới tính', 'Nam'],
-  ['CMND/CCCD', '43253456456'],
-  ['Dân tộc', 'Kinh'],
-  ['Tôn giáo', 'Công giáo'],
-  ['Lớp giáo viên phụ trách', '25LC10SP3'],
-]
-
-const contactDetails = [
-  ['Quốc gia', 'Vietnam'],
-  ['Tỉnh thành', 'Thành phố Hồ Chí Minh'],
-  ['Phường/xã', ''],
-  ['Địa chỉ', 'Phường Tân Phú, Thành phố Hồ Chí Minh'],
-  ['Di động', '0999999999'],
-  ['Email trường', '2999999@student.hcmute.edu.vn'],
-  ['Email cá nhân', 'admin@gmail.com'],
-]
-
-const courseDetails = [
-  ['Khóa dạy', 'Khóa 2025'],
-  ['Ngành dạy', 'VLVH_liên thông Cao Đẳng'],
-  ['Chương trình đào tạo', 'K25LC10(3)'],
-  ['Khoa', 'Phòng Đào tạo (VLVH)'],
-  ['Ngành', 'Công nghệ thông tin'],
-  ['Niên khóa', '2025 - 2027'],
-  ['Năm hết thời gian đào tạo', '2025 - 2027'],
-]
-
-type DetailCardProps = {
-  title: string
-  details: string[][]
+type DetailItem = {
+  label: string
+  value?: string | number | null
 }
 
-function DetailCard({ title, details }: DetailCardProps) {
+type DetailCardData = {
+  title: string
+  details: DetailItem[]
+}
+
+type Profile =
+  | { kind: 'student'; data: Student }
+  | { kind: 'lecturer'; data: Lecturer }
+  | { kind: 'admin'; data: AuthUser }
+
+function DetailCard({ title, details }: DetailCardData) {
   return (
     <section className="profile-card">
       <h2>{title}</h2>
       <dl>
-        {details.map(([label, value]) => (
+        {details.map(({ label, value }) => (
           <div className="profile-row" key={label}>
             <dt>{label}</dt>
-            <dd>{value || '—'}</dd>
+            <dd>{formatValue(value)}</dd>
           </div>
         ))}
       </dl>
@@ -58,7 +47,53 @@ function DetailCard({ title, details }: DetailCardProps) {
 }
 
 export function DashboardPage() {
-  const { success } = useNotification()
+  const { success, error: showError } = useNotification()
+  const user = useMemo(() => tokenStorage.getUser(), [])
+  const [profile, setProfile] = useState<Profile | null>(null)
+  const [departments, setDepartments] = useState<Department[]>([])
+  const [expertiseTags, setExpertiseTags] = useState<ExpertiseTag[]>([])
+  const [isLoading, setIsLoading] = useState(true)
+  const [loadError, setLoadError] = useState('')
+
+  const isStudent = hasRole(user?.roles, 'STUDENT')
+  const isLecturer = hasRole(user?.roles, 'LECTURER')
+
+  const loadProfile = useCallback(async () => {
+    if (!user) return
+
+    try {
+      setIsLoading(true)
+      setLoadError('')
+
+      const [departmentData, expertiseTagData] = await Promise.all([
+        getDepartments().catch(() => []),
+        isLecturer ? getExpertiseTags().catch(() => []) : Promise.resolve([]),
+      ])
+
+      setDepartments(departmentData)
+      setExpertiseTags(expertiseTagData)
+
+      if (isStudent) {
+        const response = await getMyStudentProfile()
+        setProfile({ kind: 'student', data: response.data })
+        return
+      }
+
+      if (isLecturer) {
+        const response = await getMyLecturerProfile()
+        setProfile({ kind: 'lecturer', data: response.data })
+        return
+      }
+
+      setProfile({ kind: 'admin', data: user })
+    } catch (requestError) {
+      const message = getErrorMessage(requestError)
+      setLoadError(message)
+      showError(message)
+    } finally {
+      setIsLoading(false)
+    }
+  }, [isLecturer, isStudent, showError, user])
 
   useEffect(() => {
     const loginMessage = sessionStorage.getItem(
@@ -71,17 +106,161 @@ export function DashboardPage() {
     success(loginMessage)
   }, [success])
 
+  useEffect(() => {
+    void loadProfile()
+  }, [loadProfile])
+
+  const cards = useMemo(
+    () => getProfileCards(profile, departments, expertiseTags),
+    [departments, expertiseTags, profile],
+  )
+
   return (
-    <DashboardLayout>
-      <div className="personal-information">
-        <DetailCard title="Thông tin giáo viên" details={studentDetails} />
-
-        <div className="profile-card-column">
-          <DetailCard title="Thông tin liên lạc" details={contactDetails} />
+    <DashboardLayout title="THÔNG TIN CÁ NHÂN">
+      {isLoading ? (
+        <section className="profile-card profile-loading">
+          <AppLoading label="Đang tải thông tin cá nhân" />
+        </section>
+      ) : loadError ? (
+        <section className="profile-card profile-message error" role="alert">
+          <p>{loadError}</p>
+          <button type="button" onClick={() => void loadProfile()}>
+            Thử lại
+          </button>
+        </section>
+      ) : (
+        <div className="personal-information">
+          {cards.map((card) => (
+            <DetailCard key={card.title} {...card} />
+          ))}
         </div>
-
-        <DetailCard title="Thông tin khóa dạy" details={courseDetails} />
-      </div>
+      )}
     </DashboardLayout>
   )
+}
+
+function getProfileCards(
+  profile: Profile | null,
+  departments: Department[],
+  expertiseTags: ExpertiseTag[],
+): DetailCardData[] {
+  if (!profile) return []
+
+  const accountDetails = getAccountDetails(profile.data)
+
+  if (profile.kind === 'student') {
+    const student = profile.data
+
+    return [
+      {
+        title: 'Thông tin tài khoản',
+        details: accountDetails,
+      },
+      {
+        title: 'Thông tin sinh viên',
+        details: [
+          { label: 'Mã sinh viên', value: student.studentCode },
+          { label: 'Lớp', value: student.className },
+          {
+            label: 'Khoa / phòng ban',
+            value: getDepartmentName(student.departmentId, departments),
+          },
+          { label: 'ID khoa / phòng ban', value: student.departmentId },
+        ],
+      },
+    ]
+  }
+
+  if (profile.kind === 'lecturer') {
+    const lecturer = profile.data
+
+    return [
+      {
+        title: 'Thông tin tài khoản',
+        details: accountDetails,
+      },
+      {
+        title: 'Thông tin giảng viên',
+        details: [
+          { label: 'Mã giảng viên', value: lecturer.lecturerCode },
+          {
+            label: 'Khoa / phòng ban',
+            value: getDepartmentName(lecturer.departmentId, departments),
+          },
+          { label: 'ID khoa / phòng ban', value: lecturer.departmentId },
+          { label: 'Học hàm / học vị', value: lecturer.academicTitle },
+          {
+            label: 'Tải phản biện tối đa',
+            value: lecturer.maxReviewLoad,
+          },
+        ],
+      },
+      {
+        title: 'Chuyên môn',
+        details: [
+          {
+            label: 'Danh sách chuyên môn',
+            value: getExpertiseTagNames(lecturer.expertiseTagIds, expertiseTags),
+          },
+          {
+            label: 'ID chuyên môn',
+            value: lecturer.expertiseTagIds?.join(', '),
+          },
+        ],
+      },
+    ]
+  }
+
+  return [
+    {
+      title: 'Thông tin quản trị viên',
+      details: accountDetails,
+    },
+  ]
+}
+
+function getAccountDetails(user: AuthUser | Student | Lecturer): DetailItem[] {
+  const userId = 'userId' in user ? user.userId : user.id
+
+  return [
+    { label: 'User ID', value: userId },
+    { label: 'Tên đăng nhập', value: user.username },
+    { label: 'Email', value: user.email },
+    { label: 'Vai trò', value: getRoleLabel(user.roles) },
+  ]
+}
+
+function getDepartmentName(
+  departmentId: number | undefined,
+  departments: Department[],
+) {
+  if (!departmentId) return undefined
+
+  return departments.find((department) => department.departmentId === departmentId)
+    ?.name
+}
+
+function getExpertiseTagNames(
+  expertiseTagIds: number[] | undefined,
+  expertiseTags: ExpertiseTag[],
+) {
+  if (!expertiseTagIds?.length) return undefined
+
+  const tagNameById = new Map(expertiseTags.map((tag) => [tag.id, tag.name]))
+
+  return expertiseTagIds
+    .map((id) => tagNameById.get(id) ?? `#${id}`)
+    .join(', ')
+}
+
+function formatValue(value: string | number | null | undefined) {
+  if (value === null || value === undefined || value === '') {
+    return 'Chưa có dữ liệu'
+  }
+
+  return value
+}
+
+function getErrorMessage(error: unknown) {
+  return error instanceof Error ? error.message : 'Không thể tải thông tin cá nhân.'
 }

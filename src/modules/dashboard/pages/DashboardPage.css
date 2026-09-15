@@ -1,6 +1,6 @@
 .dashboard-shell {
-  --sidebar-bg: #005691;
-  --sidebar-hover: #004677;
+  --sidebar-bg: #015599;
+  --sidebar-hover: #014a84;
   --main-bg: #ecf0f3;
   --table-border: #2c3e50;
   --text-light: #e0e0e0;
@@ -189,7 +189,7 @@
 
 .personal-information {
   display: grid;
-  grid-template-columns: minmax(260px, 0.9fr) minmax(360px, 1.4fr) minmax(300px, 1.35fr);
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
   gap: 14px;
   align-items: start;
 }
@@ -205,6 +205,40 @@
   border: 1px solid #d7e0e8;
   border-radius: 5px;
   box-shadow: 0 1px 3px rgba(15, 23, 42, 0.08);
+}
+
+.profile-loading,
+.profile-message {
+  padding: 20px;
+}
+
+.profile-message {
+  color: #1f2937;
+}
+
+.profile-message.error {
+  border-color: #fecaca;
+}
+
+.profile-message p {
+  margin: 0 0 14px;
+  color: #b91c1c;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.profile-message button {
+  min-height: 38px;
+  padding: 0 14px;
+  border: 0;
+  border-radius: 6px;
+  background: #0078d4;
+  color: #fff;
+  cursor: pointer;
+}
+
+.profile-message button:hover {
+  background: #006cbe;
 }
 
 .profile-card h2 {

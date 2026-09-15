@@ -7,7 +7,7 @@ import { DashboardLayout } from '../../dashboard/components/DashboardLayout'
 import { useNotification } from '../../notification'
 import { getRegistrationPeriods } from '../../topics/services/registrationPeriodApi'
 import type { RegistrationPeriod } from '../../topics/types/registrationPeriod.type'
-import { AppLoading } from '../../ui'
+import { AppLoading, Pagination } from '../../ui'
 import {
   createStudentGroup,
   deleteStudentGroup,
@@ -325,22 +325,12 @@ export function StudentGroupsPage() {
           </table>
         </div>
 
-        {totalPages > 1 && (
-          <nav className="app-pagination" aria-label="Phân trang nhóm sinh viên">
-            <button type="button" disabled={page === 1} onClick={() => setPage((current) => current - 1)}>‹</button>
-            {Array.from({ length: totalPages }, (_, index) => index + 1).map((pageNumber) => (
-              <button
-                type="button"
-                className={pageNumber === page ? 'active' : ''}
-                key={pageNumber}
-                onClick={() => setPage(pageNumber)}
-              >
-                {pageNumber}
-              </button>
-            ))}
-            <button type="button" disabled={page === totalPages} onClick={() => setPage((current) => current + 1)}>›</button>
-          </nav>
-        )}
+        <Pagination
+          currentPage={page}
+          totalPages={totalPages}
+          onPageChange={setPage}
+          ariaLabel="Phân trang nhóm sinh viên"
+        />
       </section>
 
       {isFormOpen && (
@@ -426,7 +416,11 @@ export function StudentGroupsPage() {
                     <dt>Kỳ đăng ký</dt>
                     <dd>{periodNameMap.get(detailGroup.registrationPeriodId) ?? `#${detailGroup.registrationPeriodId}`}</dd>
                     <dt>Trạng thái</dt>
-                    <dd>{detailGroup.status ? 'Đang hoạt động' : 'Không còn hoạt động'}</dd>
+                    <dd>
+                      <span className={`student-group-status ${detailGroup.status ? 'active' : 'inactive'}`}>
+                        {detailGroup.status ? 'Đang hoạt động' : 'Không còn hoạt động'}
+                      </span>
+                    </dd>
                     <dt>Người tạo</dt>
                     <dd>{detailGroup.createdBy}</dd>
                   </dl>

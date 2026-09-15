@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react'
 import { DashboardLayout } from '../../dashboard/components/DashboardLayout'
-import { AppLoading } from '../../ui'
+import { AppLoading, Pagination } from '../../ui'
 import {
   createDepartment,
   deleteDepartment,
@@ -206,22 +206,11 @@ export function DepartmentsPage() {
               </table>
             </div>
 
-            {totalPages > 1 && (
-              <nav className="app-pagination" aria-label="Phân trang">
-                <button type="button" disabled={page === 1} onClick={() => setPage((current) => current - 1)}>‹</button>
-                {Array.from({ length: totalPages }, (_, index) => index + 1).map((pageNumber) => (
-                  <button
-                    type="button"
-                    className={pageNumber === page ? 'active' : ''}
-                    key={pageNumber}
-                    onClick={() => setPage(pageNumber)}
-                  >
-                    {pageNumber}
-                  </button>
-                ))}
-                <button type="button" disabled={page === totalPages} onClick={() => setPage((current) => current + 1)}>›</button>
-              </nav>
-            )}
+            <Pagination
+              currentPage={page}
+              totalPages={totalPages}
+              onPageChange={setPage}
+            />
           </section>
 
       {isFormOpen && (
