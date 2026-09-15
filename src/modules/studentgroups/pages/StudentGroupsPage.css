@@ -1,0 +1,319 @@
+.student-groups-content {
+  width: 100%;
+}
+
+.student-groups-panel {
+  width: 100%;
+  min-height: 430px;
+  padding: 24px;
+  background: #f7f8fa;
+  border: 1px solid #e1e5ea;
+  border-radius: 8px;
+  color: #1f2937;
+}
+
+.student-groups-toolbar {
+  display: grid;
+  grid-template-columns: minmax(220px, 300px) minmax(260px, 1fr) auto;
+  gap: 14px;
+  align-items: end;
+  margin-bottom: 20px;
+}
+
+.student-group-filter,
+.student-group-search {
+  display: grid;
+  gap: 8px;
+}
+
+.student-group-search-box {
+  height: 40px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 0 12px;
+  background: #fff;
+  border: 1px solid #cbd5e1;
+  border-radius: 6px;
+}
+
+.student-group-search-box span {
+  color: #64748b;
+  font-size: 20px;
+}
+
+.student-group-search-box input {
+  width: 100%;
+  border: 0;
+  background: transparent;
+}
+
+.student-group-add-button,
+.student-group-modal-actions button {
+  min-height: 40px;
+  padding: 0 16px;
+  border: 0;
+  border-radius: 6px;
+  background: #0078d4;
+  color: #fff;
+  cursor: pointer;
+}
+
+.student-group-add-button:hover,
+.student-group-modal-actions button:hover {
+  background: #0064b1;
+}
+
+.student-group-add-button:disabled,
+.student-group-add-button:disabled:hover {
+  background: #94a3b8;
+  cursor: not-allowed;
+  opacity: 0.72;
+}
+
+.student-group-message {
+  margin-bottom: 16px;
+  padding: 10px 12px;
+  border-radius: 4px;
+  font-size: 14px;
+}
+
+.student-group-message.info {
+  background: #e0f2fe;
+  border: 1px solid #bae6fd;
+  color: #075985;
+}
+
+.student-group-message.error {
+  background: #fee2e2;
+  border: 1px solid #fecaca;
+  color: #991b1b;
+}
+
+.student-group-table-wrap {
+  width: 100%;
+  overflow-x: auto;
+}
+
+.student-group-table {
+  width: 100%;
+  min-width: 940px;
+  border-collapse: collapse;
+  background: #fff;
+}
+
+.student-group-table th,
+.student-group-table td {
+  padding: 13px 14px;
+  border: 1px solid #d8dee6;
+  text-align: left;
+  vertical-align: middle;
+}
+
+.student-group-table th {
+  background: #164a76;
+  color: #fff;
+  font-size: 14px;
+}
+
+.student-group-table th:first-child,
+.student-group-table td:first-child {
+  width: 80px;
+  text-align: center;
+}
+
+.student-group-table th:nth-child(4),
+.student-group-table td:nth-child(4),
+.student-group-table th:nth-child(5),
+.student-group-table td:nth-child(5),
+.student-group-table th:last-child,
+.student-group-table td:last-child {
+  text-align: center;
+}
+
+.student-group-table th:last-child,
+.student-group-table td:last-child {
+  width: 190px;
+}
+
+.student-group-table tbody tr:hover {
+  background: #f1f5f9;
+}
+
+.student-group-empty {
+  height: 120px;
+  text-align: center !important;
+  color: #64748b;
+}
+
+.student-group-status {
+  display: inline-block;
+  padding: 4px 9px;
+  border-radius: 999px;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.student-group-status.active {
+  background: #dcfce7;
+  color: #166534;
+}
+
+.student-group-status.inactive {
+  background: #dc2626;
+  color: #fff;
+}
+
+.student-group-actions {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+}
+
+.student-group-actions button {
+  min-width: 78px;
+  height: 34px;
+  border: 1px solid #bfdbfe;
+  border-radius: 4px;
+  background: #eff6ff;
+  color: #1d4ed8;
+  cursor: pointer;
+}
+
+.student-group-actions button.delete {
+  border-color: #fecaca;
+  background: #fff1f2;
+  color: #be123c;
+}
+
+.student-group-action-empty {
+  color: #94a3b8;
+}
+
+.student-group-modal-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 20;
+  display: grid;
+  place-items: center;
+  padding: 20px;
+  background: rgba(15, 23, 42, 0.68);
+}
+
+.student-group-modal {
+  width: min(620px, 100%);
+  max-height: calc(100vh - 40px);
+  overflow-y: auto;
+  background: #fff;
+  border-radius: 8px;
+  color: #1f2937;
+  box-shadow: 0 18px 50px rgba(0, 0, 0, 0.28);
+}
+
+.student-group-modal-header {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 18px 20px;
+  border-bottom: 1px solid #e2e8f0;
+  background: #fff;
+}
+
+.student-group-modal-header h3 {
+  font-size: 18px;
+}
+
+.student-group-modal-header button {
+  width: 34px;
+  height: 34px;
+  border: 0;
+  background: transparent;
+  color: #475569;
+  cursor: pointer;
+  font-size: 24px;
+}
+
+.student-group-modal form,
+.student-group-detail {
+  display: grid;
+  gap: 16px;
+  padding: 20px;
+}
+
+.student-group-note {
+  padding: 12px;
+  border: 1px solid #bfdbfe;
+  border-radius: 6px;
+  background: #eff6ff;
+  color: #1e3a8a;
+  font-size: 14px;
+}
+
+.student-group-help {
+  color: #64748b;
+  font-size: 13px;
+  line-height: 1.45;
+}
+
+.student-group-detail-grid {
+  display: grid;
+  grid-template-columns: 150px 1fr;
+  gap: 10px 14px;
+}
+
+.student-group-detail-grid dt {
+  font-weight: 700;
+}
+
+.student-group-detail-grid dd {
+  margin: 0;
+}
+
+.student-group-member-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.student-group-member-table th,
+.student-group-member-table td {
+  padding: 10px 12px;
+  border: 1px solid #d8dee6;
+  text-align: left;
+}
+
+.student-group-member-table th {
+  background: #f1f5f9;
+  color: #0f172a;
+}
+
+.student-group-modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 6px;
+}
+
+.student-group-modal-actions button.secondary {
+  border: 1px solid #cbd5e1;
+  background: #fff;
+  color: #334155;
+}
+
+.student-group-modal-actions button:disabled {
+  cursor: wait;
+  opacity: 0.65;
+}
+
+@media (max-width: 860px) {
+  .student-groups-toolbar {
+    grid-template-columns: 1fr;
+  }
+
+  .student-group-add-button {
+    width: 100%;
+  }
+}
