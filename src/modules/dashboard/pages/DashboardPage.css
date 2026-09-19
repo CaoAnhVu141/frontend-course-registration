@@ -132,19 +132,15 @@
 }
 
 .personal-info-link {
-  position: absolute;
-  z-index: 1;
-  top: 0;
-  left: 0;
-  width: 22px;
-  height: 28px;
-  padding: 0;
-  border: 0;
-  background: transparent;
-  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  padding: 2px;
 }
 
-.top-actions img {
+.personal-info-link img {
   width: 30px;
   height: 30px;
   border-radius: 50%;
