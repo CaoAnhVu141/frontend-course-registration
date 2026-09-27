@@ -6,7 +6,7 @@ import '../pages/DashboardPage.css'
 
 type DashboardLayoutProps = {
   title?: string
-  children: ReactNode
+  children?: ReactNode
   contentClassName?: string
 }
 
