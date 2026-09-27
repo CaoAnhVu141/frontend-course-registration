@@ -31,6 +31,14 @@ export const tokenStorage = {
         return localStorage.getItem(STORAGE_KEYS.accessToken)
     },
 
+    getRefreshToken() {
+        return localStorage.getItem(STORAGE_KEYS.refreshToken)
+    },
+
+    getTokenType() {
+        return localStorage.getItem(STORAGE_KEYS.tokenType) ?? 'Bearer'
+    },
+
     getUser(): AuthUser | null {
         const rawUser = localStorage.getItem(STORAGE_KEYS.authUser)
 
