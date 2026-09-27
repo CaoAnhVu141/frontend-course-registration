@@ -71,7 +71,6 @@ export function LoginPage() {
       <div className="login-container">
         <div className="login-box">
           <div className="logo">
-            <div className="logo-icon">🎓</div>
             <h1>Đăng Nhập</h1>
             <p>Hệ thống đăng nhập thông tin</p>
           </div>
