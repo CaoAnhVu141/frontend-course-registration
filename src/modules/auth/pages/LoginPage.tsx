@@ -11,16 +11,25 @@ const brandTitle = [
 ]
 
 export function LoginPage() {
-  const { success } = useNotification()
+  const { success, warning } = useNotification()
 
   useEffect(() => {
     const logoutMessage = sessionStorage.getItem(STORAGE_KEYS.logoutMessage)
 
-    if (!logoutMessage) return
+    if (logoutMessage) {
+      sessionStorage.removeItem(STORAGE_KEYS.logoutMessage)
+      success(logoutMessage)
+    }
 
-    sessionStorage.removeItem(STORAGE_KEYS.logoutMessage)
-    success(logoutMessage)
-  }, [success])
+    const sessionExpiredMessage = sessionStorage.getItem(
+      STORAGE_KEYS.sessionExpiredMessage,
+    )
+
+    if (sessionExpiredMessage) {
+      sessionStorage.removeItem(STORAGE_KEYS.sessionExpiredMessage)
+      warning(sessionExpiredMessage)
+    }
+  }, [success, warning])
 
   function handleLoginSuccess() {
     window.location.href = '/dashboard'
