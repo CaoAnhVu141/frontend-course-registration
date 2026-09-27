@@ -5,6 +5,7 @@ import {
     ClipboardCheck,
     FileText,
     FolderUp,
+    Gavel,
     GraduationCap,
     Tags,
     UserRound,
@@ -32,6 +33,7 @@ const navigationItems: NavItem[] = [
     { label: 'Quản lý đề tài', icon: FileText, href: '/topics', roles: ['ADMIN', 'LECTURER'] },
     { label: 'Quản lý đăng ký đề tài', icon: ClipboardCheck, href: '/topic-registrations', roles: ['ADMIN', 'LECTURER', 'STUDENT'] },
     { label: 'Quản lý bài nộp', icon: FolderUp, href: '/submissions', roles: ['ADMIN', 'LECTURER', 'STUDENT'] },
+    { label: 'Quản lý hội đồng', icon: Gavel, href: '/defense-committees', roles: ['ADMIN', 'LECTURER'] },
 ]
 
 export const navItems = navigationItems.map((item) =>

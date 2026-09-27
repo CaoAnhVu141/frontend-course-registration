@@ -10,12 +10,13 @@ import { StudentGroupsPage } from './modules/studentgroups'
 import { RegistrationPeriodsPage } from './modules/registrationperiods'
 import { TopicRegistrationsPage } from './modules/topicregistrations'
 import { SubmissionsPage } from './modules/submissions'
+import { DefenseCommitteesPage } from './modules/defensecommittees'
 
 function App() {
   const path = window.location.pathname
   const isAuthenticated = Boolean(tokenStorage.getAccessToken())
 
-  if (path === '/dashboard' || path === '/departments' || path === '/lecturers' || path === '/students' || path === "/expertisetags" || path === '/topics' || path === '/student-groups' || path === '/registration-periods' || path === '/topic-registrations' || path === '/submissions') {
+  if (path === '/dashboard' || path === '/departments' || path === '/lecturers' || path === '/students' || path === "/expertisetags" || path === '/topics' || path === '/student-groups' || path === '/registration-periods' || path === '/topic-registrations' || path === '/submissions' || path === '/defense-committees') {
     if (!isAuthenticated) {
       window.location.href = '/'
       return null
@@ -30,6 +31,7 @@ function App() {
     if (path === '/registration-periods') return <RegistrationPeriodsPage />
     if (path === '/topic-registrations') return <TopicRegistrationsPage />
     if (path === '/submissions') return <SubmissionsPage />
+    if (path === '/defense-committees') return <DefenseCommitteesPage />
     return <DashboardPage />
   }
 
