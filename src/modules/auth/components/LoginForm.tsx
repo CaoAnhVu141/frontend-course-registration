@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import type { FormEvent } from 'react'
+import { Eye, EyeOff, Lock, User } from 'lucide-react'
 import { login } from '../services/authApi'
 import { tokenStorage } from '../../../shared/services/tokenStorage'
 import { STORAGE_KEYS } from '../../../shared/constants/storageKeys'
@@ -63,7 +64,9 @@ export function LoginForm({ onLoginSuccess }: LoginFormProps) {
       <div className="form-group">
         <label htmlFor="username">Tên đăng nhập</label>
         <div className="input-box">
-          <span className="input-icon">👤</span>
+          <span className="input-icon">
+            <User aria-hidden="true" size={18} strokeWidth={1.9} />
+          </span>
           <input
             id="username"
             type="text"
@@ -79,7 +82,9 @@ export function LoginForm({ onLoginSuccess }: LoginFormProps) {
       <div className="form-group">
         <label htmlFor="password">Mật khẩu</label>
         <div className="input-box">
-          <span className="input-icon">🔒</span>
+          <span className="input-icon">
+            <Lock aria-hidden="true" size={18} strokeWidth={1.9} />
+          </span>
           <input
             id="password"
             type={showPassword ? 'text' : 'password'}
@@ -93,8 +98,14 @@ export function LoginForm({ onLoginSuccess }: LoginFormProps) {
             className="password-toggle"
             type="button"
             onClick={() => setShowPassword((current) => !current)}
+            aria-label={showPassword ? 'Ẩn mật khẩu' : 'Hiện mật khẩu'}
+            title={showPassword ? 'Ẩn mật khẩu' : 'Hiện mật khẩu'}
           >
-            {showPassword ? '🙈' : '👁'}
+            {showPassword ? (
+              <EyeOff aria-hidden="true" size={18} strokeWidth={1.9} />
+            ) : (
+              <Eye aria-hidden="true" size={18} strokeWidth={1.9} />
+            )}
           </button>
         </div>
       </div>

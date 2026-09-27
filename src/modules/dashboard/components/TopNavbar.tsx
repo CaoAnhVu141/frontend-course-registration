@@ -1,3 +1,4 @@
+import { Bell, Flag, LogOut } from 'lucide-react'
 import { tokenStorage } from '../../../shared/services/tokenStorage'
 import { STORAGE_KEYS } from '../../../shared/constants/storageKeys'
 import { logout } from '../../auth/services/authApi'
@@ -39,8 +40,12 @@ export function TopNavbar() {
           aria-label="Thông tin cá nhân"
           title="Thông tin cá nhân"
         />
-        <span className="flag-icon">⚑</span>
-        <span className="bell-icon">●</span>
+        <span className="flag-icon">
+          <Flag aria-hidden="true" size={18} strokeWidth={1.9} />
+        </span>
+        <span className="bell-icon">
+          <Bell aria-hidden="true" size={18} strokeWidth={1.9} />
+        </span>
         <img
           src="https://www.iconpacks.net/icons/2/free-user-icon-3296-thumb.png"
           alt="User"
@@ -51,7 +56,7 @@ export function TopNavbar() {
           aria-label="Đăng xuất"
           title="Đăng xuất"
         >
-          ↪
+          <LogOut aria-hidden="true" size={18} strokeWidth={1.9} />
         </button>
       </div>
     </header>
