@@ -1,61 +1,65 @@
 .auth-page {
   min-height: 100vh;
-  background: url('https://hcmute.edu.vn/Resources/Images/SubDomain/HomePage/Nut/H%C3%ACnh%20%E1%BA%A3nh/Nen%20cong%20truong.jpg') no-repeat center center fixed;
-  background-size: cover;
+  background: #f1f5f9;
   position: relative;
+  overflow: hidden;
 }
 
+/* Mảng thương hiệu bên trái */
 .auth-page::before {
   content: '';
   position: absolute;
-  inset: 0;
-  background: rgba(0, 0, 0, 0.35);
+  inset: 0 auto 0 0;
+  width: 52%;
+  background:
+    radial-gradient(
+      circle at 82% 12%,
+      rgba(56, 189, 248, 0.28),
+      transparent 55%
+    ),
+    linear-gradient(150deg, #0f2f57 0%, #164a76 58%, #0b6ba8 100%);
   z-index: 0;
 }
 
 .login-container {
   position: relative;
-  z-index: 1;
+  z-index: 2;
   width: 100%;
   min-height: 100vh;
   display: flex;
   align-items: center;
-  justify-content: center;
-  padding: 20px;
+  justify-content: flex-end;
+  padding: 40px clamp(24px, 6vw, 96px);
 }
 
 .login-box {
   width: 100%;
-  max-width: 430px;
+  max-width: 400px;
   background: #fff;
-  border-radius: 20px;
-  padding: 40px;
-  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.2);
-  animation: fadeIn 0.5s ease;
+  border: 1px solid #e2e8f0;
+  border-radius: 14px;
+  padding: 40px 36px;
+  box-shadow: 0 18px 48px rgba(15, 47, 87, 0.12);
+  animation: fadeIn 0.4s ease;
 }
 
 .logo {
-  text-align: center;
-  margin-bottom: 35px;
+  text-align: left;
+  margin-bottom: 28px;
 }
 
+/* Bỏ icon emoji tròn */
 .logo-icon {
-  width: 70px;
-  height: 70px;
-  margin: 0 auto 15px;
-  background: #eef2ff;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 35px;
+  display: none;
 }
 
 .logo h1 {
-  font-size: 25px;
-  line-height: 1.2;
-  color: #1e293b;
-  margin-bottom: 8px;
+  font-size: 24px;
+  font-weight: 700;
+  line-height: 1.25;
+  color: #0f2f57;
+  margin-bottom: 6px;
+  letter-spacing: -0.01em;
 }
 
 .logo p {
@@ -64,7 +68,7 @@
 }
 
 .form-group {
-  margin-bottom: 20px;
+  margin-bottom: 18px;
 }
 
 .form-group label {
@@ -78,85 +82,95 @@
   align-items: center;
 }
 
+/* Bỏ icon emoji trong ô nhập */
 .input-icon {
-  position: absolute;
-  left: 15px;
-  font-size: 17px;
-  z-index: 2;
+  display: none;
 }
 
 .input-box input {
   width: 100%;
-  height: 50px;
-  border: 1px solid #cbd5e1;
-  border-radius: 10px;
-  padding: 0 45px;
+  height: 46px;
+  border: 1px solid var(--form-border);
+  border-radius: 8px;
+  padding: 0 44px 0 14px;
+  background: #fff;
 }
 
 .password-toggle {
   position: absolute;
-  right: 10px;
-  width: 35px;
-  height: 35px;
+  right: 8px;
+  width: 32px;
+  height: 32px;
   border: none;
+  border-radius: 6px;
   background: transparent;
+  color: #64748b;
   cursor: pointer;
-  font-size: 16px;
+  font-size: 14px;
+  opacity: 0.7;
   display: flex;
   align-items: center;
   justify-content: center;
+  transition: opacity 160ms ease, background-color 160ms ease;
+}
+
+.password-toggle:hover {
+  opacity: 1;
+  background: #f1f5f9;
 }
 
 .login-button {
   width: 100%;
-  height: 50px;
-  margin-top: 5px;
+  height: 46px;
+  margin-top: 4px;
   border: none;
-  border-radius: 10px;
-  background: #4f46e5;
+  border-radius: 8px;
+  background: #0f2f57;
   color: #fff;
-  font-size: 16px;
+  font-size: 15px;
+  font-weight: 600;
+  letter-spacing: 0.01em;
   cursor: pointer;
-  transition: 0.2s;
   display: flex;
   align-items: center;
   justify-content: center;
+  transition: background-color 160ms ease;
 }
 
-.login-button:hover {
-  background: #4338ca;
-  transform: translateY(-1px);
+.login-button:hover:not(:disabled) {
+  background: #164a76;
 }
 
 .login-button:disabled {
-  background: #a5b4fc;
+  background: #94a3b8;
   cursor: not-allowed;
-  transform: none;
 }
 
 .message {
   min-height: 20px;
   margin-bottom: 10px;
-  text-align: center;
-  font-size: 14px;
+  font-size: 13px;
+  line-height: 1.45;
 }
 
 .message.error {
-  color: #dc2626;
+  color: #b91c1c;
 }
 
 .loading {
-  width: 20px;
-  height: 20px;
-  border: 3px solid rgba(255, 255, 255, 0.4);
+  width: 18px;
+  height: 18px;
+  border: 2.5px solid rgba(255, 255, 255, 0.35);
   border-top-color: #fff;
   border-radius: 50%;
   animation: spin 0.7s linear infinite;
 }
 
 .login-footer {
+  margin-top: 26px;
+  padding-top: 18px;
+  border-top: 1px solid #eef2f6;
   text-align: center;
-  margin-top: 30px;
   color: #94a3b8;
   font-size: 12px;
 }
@@ -170,7 +184,7 @@
 @keyframes fadeIn {
   from {
     opacity: 0;
-    transform: translateY(15px);
+    transform: translateY(12px);
   }
 
   to {
@@ -179,12 +193,26 @@
   }
 }
 
+@media (max-width: 1024px) {
+  .auth-page::before {
+    width: 100%;
+    height: 240px;
+    inset: 0 0 auto 0;
+    background: linear-gradient(140deg, #0f2f57 0%, #164a76 60%, #0b6ba8 100%);
+  }
+
+  .login-container {
+    justify-content: center;
+    padding: 216px 24px 48px;
+  }
+}
+
 @media (max-width: 480px) {
   .login-box {
-    padding: 30px 25px;
+    padding: 28px 22px;
   }
 
   .logo h1 {
-    font-size: 22px;
+    font-size: 21px;
   }
 }
