@@ -1,4 +1,5 @@
 import { useEffect } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { useNotification } from '../../notification'
 import { STORAGE_KEYS } from '../../../shared/constants/storageKeys'
 import { LoginForm } from '../components/LoginForm'
@@ -11,6 +12,7 @@ const brandTitle = [
 ]
 
 export function LoginPage() {
+  const navigate = useNavigate()
   const { success, warning } = useNotification()
 
   useEffect(() => {
@@ -32,7 +34,7 @@ export function LoginPage() {
   }, [success, warning])
 
   function handleLoginSuccess() {
-    window.location.href = '/dashboard'
+    navigate('/dashboard', { replace: true })
   }
 
   return (

@@ -158,18 +158,8 @@ export function TopicRegistrationsPage() {
   }, [canCreateRegistration, canReviewRegistrations, showError])
 
   useEffect(() => {
-    if (!user) {
-      window.location.href = '/'
-      return
-    }
-
-    if (!canReviewRegistrations && !canCreateRegistration) {
-      window.location.href = '/dashboard'
-      return
-    }
-
     void loadData()
-  }, [canCreateRegistration, canReviewRegistrations, loadData, user])
+  }, [loadData])
 
   useEffect(() => {
     setPage(1)

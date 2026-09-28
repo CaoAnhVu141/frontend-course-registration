@@ -111,18 +111,8 @@ export function SubmissionsPage() {
   }, [canViewAll, showError])
 
   useEffect(() => {
-    if (!user) {
-      window.location.href = '/'
-      return
-    }
-
-    if (!canViewAll && !canCreateSubmission) {
-      window.location.href = '/dashboard'
-      return
-    }
-
     void loadSubmissions()
-  }, [canCreateSubmission, canViewAll, loadSubmissions, user])
+  }, [loadSubmissions])
 
   useEffect(() => {
     setPage(1)

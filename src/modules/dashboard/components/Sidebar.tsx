@@ -1,3 +1,4 @@
+import { NavLink } from 'react-router-dom'
 import type { AuthUser } from '../../auth/types/auth.type'
 import hcmuteLogo from '../../../assets/hcmute-logo.png'
 import { getRoleLabel, hasRole } from '../../../shared/utils/roleLabel'
@@ -8,8 +9,6 @@ type SidebarProps = {
 }
 
 export function Sidebar({ user }: SidebarProps) {
-  const currentPath = window.location.pathname
-
   const visibleNavItems = navItems.filter(
     (item) =>
       !item.roles ||
@@ -41,15 +40,15 @@ export function Sidebar({ user }: SidebarProps) {
 
           return (
             <li key={item.label}>
-              <a
-                className={item.href === currentPath ? 'active' : ''}
-                href={item.href}
+              <NavLink
+                className={({ isActive }) => (isActive ? 'active' : '')}
+                to={item.href}
               >
                 <span className="nav-icon">
                   <Icon aria-hidden="true" size={19} strokeWidth={1.9} />
                 </span>
                 {item.label}
-              </a>
+              </NavLink>
             </li>
           )
         })}

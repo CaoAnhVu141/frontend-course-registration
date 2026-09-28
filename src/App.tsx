@@ -1,7 +1,11 @@
+import type { ReactElement } from 'react'
+import { Navigate, Route, Routes } from 'react-router-dom'
 import { LoginPage } from './modules/auth'
+import type { UserRole } from './modules/auth'
 import { DashboardPage } from './modules/dashboard'
 import { DepartmentsPage } from './modules/departments'
 import { tokenStorage } from './shared/services/tokenStorage'
+import { hasRole } from './shared/utils/roleLabel'
 import { LecturersPage } from './modules/lecturers'
 import { StudentsPage } from './modules/students'
 import { ExpertiseTagsPage } from './modules/expertisetags'
@@ -12,35 +16,142 @@ import { TopicRegistrationsPage } from './modules/topicregistrations'
 import { SubmissionsPage } from './modules/submissions'
 import { DefenseCommitteesPage } from './modules/defensecommittees'
 
-function App() {
-  const path = window.location.pathname
+type ProtectedRouteProps = {
+  children: ReactElement
+  roles?: UserRole[]
+}
+
+function ProtectedRoute({ children, roles }: ProtectedRouteProps) {
   const isAuthenticated = Boolean(tokenStorage.getAccessToken())
 
-  if (path === '/dashboard' || path === '/departments' || path === '/lecturers' || path === '/students' || path === "/expertisetags" || path === '/topics' || path === '/student-groups' || path === '/registration-periods' || path === '/topic-registrations' || path === '/submissions' || path === '/defense-committees') {
-    if (!isAuthenticated) {
-      window.location.href = '/'
-      return null
-    }
-
-    if (path === '/departments') return <DepartmentsPage />
-    if (path === '/lecturers') return <LecturersPage />
-    if (path === '/students') return <StudentsPage />
-    if (path === '/expertisetags') return <ExpertiseTagsPage />
-    if (path === '/topics') return <TopicsPage />
-    if (path === '/student-groups') return <StudentGroupsPage />
-    if (path === '/registration-periods') return <RegistrationPeriodsPage />
-    if (path === '/topic-registrations') return <TopicRegistrationsPage />
-    if (path === '/submissions') return <SubmissionsPage />
-    if (path === '/defense-committees') return <DefenseCommitteesPage />
-    return <DashboardPage />
+  if (!isAuthenticated) {
+    return <Navigate to="/" replace />
   }
 
-  if (isAuthenticated) {
-    window.location.href = '/dashboard'
-    return null
+  const user = tokenStorage.getUser()
+  const isAllowed =
+    !roles || roles.some((role) => hasRole(user?.roles, role))
+
+  if (!isAllowed) {
+    return <Navigate to="/dashboard" replace />
   }
 
-  return <LoginPage />
+  return children
+}
+
+function LoginRoute() {
+  const isAuthenticated = Boolean(tokenStorage.getAccessToken())
+
+  return isAuthenticated ? <Navigate to="/dashboard" replace /> : <LoginPage />
+}
+
+function App() {
+  return (
+    <Routes>
+      <Route path="/" element={<LoginRoute />} />
+
+      <Route
+        path="/dashboard"
+        element={
+          <ProtectedRoute>
+            <DashboardPage />
+          </ProtectedRoute>
+        }
+      />
+
+      <Route
+        path="/departments"
+        element={
+          <ProtectedRoute roles={['ADMIN']}>
+            <DepartmentsPage />
+          </ProtectedRoute>
+        }
+      />
+
+      <Route
+        path="/expertisetags"
+        element={
+          <ProtectedRoute roles={['ADMIN']}>
+            <ExpertiseTagsPage />
+          </ProtectedRoute>
+        }
+      />
+
+      <Route
+        path="/lecturers"
+        element={
+          <ProtectedRoute roles={['ADMIN']}>
+            <LecturersPage />
+          </ProtectedRoute>
+        }
+      />
+
+      <Route
+        path="/registration-periods"
+        element={
+          <ProtectedRoute roles={['ADMIN']}>
+            <RegistrationPeriodsPage />
+          </ProtectedRoute>
+        }
+      />
+
+      <Route
+        path="/students"
+        element={
+          <ProtectedRoute roles={['ADMIN', 'LECTURER']}>
+            <StudentsPage />
+          </ProtectedRoute>
+        }
+      />
+
+      <Route
+        path="/topics"
+        element={
+          <ProtectedRoute roles={['ADMIN', 'LECTURER']}>
+            <TopicsPage />
+          </ProtectedRoute>
+        }
+      />
+
+      <Route
+        path="/student-groups"
+        element={
+          <ProtectedRoute roles={['ADMIN', 'LECTURER', 'STUDENT']}>
+            <StudentGroupsPage />
+          </ProtectedRoute>
+        }
+      />
+
+      <Route
+        path="/topic-registrations"
+        element={
+          <ProtectedRoute roles={['ADMIN', 'LECTURER', 'STUDENT']}>
+            <TopicRegistrationsPage />
+          </ProtectedRoute>
+        }
+      />
+
+      <Route
+        path="/submissions"
+        element={
+          <ProtectedRoute roles={['ADMIN', 'LECTURER', 'STUDENT']}>
+            <SubmissionsPage />
+          </ProtectedRoute>
+        }
+      />
+
+      <Route
+        path="/defense-committees"
+        element={
+          <ProtectedRoute roles={['ADMIN', 'LECTURER']}>
+            <DefenseCommitteesPage />
+          </ProtectedRoute>
+        }
+      />
+
+      <Route path="*" element={<Navigate to="/" replace />} />
+    </Routes>
+  )
 }
 
 export default App
