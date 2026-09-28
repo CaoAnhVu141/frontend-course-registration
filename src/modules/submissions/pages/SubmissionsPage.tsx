@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import type { FormEvent } from 'react'
+import { Eye, Search, Upload } from 'lucide-react'
 import { tokenStorage } from '../../../shared/services/tokenStorage'
 import { hasRole } from '../../../shared/utils/roleLabel'
 import { DashboardLayout } from '../../dashboard/components/DashboardLayout'
@@ -308,7 +309,7 @@ export function SubmissionsPage() {
       <section className="submissions-panel">
         <div className="submissions-toolbar">
           <label className="submission-search">
-            <span aria-hidden="true">⌕</span>
+            <Search aria-hidden="true" size={17} strokeWidth={2} />
             <input
               type="search"
               value={search}
@@ -417,7 +418,7 @@ export function SubmissionsPage() {
                             type="button"
                             onClick={() => void openDetail(submission)}
                           >
-                            <span className="app-view-icon" aria-hidden="true" />
+                            <Eye aria-hidden="true" size={16} strokeWidth={1.9} />
                             <span>Chi tiết</span>
                           </button>
 
@@ -427,7 +428,7 @@ export function SubmissionsPage() {
                               className="upload"
                               onClick={() => openVersionForm(submission)}
                             >
-                              ↑ <span>Nộp báo cáo</span>
+                              <Upload aria-hidden="true" size={16} strokeWidth={1.9} /> <span>Nộp báo cáo</span>
                             </button>
                           )}
                         </div>

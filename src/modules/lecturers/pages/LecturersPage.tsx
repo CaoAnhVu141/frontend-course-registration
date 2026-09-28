@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from 'react'
+import { Eye, Pencil, Search, Trash2, X } from 'lucide-react'
 import { useConfirmation } from '../../confirmation'
 import { DashboardLayout } from '../../dashboard/components/DashboardLayout'
 import { useNotification } from '../../notification'
@@ -256,7 +257,7 @@ export function LecturersPage() {
           <section className="lecturers-panel">
             <div className="lecturers-toolbar">
               <label className="lecturer-search">
-                <span>⌕</span>
+                <Search aria-hidden="true" size={17} strokeWidth={2} />
                 <input
                   type="search"
                   value={search}
@@ -303,9 +304,9 @@ export function LecturersPage() {
                         <td>{lecturer.maxReviewLoad}</td>
                         <td>{getExpertiseNames(lecturer.expertiseTagIds, expertiseTagNameMap)}</td>
                         <td className="lecturer-actions">
-                          <button type="button" onClick={() => void openDetail(lecturer)} title="Chi tiết"><span className="app-view-icon" aria-hidden="true" /><span>Chi tiết</span></button>
-                          <button type="button" onClick={() => openEditForm(lecturer)} title="Sửa"><span className="app-action-icon edit" aria-hidden="true" /><span>Sửa</span></button>
-                          <button type="button" className="delete" onClick={() => void handleDelete(lecturer)} title="Xóa"><span className="app-action-icon delete" aria-hidden="true" /><span>Xóa</span></button>
+                          <button type="button" onClick={() => void openDetail(lecturer)} title="Chi tiết"><Eye aria-hidden="true" size={16} strokeWidth={1.9} /><span>Chi tiết</span></button>
+                          <button type="button" onClick={() => openEditForm(lecturer)} title="Sửa"><Pencil aria-hidden="true" size={16} strokeWidth={1.9} /><span>Sửa</span></button>
+                          <button type="button" className="delete" onClick={() => void handleDelete(lecturer)} title="Xóa"><Trash2 aria-hidden="true" size={16} strokeWidth={1.9} /><span>Xóa</span></button>
                         </td>
                       </tr>
                     ))
@@ -326,7 +327,7 @@ export function LecturersPage() {
           <section className="lecturer-modal" role="dialog" aria-modal="true" onMouseDown={(event) => event.stopPropagation()}>
             <div className="lecturer-modal-header">
               <h3>{editingLecturer ? 'Cập nhật giảng viên' : 'Thêm giảng viên'}</h3>
-              <button type="button" onClick={closeForm} aria-label="Đóng" title="Đóng">×</button>
+              <button type="button" onClick={closeForm} aria-label="Đóng" title="Đóng"><X aria-hidden="true" size={20} strokeWidth={2} /></button>
             </div>
 
             <form onSubmit={(event) => void handleSubmit(event)}>
@@ -371,7 +372,7 @@ export function LecturersPage() {
           <section className="lecturer-modal lecturer-detail-modal" role="dialog" aria-modal="true" onMouseDown={(event) => event.stopPropagation()}>
             <div className="lecturer-modal-header">
               <h3>Chi tiết giảng viên</h3>
-              <button type="button" onClick={closeDetail} aria-label="Đóng" title="Đóng">×</button>
+              <button type="button" onClick={closeDetail} aria-label="Đóng" title="Đóng"><X aria-hidden="true" size={20} strokeWidth={2} /></button>
             </div>
             <div className="lecturer-detail">
               {isDetailLoading ? (

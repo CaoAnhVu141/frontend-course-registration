@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import type { FormEvent } from 'react'
-import { CircleUser, Eye, Gavel, Lock, UserPlus } from 'lucide-react'
+import { CircleUser, Eye, Gavel, Lock, UserPlus, X } from 'lucide-react'
 import { tokenStorage } from '../../../shared/services/tokenStorage'
 import { hasRole } from '../../../shared/utils/roleLabel'
 import { useConfirmation } from '../../confirmation'
@@ -545,7 +545,7 @@ export function DefenseCommitteesPage() {
             <div className="defense-committee-modal-header">
               <h3 id="defense-committee-form-title">Tạo hội đồng bảo vệ</h3>
               <button type="button" onClick={closeCreateForm} aria-label="Đóng">
-                ×
+                <X aria-hidden="true" size={20} strokeWidth={2} />
               </button>
             </div>
             <form onSubmit={(event) => void handleCreateSubmit(event)}>
@@ -649,7 +649,7 @@ export function DefenseCommitteesPage() {
                 Thêm thành viên - {memberCommittee.code}
               </h3>
               <button type="button" onClick={closeMemberForm} aria-label="Đóng">
-                ×
+                <X aria-hidden="true" size={20} strokeWidth={2} />
               </button>
             </div>
             <form onSubmit={(event) => void handleMemberSubmit(event)}>
@@ -735,7 +735,7 @@ export function DefenseCommitteesPage() {
             <div className="defense-committee-modal-header">
               <h3 id="defense-committee-detail-title">Chi tiết hội đồng</h3>
               <button type="button" onClick={closeDetail} aria-label="Đóng">
-                ×
+                <X aria-hidden="true" size={20} strokeWidth={2} />
               </button>
             </div>
             <div className="defense-committee-detail">
@@ -836,7 +836,7 @@ export function DefenseCommitteesPage() {
             <div className="defense-committee-modal-header">
               <h3 id="defense-committee-mine-title">Hội đồng của tôi</h3>
               <button type="button" onClick={closeMyCommittees} aria-label="Đóng">
-                ×
+                <X aria-hidden="true" size={20} strokeWidth={2} />
               </button>
             </div>
             <div className="defense-committee-detail">

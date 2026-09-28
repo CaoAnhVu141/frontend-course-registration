@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import type { FormEvent } from 'react'
+import { Eye, Pencil, Trash2, X } from 'lucide-react'
 import { tokenStorage } from '../../../shared/services/tokenStorage'
 import { hasRole } from '../../../shared/utils/roleLabel'
 import { DashboardLayout } from '../../dashboard/components/DashboardLayout'
@@ -231,14 +232,14 @@ export function StudentsPage() {
                       title="Chi tiết sinh viên"
                       onClick={() => void openDetail(student)}
                     >
-                      <span className="app-view-icon" aria-hidden="true" /><span>Chi tiết</span>
+                      <Eye aria-hidden="true" size={16} strokeWidth={1.9} /><span>Chi tiết</span>
                     </button>
                     <button
                       title={canManage ? 'Sửa sinh viên' : 'Bạn không có quyền sửa sinh viên'}
                       disabled={!canManage || deletingId !== null}
                       onClick={() => openForm(student)}
                     >
-                      <span className="app-action-icon edit" aria-hidden="true" /><span>Sửa</span>
+                      <Pencil aria-hidden="true" size={16} strokeWidth={1.9} /><span>Sửa</span>
                     </button>
                     <button
                       className="student-delete"
@@ -246,7 +247,7 @@ export function StudentsPage() {
                       disabled={!canManage || deletingId !== null}
                       onClick={() => void handleDelete(student)}
                     >
-                      <span className="app-action-icon delete" aria-hidden="true" /><span>{deletingId === student.userId ? 'Đang xử lý...' : 'Xóa'}</span>
+                      <Trash2 aria-hidden="true" size={16} strokeWidth={1.9} /><span>{deletingId === student.userId ? 'Đang xử lý...' : 'Xóa'}</span>
                     </button>
                   </div></td>
                 </tr>
@@ -267,7 +268,7 @@ export function StudentsPage() {
       <section role="dialog" aria-modal="true" className="student-modal student-detail-modal" aria-labelledby="student-detail-title">
         <div className="student-modal-header">
           <h3 id="student-detail-title">Chi tiết sinh viên</h3>
-          <button type="button" title="Đóng" aria-label="Đóng" disabled={isDetailLoading} onClick={closeDetail}>×</button>
+          <button type="button" title="Đóng" aria-label="Đóng" disabled={isDetailLoading} onClick={closeDetail}><X aria-hidden="true" size={20} strokeWidth={2} /></button>
         </div>
         <div className="student-detail">
           {isDetailLoading ? (
@@ -295,7 +296,7 @@ export function StudentsPage() {
       <section ref={dialogRef} role="dialog" aria-modal="true" className="student-modal" aria-labelledby="student-form-title">
         <div className="student-modal-header">
           <h3 id="student-form-title">{editingStudent ? 'Cập nhật sinh viên' : 'Thêm sinh viên'}</h3>
-          <button type="button" title="Đóng" aria-label="Đóng" disabled={isSaving} onClick={closeForm}>×</button>
+          <button type="button" title="Đóng" aria-label="Đóng" disabled={isSaving} onClick={closeForm}><X aria-hidden="true" size={20} strokeWidth={2} /></button>
         </div>
         <form noValidate onSubmit={(event) => void handleSubmit(event)}>
           <fieldset disabled={isSaving}>

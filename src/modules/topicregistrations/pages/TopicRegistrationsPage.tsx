@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import type { FormEvent, ReactNode } from 'react'
+import { Ban, Check, Eye, Search, XCircle } from 'lucide-react'
 import { tokenStorage } from '../../../shared/services/tokenStorage'
 import { hasRole } from '../../../shared/utils/roleLabel'
 import { useConfirmation } from '../../confirmation'
@@ -348,7 +349,7 @@ export function TopicRegistrationsPage() {
           )}
 
           <label className="topic-registration-search">
-            <span aria-hidden="true">⌕</span>
+            <Search aria-hidden="true" size={17} strokeWidth={2} />
             <input
               value={search}
               onChange={(event) => setSearch(event.target.value)}
@@ -709,7 +710,7 @@ function renderActions({
       key="detail"
       onClick={() => void openDetail(registration)}
     >
-      <span className="app-view-icon" aria-hidden="true" />
+      <Eye aria-hidden="true" size={16} strokeWidth={1.9} />
       <span>Chi tiết</span>
     </button>,
   ]
@@ -723,7 +724,7 @@ function renderActions({
         key="approve"
         onClick={() => void handleApprove(registration)}
       >
-        <span className="app-action-icon approve" aria-hidden="true" />
+        <Check aria-hidden="true" size={16} strokeWidth={1.9} />
         <span>Duyệt</span>
       </button>,
       <button
@@ -733,7 +734,7 @@ function renderActions({
         key="reject"
         onClick={() => openRejectForm(registration)}
       >
-        <span className="app-action-icon reject" aria-hidden="true" />
+        <XCircle aria-hidden="true" size={16} strokeWidth={1.9} />
         <span>Từ chối</span>
       </button>,
     )
@@ -748,7 +749,7 @@ function renderActions({
         key="cancel"
         onClick={() => void handleCancel(registration)}
       >
-        <span className="app-action-icon cancel" aria-hidden="true" />
+        <Ban aria-hidden="true" size={16} strokeWidth={1.9} />
         <span>Hủy</span>
       </button>,
     )
