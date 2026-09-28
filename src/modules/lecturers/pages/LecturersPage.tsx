@@ -241,16 +241,6 @@ export function LecturersPage() {
     setDetailLecturer(null)
   }
 
-  if (!user) {
-    window.location.href = '/'
-    return null
-  }
-
-  if (!isAdmin) {
-    window.location.href = '/dashboard'
-    return null
-  }
-
   return (
     <DashboardLayout title="QUẢN LÝ GIẢNG VIÊN" contentClassName="lecturers-content">
       <>

@@ -18,9 +18,7 @@ const emptyForm = { username: '', email: '', password: '', studentCode: '', depa
 
 export function StudentsPage() {
   const user = tokenStorage.getUser()
-  const hasUser = Boolean(user)
   const canManage = hasRole(user?.roles, 'ADMIN')
-  const canView = canManage || hasRole(user?.roles, 'LECTURER')
   const { success, error: showError } = useNotification()
   const { confirm } = useConfirmation()
   const [students, setStudents] = useState<Student[]>([])
@@ -41,10 +39,6 @@ export function StudentsPage() {
   const mutationPending = useRef(false)
 
   useEffect(() => {
-    if (!canView) {
-      window.location.replace(hasUser ? '/dashboard' : '/')
-      return
-    }
     let cancelled = false
     setIsLoading(true)
     setLoadError('')
@@ -59,7 +53,7 @@ export function StudentsPage() {
       })
       .finally(() => { if (!cancelled) setIsLoading(false) })
     return () => { cancelled = true }
-  }, [canView, hasUser, reload])
+  }, [reload])
 
   useEffect(() => {
     if (!isFormOpen) return
@@ -198,8 +192,6 @@ export function StudentsPage() {
     if (isDetailLoading) return
     setDetailStudent(null)
   }
-
-  if (!canView) return null
 
   return (
     <DashboardLayout title="QUẢN LÝ SINH VIÊN" contentClassName="students-content">

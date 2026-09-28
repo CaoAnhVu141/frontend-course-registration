@@ -108,18 +108,8 @@ export function StudentGroupsPage() {
   }, [canViewGroups, selectedPeriodId, showError])
 
   useEffect(() => {
-    if (!user) {
-      window.location.href = '/'
-      return
-    }
-
-    if (!canViewGroups && !canCreateGroup) {
-      window.location.href = '/dashboard'
-      return
-    }
-
     void loadData()
-  }, [canCreateGroup, canViewGroups, loadData, user])
+  }, [loadData])
 
   useEffect(() => {
     setPage(1)

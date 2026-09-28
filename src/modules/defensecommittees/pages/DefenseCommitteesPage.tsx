@@ -65,7 +65,6 @@ export function DefenseCommitteesPage() {
   const user = useMemo(() => tokenStorage.getUser(), [])
   const isAdmin = hasRole(user?.roles, 'ADMIN')
   const isLecturer = hasRole(user?.roles, 'LECTURER')
-  const canViewCommittees = isAdmin || isLecturer
 
   const [committees, setCommittees] = useState<DefenseCommittee[]>([])
   const [registrationPeriods, setRegistrationPeriods] = useState<
@@ -160,18 +159,8 @@ export function DefenseCommitteesPage() {
   }, [isAdmin, selectedPeriodId, showError])
 
   useEffect(() => {
-    if (!user) {
-      window.location.href = '/'
-      return
-    }
-
-    if (!canViewCommittees) {
-      window.location.href = '/dashboard'
-      return
-    }
-
     void loadData()
-  }, [canViewCommittees, loadData, user])
+  }, [loadData])
 
   useEffect(() => {
     setPage(1)

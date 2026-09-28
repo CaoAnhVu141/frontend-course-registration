@@ -81,18 +81,8 @@ export function RegistrationPeriodsPage() {
   )
 
   useEffect(() => {
-    if (!user) {
-      window.location.href = '/'
-      return
-    }
-
-    if (!isAdmin) {
-      window.location.href = '/dashboard'
-      return
-    }
-
     void loadPeriods()
-  }, [isAdmin, user])
+  }, [])
 
   useEffect(() => {
     setPage(1)

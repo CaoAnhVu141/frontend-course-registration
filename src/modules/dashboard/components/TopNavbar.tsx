@@ -1,9 +1,12 @@
 import { Bell, Flag, LogOut } from 'lucide-react'
+import { useNavigate } from 'react-router-dom'
 import { tokenStorage } from '../../../shared/services/tokenStorage'
 import { STORAGE_KEYS } from '../../../shared/constants/storageKeys'
 import { logout } from '../../auth/services/authApi'
 
 export function TopNavbar() {
+  const navigate = useNavigate()
+
   async function handleLogout() {
     const refreshToken = localStorage.getItem(STORAGE_KEYS.refreshToken)
 
@@ -22,7 +25,7 @@ export function TopNavbar() {
       }
     } finally {
       tokenStorage.clear()
-      window.location.href = '/'
+      navigate('/', { replace: true })
     }
   }
 
@@ -34,9 +37,7 @@ export function TopNavbar() {
         <button
           type="button"
           className="personal-info-link"
-          onClick={() => {
-            window.location.href = '/dashboard'
-          }}
+          onClick={() => navigate('/dashboard')}
           aria-label="Thông tin cá nhân"
           title="Thông tin cá nhân"
         />

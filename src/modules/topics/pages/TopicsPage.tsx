@@ -125,18 +125,8 @@ export function TopicsPage() {
   }, [showError])
 
   useEffect(() => {
-    if (!user) {
-      window.location.href = '/'
-      return
-    }
-
-    if (!canManageTopics) {
-      window.location.href = '/dashboard'
-      return
-    }
-
     void loadTopics()
-  }, [canManageTopics, loadTopics, user])
+  }, [loadTopics])
 
   useEffect(() => {
     setPage(1)
