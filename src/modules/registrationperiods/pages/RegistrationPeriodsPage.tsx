@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from 'react'
 import type { FormEvent } from 'react'
+import { Pencil, Search, Trash2 } from 'lucide-react'
 import { tokenStorage } from '../../../shared/services/tokenStorage'
 import { hasRole } from '../../../shared/utils/roleLabel'
 import { useConfirmation } from '../../confirmation'
@@ -200,7 +201,7 @@ export function RegistrationPeriodsPage() {
       <section className="registration-periods-panel">
         <div className="registration-periods-toolbar">
           <label className="registration-period-search">
-            <span aria-hidden="true">⌕</span>
+            <Search aria-hidden="true" size={17} strokeWidth={2} />
             <input
               type="search"
               value={search}
@@ -260,14 +261,14 @@ export function RegistrationPeriodsPage() {
                     </td>
                     <td className="registration-period-actions">
                       <button type="button" onClick={() => openEditForm(period)}>
-                        ✎ <span>Sửa</span>
+                        <Pencil aria-hidden="true" size={16} strokeWidth={1.9} /> <span>Sửa</span>
                       </button>
                       <button
                         type="button"
                         className="delete"
                         onClick={() => void handleDelete(period)}
                       >
-                        × <span>Xóa</span>
+                        <Trash2 aria-hidden="true" size={16} strokeWidth={1.9} /> <span>Xóa</span>
                       </button>
                     </td>
                   </tr>

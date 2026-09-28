@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from 'react'
+import { Pencil, Search, Trash2, X } from 'lucide-react'
 import { DashboardLayout } from '../../dashboard/components/DashboardLayout'
 import { AppLoading, Pagination } from '../../ui'
 import {
@@ -161,7 +162,7 @@ export function DepartmentsPage() {
           <section className="departments-panel">
             <div className="departments-toolbar">
               <label className="department-search">
-                <span>⌕</span>
+                <Search aria-hidden="true" size={17} strokeWidth={2} />
                 <input
                   type="search"
                   value={search}
@@ -196,8 +197,8 @@ export function DepartmentsPage() {
                         <td>{department.departmentId}</td>
                         <td>{department.name}</td>
                         <td className="department-actions">
-                          <button type="button" onClick={() => openEditForm(department)} title="Sửa">✎ <span>Sửa</span></button>
-                          <button type="button" className="delete" onClick={() => void handleDelete(department)} title="Xóa">× <span>Xóa</span></button>
+                          <button type="button" onClick={() => openEditForm(department)} title="Sửa"><Pencil aria-hidden="true" size={16} strokeWidth={1.9} /> <span>Sửa</span></button>
+                          <button type="button" className="delete" onClick={() => void handleDelete(department)} title="Xóa"><Trash2 aria-hidden="true" size={16} strokeWidth={1.9} /> <span>Xóa</span></button>
                         </td>
                       </tr>
                     ))
@@ -218,7 +219,7 @@ export function DepartmentsPage() {
           <section className="department-modal" role="dialog" aria-modal="true" aria-labelledby="department-form-title" onMouseDown={(event) => event.stopPropagation()}>
             <div className="department-modal-header">
               <h3 id="department-form-title">{editingDepartment ? 'Cập nhật khoa / phòng ban' : 'Thêm khoa / phòng ban'}</h3>
-              <button type="button" onClick={closeForm} aria-label="Đóng" title="Đóng">×</button>
+              <button type="button" onClick={closeForm} aria-label="Đóng" title="Đóng"><X aria-hidden="true" size={20} strokeWidth={2} /></button>
             </div>
             <form onSubmit={(event) => void handleSubmit(event)}>
               <label htmlFor="department-name">Tên khoa / phòng ban</label>
