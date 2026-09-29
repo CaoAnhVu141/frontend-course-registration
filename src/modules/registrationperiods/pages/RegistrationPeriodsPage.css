@@ -114,6 +114,11 @@
   background: #f1f5f9;
 }
 
+.registration-period-table tbody tr.inactive-row,
+.registration-period-table tbody tr.inactive-row:hover {
+  background: #fff1f2;
+}
+
 .registration-period-empty {
   height: 120px;
   text-align: center !important;
