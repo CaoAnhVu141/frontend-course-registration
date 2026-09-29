@@ -108,7 +108,7 @@
 
 .topic-registration-table {
   width: 100%;
-  min-width: 1180px;
+  min-width: 1250px;
   border-collapse: collapse;
   background: #fff;
   table-layout: fixed;
@@ -168,7 +168,7 @@
 
 .topic-registration-table th:last-child,
 .topic-registration-table td:last-child {
-  width: 185px;
+  width: 255px;
   text-align: center;
 }
 
@@ -249,10 +249,10 @@
 
 .topic-registration-actions {
   display: flex;
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
   justify-content: center;
   align-items: center;
-  gap: 8px;
+  gap: 6px;
   min-height: 34px;
 }
 
