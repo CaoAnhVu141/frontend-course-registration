@@ -1,61 +1,234 @@
 .auth-page {
   min-height: 100vh;
-  background: url('https://hcmute.edu.vn/Resources/Images/SubDomain/HomePage/Nut/H%C3%ACnh%20%E1%BA%A3nh/Nen%20cong%20truong.jpg') no-repeat center center fixed;
-  background-size: cover;
+  background: #f1f5f9;
   position: relative;
+  overflow: hidden;
 }
 
-.auth-page::before {
-  content: '';
+/* Mảng thương hiệu bên trái */
+.auth-brand {
   position: absolute;
-  inset: 0;
-  background: rgba(0, 0, 0, 0.35);
+  inset: 0 auto 0 0;
+  width: 52%;
+  display: flex;
+  align-items: center;
+  overflow: hidden;
+  background:
+    radial-gradient(
+      circle at 82% 12%,
+      rgba(125, 211, 252, 0.26),
+      transparent 55%
+    ),
+    linear-gradient(150deg, #013d6f 0%, #015599 55%, #0b74c4 100%);
+  background-size: 160% 160%;
+  animation: brandDrift 18s ease-in-out infinite;
   z-index: 0;
+}
+
+.auth-brand-orb {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(60px);
+  pointer-events: none;
+}
+
+.auth-brand-orb.one {
+  width: 340px;
+  height: 340px;
+  top: -80px;
+  right: -60px;
+  background: rgba(125, 211, 252, 0.34);
+  animation: orbFloat 14s ease-in-out infinite;
+}
+
+.auth-brand-orb.two {
+  width: 280px;
+  height: 280px;
+  bottom: -70px;
+  left: -50px;
+  background: rgba(14, 165, 233, 0.3);
+  animation: orbFloat 18s ease-in-out infinite reverse;
+}
+
+.auth-brand-inner {
+  position: relative;
+  z-index: 1;
+  padding: 0 clamp(32px, 5vw, 76px);
+}
+
+.auth-brand-eyebrow {
+  margin-bottom: 18px;
+  color: rgba(186, 230, 253, 0.92);
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  opacity: 0;
+  animation: brandFadeUp 900ms cubic-bezier(0.22, 1, 0.36, 1) 60ms forwards;
+}
+
+.auth-brand-title {
+  margin: 0;
+  font-size: clamp(30px, 3.6vw, 52px);
+  font-weight: 800;
+  line-height: 1.16;
+  letter-spacing: -0.015em;
+}
+
+.auth-brand-line {
+  display: block;
+}
+
+.auth-brand-word {
+  display: inline-block;
+  margin-right: 0.28em;
+  opacity: 0;
+  transform: translateY(46px) rotate(4deg);
+  filter: blur(10px);
+  animation: wordReveal 1100ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+/* Lớp trong: hiệu ứng chạy liên tục sau khi chữ đã hiện */
+.auth-brand-word-inner {
+  display: inline-block;
+  color: transparent;
+  background-image: linear-gradient(
+    100deg,
+    #ffffff 0%,
+    #ffffff 36%,
+    #a8dcff 47%,
+    #ffffff 54%,
+    #ffffff 100%
+  );
+  background-size: 260% 100%;
+  background-position: 180% 0;
+  -webkit-background-clip: text;
+  background-clip: text;
+  animation:
+    wordFloat 5.5s ease-in-out infinite,
+    wordShine 5.5s ease-in-out infinite;
+  animation-delay: 0s, 0s;
+}
+
+.auth-brand-desc {
+  margin-top: 26px;
+  color: rgba(226, 240, 255, 0.78);
+  font-size: clamp(12px, 1.05vw, 16px);
+  line-height: 1.7;
+  white-space: nowrap;
+  opacity: 0;
+  animation: brandFadeUp 1000ms cubic-bezier(0.22, 1, 0.36, 1) 1.15s forwards;
+}
+
+@keyframes brandDrift {
+  0%,
+  100% {
+    background-position: 0% 0%, 0% 50%;
+  }
+
+  50% {
+    background-position: 100% 100%, 100% 50%;
+  }
+}
+
+@keyframes orbFloat {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+
+  50% {
+    transform: translate3d(-38px, 46px, 0) scale(1.14);
+  }
+}
+
+@keyframes wordReveal {
+  60% {
+    filter: blur(0);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0) rotate(0);
+    filter: blur(0);
+  }
+}
+
+@keyframes wordFloat {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+
+  50% {
+    transform: translateY(-9px);
+  }
+}
+
+@keyframes wordShine {
+  0%,
+  45% {
+    background-position: 180% 0;
+  }
+
+  80%,
+  100% {
+    background-position: -80% 0;
+  }
+}
+
+@keyframes brandFadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(22px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .login-container {
   position: relative;
-  z-index: 1;
-  width: 100%;
+  z-index: 2;
+  width: 48%;
+  margin-left: 52%;
   min-height: 100vh;
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 20px;
+  padding: 40px clamp(20px, 3vw, 48px);
 }
 
 .login-box {
   width: 100%;
-  max-width: 430px;
+  max-width: 400px;
   background: #fff;
-  border-radius: 20px;
-  padding: 40px;
-  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.2);
-  animation: fadeIn 0.5s ease;
+  border: 1px solid #e2e8f0;
+  border-radius: 14px;
+  padding: 40px 36px;
+  box-shadow: 0 18px 48px rgba(15, 47, 87, 0.12);
+  animation: fadeIn 0.4s ease;
 }
 
 .logo {
-  text-align: center;
-  margin-bottom: 35px;
+  text-align: left;
+  margin-bottom: 28px;
 }
 
+/* Bỏ icon emoji tròn */
 .logo-icon {
-  width: 70px;
-  height: 70px;
-  margin: 0 auto 15px;
-  background: #eef2ff;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 35px;
+  display: none;
 }
 
 .logo h1 {
-  font-size: 25px;
-  line-height: 1.2;
-  color: #1e293b;
-  margin-bottom: 8px;
+  font-size: 24px;
+  font-weight: 700;
+  line-height: 1.25;
+  color: #015599;
+  margin-bottom: 6px;
+  letter-spacing: -0.01em;
 }
 
 .logo p {
@@ -64,7 +237,7 @@
 }
 
 .form-group {
-  margin-bottom: 20px;
+  margin-bottom: 18px;
 }
 
 .form-group label {
@@ -80,83 +253,109 @@
 
 .input-icon {
   position: absolute;
-  left: 15px;
-  font-size: 17px;
+  left: 13px;
+  display: inline-flex;
+  align-items: center;
+  color: #94a3b8;
   z-index: 2;
+  pointer-events: none;
+  transition: color 160ms ease;
+}
+
+.input-box:focus-within .input-icon {
+  color: #015599;
 }
 
 .input-box input {
   width: 100%;
-  height: 50px;
-  border: 1px solid #cbd5e1;
-  border-radius: 10px;
-  padding: 0 45px;
+  height: 46px;
+  border: 1px solid var(--form-border);
+  border-radius: 8px;
+  padding: 0 44px 0 40px;
+  background: #fff;
+}
+
+.input-box input:focus,
+.input-box input:focus-visible {
+  border-color: #015599;
+  box-shadow: 0 0 0 3px rgba(1, 85, 153, 0.14);
 }
 
 .password-toggle {
   position: absolute;
-  right: 10px;
-  width: 35px;
-  height: 35px;
+  right: 8px;
+  width: 32px;
+  height: 32px;
   border: none;
+  border-radius: 6px;
   background: transparent;
+  color: #64748b;
   cursor: pointer;
-  font-size: 16px;
+  font-size: 14px;
+  opacity: 0.7;
   display: flex;
   align-items: center;
   justify-content: center;
+  transition: opacity 160ms ease, background-color 160ms ease;
+}
+
+.password-toggle:hover {
+  opacity: 1;
+  background: #f1f5f9;
 }
 
 .login-button {
   width: 100%;
-  height: 50px;
-  margin-top: 5px;
+  height: 46px;
+  margin-top: 4px;
   border: none;
-  border-radius: 10px;
-  background: #4f46e5;
+  border-radius: 8px;
+  background: #015599;
   color: #fff;
-  font-size: 16px;
+  font-size: 15px;
+  font-weight: 600;
+  letter-spacing: 0.01em;
   cursor: pointer;
-  transition: 0.2s;
   display: flex;
   align-items: center;
   justify-content: center;
+  transition: background-color 160ms ease;
 }
 
-.login-button:hover {
-  background: #4338ca;
-  transform: translateY(-1px);
+.login-button:hover:not(:disabled) {
+  background: #014a84;
 }
 
 .login-button:disabled {
-  background: #a5b4fc;
+  background: #94a3b8;
   cursor: not-allowed;
-  transform: none;
 }
 
 .message {
   min-height: 20px;
   margin-bottom: 10px;
-  text-align: center;
-  font-size: 14px;
+  font-size: 13px;
+  line-height: 1.45;
 }
 
 .message.error {
-  color: #dc2626;
+  color: #b91c1c;
 }
 
 .loading {
-  width: 20px;
-  height: 20px;
-  border: 3px solid rgba(255, 255, 255, 0.4);
+  width: 18px;
+  height: 18px;
+  border: 2.5px solid rgba(255, 255, 255, 0.35);
   border-top-color: #fff;
   border-radius: 50%;
   animation: spin 0.7s linear infinite;
 }
 
 .login-footer {
+  margin-top: 26px;
+  padding-top: 18px;
+  border-top: 1px solid #eef2f6;
   text-align: center;
-  margin-top: 30px;
   color: #94a3b8;
   font-size: 12px;
 }
@@ -170,7 +369,7 @@
 @keyframes fadeIn {
   from {
     opacity: 0;
-    transform: translateY(15px);
+    transform: translateY(12px);
   }
 
   to {
@@ -179,12 +378,79 @@
   }
 }
 
-@media (max-width: 480px) {
+@media (prefers-reduced-motion: reduce) {
+  .auth-brand,
+  .auth-brand-orb,
+  .auth-brand-eyebrow,
+  .auth-brand-word,
+  .auth-brand-word-inner,
+  .auth-brand-desc,
   .login-box {
-    padding: 30px 25px;
+    animation: none;
+    opacity: 1;
+    transform: none;
+    filter: none;
+  }
+
+  .auth-brand-word-inner {
+    color: #fff;
+    background: none;
+  }
+}
+
+@media (max-width: 1024px) {
+  .auth-brand {
+    width: 100%;
+    height: 300px;
+    inset: 0 0 auto 0;
+    align-items: flex-end;
+  }
+
+  .auth-brand-inner {
+    padding: 0 28px 34px;
+  }
+
+  .auth-brand-eyebrow {
+    margin-bottom: 12px;
+    font-size: 12px;
+  }
+
+  .auth-brand-desc {
+    margin-top: 16px;
+    font-size: 15px;
+    white-space: normal;
+  }
+
+  .login-container {
+    width: 100%;
+    margin-left: 0;
+    justify-content: center;
+    padding: 276px 24px 48px;
+  }
+}
+
+@media (max-width: 480px) {
+  .auth-brand {
+    height: 268px;
+  }
+
+  .auth-brand-title {
+    font-size: 27px;
+  }
+
+  .auth-brand-desc {
+    font-size: 14px;
+  }
+
+  .login-container {
+    padding: 244px 20px 40px;
+  }
+
+  .login-box {
+    padding: 28px 22px;
   }
 
   .logo h1 {
-    font-size: 22px;
+    font-size: 21px;
   }
 }

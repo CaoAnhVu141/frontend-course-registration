@@ -1,4 +1,5 @@
 import type { ReactNode } from 'react'
+import { Navigate } from 'react-router-dom'
 import { tokenStorage } from '../../../shared/services/tokenStorage'
 import { Sidebar } from './Sidebar'
 import { TopNavbar } from './TopNavbar'
@@ -6,7 +7,7 @@ import '../pages/DashboardPage.css'
 
 type DashboardLayoutProps = {
   title?: string
-  children: ReactNode
+  children?: ReactNode
   contentClassName?: string
 }
 
@@ -18,8 +19,7 @@ export function DashboardLayout({
   const user = tokenStorage.getUser()
 
   if (!user) {
-    window.location.href = '/'
-    return null
+    return <Navigate to="/" replace />
   }
 
   return (

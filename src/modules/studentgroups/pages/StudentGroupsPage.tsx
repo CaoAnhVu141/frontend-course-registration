@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import type { FormEvent } from 'react'
+import { Eye, Search, Trash2, X } from 'lucide-react'
 import { tokenStorage } from '../../../shared/services/tokenStorage'
 import { hasRole } from '../../../shared/utils/roleLabel'
 import { useConfirmation } from '../../confirmation'
@@ -107,18 +108,8 @@ export function StudentGroupsPage() {
   }, [canViewGroups, selectedPeriodId, showError])
 
   useEffect(() => {
-    if (!user) {
-      window.location.href = '/'
-      return
-    }
-
-    if (!canViewGroups && !canCreateGroup) {
-      window.location.href = '/dashboard'
-      return
-    }
-
     void loadData()
-  }, [canCreateGroup, canViewGroups, loadData, user])
+  }, [loadData])
 
   useEffect(() => {
     setPage(1)
@@ -228,7 +219,7 @@ export function StudentGroupsPage() {
           <label className="student-group-search">
             <span>Tìm kiếm</span>
             <span className="student-group-search-box">
-              <span aria-hidden="true">⌕</span>
+              <Search aria-hidden="true" size={17} strokeWidth={2} />
               <input
                 type="search"
                 value={search}
@@ -299,7 +290,7 @@ export function StudentGroupsPage() {
                         <div className="student-group-actions">
                           {canViewGroups && (
                             <button type="button" onClick={() => void openDetail(group)}>
-                              <span className="app-view-icon" aria-hidden="true" />
+                              <Eye aria-hidden="true" size={16} strokeWidth={1.9} />
                               <span>Chi tiết</span>
                             </button>
                           )}
@@ -310,7 +301,7 @@ export function StudentGroupsPage() {
                               disabled={deletingId !== null}
                               onClick={() => void handleDelete(group)}
                             >
-                              × <span>{deletingId === group.id ? 'Đang xóa...' : 'Xóa'}</span>
+                              <Trash2 aria-hidden="true" size={16} strokeWidth={1.9} /> <span>{deletingId === group.id ? 'Đang xóa...' : 'Xóa'}</span>
                             </button>
                           )}
                           {!canViewGroups && !canDeleteGroup && (
@@ -339,7 +330,7 @@ export function StudentGroupsPage() {
           <section className="student-group-modal" onMouseDown={(event) => event.stopPropagation()} role="dialog" aria-modal="true" aria-labelledby="student-group-form-title">
             <div className="student-group-modal-header">
               <h3 id="student-group-form-title">Tạo nhóm sinh viên</h3>
-              <button type="button" onClick={closeCreateForm} aria-label="Đóng">×</button>
+              <button type="button" onClick={closeCreateForm} aria-label="Đóng"><X aria-hidden="true" size={20} strokeWidth={2} /></button>
             </div>
             <form onSubmit={(event) => void handleSubmit(event)}>
               <div className="form-field">
@@ -404,7 +395,7 @@ export function StudentGroupsPage() {
           <section className="student-group-modal" onMouseDown={(event) => event.stopPropagation()} role="dialog" aria-modal="true" aria-labelledby="student-group-detail-title">
             <div className="student-group-modal-header">
               <h3 id="student-group-detail-title">Chi tiết nhóm sinh viên</h3>
-              <button type="button" onClick={closeDetail} aria-label="Đóng">×</button>
+              <button type="button" onClick={closeDetail} aria-label="Đóng"><X aria-hidden="true" size={20} strokeWidth={2} /></button>
             </div>
             <div className="student-group-detail">
               {isDetailLoading ? (

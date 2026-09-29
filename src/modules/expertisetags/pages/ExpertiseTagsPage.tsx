@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from 'react'
+import { Pencil, Search, Trash2, X } from 'lucide-react'
 import { useConfirmation } from '../../confirmation'
 import { DashboardLayout } from '../../dashboard/components/DashboardLayout'
 import { useNotification } from '../../notification'
@@ -117,13 +118,13 @@ export function ExpertiseTagsPage() {
     <DashboardLayout title="QUẢN LÝ CHUYÊN MÔN" contentClassName="expertise-tags-content">
       <section className="expertise-tags-panel">
         <div className="expertise-tags-toolbar">
-          <label className="expertise-tag-search"><span>⌕</span><input type="search" value={search} onChange={(event) => setSearch(event.target.value)} placeholder="Tìm kiếm chuyên môn..." /></label>
+          <label className="expertise-tag-search"><Search aria-hidden="true" size={17} strokeWidth={2} /><input type="search" value={search} onChange={(event) => setSearch(event.target.value)} placeholder="Tìm kiếm chuyên môn..." /></label>
           <button className="expertise-tag-add-button" type="button" onClick={openCreateForm}><span>+</span> Thêm mới</button>
         </div>
         {error && <div className="expertise-tag-message error">{error}</div>}
         <div className="expertise-tag-table-wrap"><table className="expertise-tag-table">
           <thead><tr><th>STT</th><th>Tên chuyên môn</th><th>Trạng thái</th><th>Thao tác</th></tr></thead>
-          <tbody>{isLoading ? <tr><td colSpan={4} className="expertise-tag-empty"><AppLoading /></td></tr> : visibleTags.length === 0 ? <tr><td colSpan={4} className="expertise-tag-empty">Không tìm thấy chuyên môn.</td></tr> : visibleTags.map((tag) => <tr key={tag.id} className={tag.status ? '' : 'inactive-row'}><td>{tag.id}</td><td>{tag.name}</td><td><span className={`expertise-tag-status ${tag.status ? 'active' : 'inactive'}`}>{tag.status ? 'Đang hoạt động' : 'Không còn hoạt động'}</span></td><td className="expertise-tag-actions"><button type="button" onClick={() => openEditForm(tag)}>✎ <span>Sửa</span></button><button type="button" className="delete" onClick={() => void handleDelete(tag)}>× <span>Xóa</span></button></td></tr>)}</tbody>
+          <tbody>{isLoading ? <tr><td colSpan={4} className="expertise-tag-empty"><AppLoading /></td></tr> : visibleTags.length === 0 ? <tr><td colSpan={4} className="expertise-tag-empty">Không tìm thấy chuyên môn.</td></tr> : visibleTags.map((tag) => <tr key={tag.id} className={tag.status ? '' : 'inactive-row'}><td>{tag.id}</td><td>{tag.name}</td><td><span className={`expertise-tag-status ${tag.status ? 'active' : 'inactive'}`}>{tag.status ? 'Đang hoạt động' : 'Không còn hoạt động'}</span></td><td className="expertise-tag-actions"><button type="button" onClick={() => openEditForm(tag)}><Pencil aria-hidden="true" size={16} strokeWidth={1.9} /> <span>Sửa</span></button><button type="button" className="delete" onClick={() => void handleDelete(tag)}><Trash2 aria-hidden="true" size={16} strokeWidth={1.9} /> <span>Xóa</span></button></td></tr>)}</tbody>
         </table></div>
         <Pagination
           currentPage={page}
@@ -131,7 +132,7 @@ export function ExpertiseTagsPage() {
           onPageChange={setPage}
         />
       </section>
-      {isFormOpen && <div className="expertise-tag-modal-backdrop" role="presentation" onMouseDown={closeForm}><section className="expertise-tag-modal" role="dialog" aria-modal="true" onMouseDown={(event) => event.stopPropagation()}><div className="expertise-tag-modal-header"><h3>{editingTag ? 'Cập nhật chuyên môn' : 'Thêm chuyên môn'}</h3><button type="button" onClick={closeForm} aria-label="Đóng">×</button></div><form onSubmit={(event) => void handleSubmit(event)}><label htmlFor="expertise-tag-name">Tên chuyên môn</label><input id="expertise-tag-name" autoFocus required value={tagName} onChange={(event) => setTagName(event.target.value)} placeholder="Nhập tên chuyên môn" maxLength={255} /><label htmlFor="expertise-tag-status">Trạng thái</label><select id="expertise-tag-status" value={String(tagStatus)} onChange={(event) => setTagStatus(event.target.value === 'true')}><option value="true">Đang hoạt động</option><option value="false">Không còn hoạt động</option></select><div className="expertise-tag-modal-actions"><button type="button" className="secondary" onClick={closeForm}>Hủy</button><button type="submit" disabled={isSaving}>{isSaving ? 'Đang lưu...' : 'Lưu'}</button></div></form></section></div>}
+      {isFormOpen && <div className="expertise-tag-modal-backdrop" role="presentation" onMouseDown={closeForm}><section className="expertise-tag-modal" role="dialog" aria-modal="true" onMouseDown={(event) => event.stopPropagation()}><div className="expertise-tag-modal-header"><h3>{editingTag ? 'Cập nhật chuyên môn' : 'Thêm chuyên môn'}</h3><button type="button" onClick={closeForm} aria-label="Đóng"><X aria-hidden="true" size={20} strokeWidth={2} /></button></div><form onSubmit={(event) => void handleSubmit(event)}><label htmlFor="expertise-tag-name">Tên chuyên môn</label><input id="expertise-tag-name" autoFocus required value={tagName} onChange={(event) => setTagName(event.target.value)} placeholder="Nhập tên chuyên môn" maxLength={255} /><label htmlFor="expertise-tag-status">Trạng thái</label><select id="expertise-tag-status" value={String(tagStatus)} onChange={(event) => setTagStatus(event.target.value === 'true')}><option value="true">Đang hoạt động</option><option value="false">Không còn hoạt động</option></select><div className="expertise-tag-modal-actions"><button type="button" className="secondary" onClick={closeForm}>Hủy</button><button type="submit" disabled={isSaving}>{isSaving ? 'Đang lưu...' : 'Lưu'}</button></div></form></section></div>}
     </DashboardLayout>
   )
 }

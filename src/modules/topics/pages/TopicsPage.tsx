@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import type { FormEvent, ReactNode } from 'react'
+import { Check, Megaphone, Pencil, Search, Trash2, X, XCircle } from 'lucide-react'
 import { tokenStorage } from '../../../shared/services/tokenStorage'
 import { hasRole } from '../../../shared/utils/roleLabel'
 import { getDepartments } from '../../departments/services/departmentApi'
@@ -124,18 +125,8 @@ export function TopicsPage() {
   }, [showError])
 
   useEffect(() => {
-    if (!user) {
-      window.location.href = '/'
-      return
-    }
-
-    if (!canManageTopics) {
-      window.location.href = '/dashboard'
-      return
-    }
-
     void loadTopics()
-  }, [canManageTopics, loadTopics, user])
+  }, [loadTopics])
 
   useEffect(() => {
     setPage(1)
@@ -276,7 +267,7 @@ export function TopicsPage() {
       <section className="topics-panel">
         <div className="topics-toolbar">
           <label className="topic-search">
-            <span aria-hidden="true">⌕</span>
+            <Search aria-hidden="true" size={17} strokeWidth={2} />
             <input
               value={search}
               onChange={(event) => setSearch(event.target.value)}
@@ -376,7 +367,7 @@ export function TopicsPage() {
           <section className="topic-modal" onMouseDown={(event) => event.stopPropagation()} role="dialog" aria-modal="true" aria-labelledby="topic-form-title">
             <div className="topic-modal-header">
               <h3 id="topic-form-title">{editingTopic ? 'Cập nhật đề tài' : 'Thêm đề tài'}</h3>
-              <button type="button" onClick={closeForm} aria-label="Đóng">×</button>
+              <button type="button" onClick={closeForm} aria-label="Đóng"><X aria-hidden="true" size={20} strokeWidth={2} /></button>
             </div>
             <form onSubmit={(event) => void handleSubmit(event)}>
               <div className="form-field">
@@ -458,7 +449,7 @@ export function TopicsPage() {
           <section className="topic-modal" onMouseDown={(event) => event.stopPropagation()} role="dialog" aria-modal="true" aria-labelledby="topic-reject-title">
             <div className="topic-modal-header">
               <h3 id="topic-reject-title">Từ chối đề tài</h3>
-              <button type="button" onClick={closeRejectForm} aria-label="Đóng">×</button>
+              <button type="button" onClick={closeRejectForm} aria-label="Đóng"><X aria-hidden="true" size={20} strokeWidth={2} /></button>
             </div>
             <form onSubmit={(event) => void handleRejectSubmit(event)}>
               <label htmlFor="topic-reject-reason">Lý do từ chối</label>
@@ -511,7 +502,7 @@ function renderActions({
   if ((isAdmin || isLecturer) && topic.status !== 'PUBLISHED') {
     actions.push(
       <button type="button" key="edit" onClick={() => openEditForm(topic)}>
-        ✎ <span>Sửa</span>
+        <Pencil aria-hidden="true" size={16} strokeWidth={1.9} /> <span>Sửa</span>
       </button>,
     )
   }
@@ -524,7 +515,7 @@ function renderActions({
         key="approve"
         onClick={() => void handleStatusAction(topic, approveTopic)}
       >
-        ✓ <span>Duyệt</span>
+        <Check aria-hidden="true" size={16} strokeWidth={1.9} /> <span>Duyệt</span>
       </button>,
       <button
         type="button"
@@ -532,7 +523,7 @@ function renderActions({
         key="reject"
         onClick={() => openRejectForm(topic)}
       >
-        ! <span>Từ chối</span>
+        <XCircle aria-hidden="true" size={16} strokeWidth={1.9} /> <span>Từ chối</span>
       </button>,
     )
   }
@@ -545,7 +536,7 @@ function renderActions({
         key="publish"
         onClick={() => void handleStatusAction(topic, publishTopic)}
       >
-        ↑ <span>Công bố</span>
+        <Megaphone aria-hidden="true" size={16} strokeWidth={1.9} /> <span>Công bố</span>
       </button>,
     )
   }
@@ -558,7 +549,7 @@ function renderActions({
         key="delete"
         onClick={() => void handleDelete(topic)}
       >
-        × <span>Xóa</span>
+        <Trash2 aria-hidden="true" size={16} strokeWidth={1.9} /> <span>Xóa</span>
       </button>,
     )
   }

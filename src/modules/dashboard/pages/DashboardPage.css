@@ -161,13 +161,23 @@
   background-color: rgba(255, 255, 255, 0.1);
 }
 
+.flag-icon,
+.bell-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
 .flag-icon {
   color: #ff5722;
 }
 
 .bell-icon {
   color: #fff;
-  font-size: 10px;
+}
+
+.top-actions button svg {
+  display: block;
 }
 
 .content-body {
@@ -199,191 +209,6 @@
   color: #1f2937;
 }
 
-.personal-profile {
-  width: min(980px, 100%);
-  margin: 18px auto 0;
-  display: grid;
-  grid-template-columns: minmax(190px, 250px) minmax(0, 1fr);
-  overflow: hidden;
-  background: #fff;
-  border: 1px solid #d5e2ec;
-  border-radius: 6px;
-  box-shadow: 0 12px 30px rgba(22, 74, 118, 0.12);
-}
-
-.personal-profile-summary {
-  min-width: 0;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  padding: 34px 24px;
-  background: linear-gradient(180deg, #f6fbff 0%, #edf5fb 100%);
-  border-right: 1px solid #d5e2ec;
-}
-
-.personal-profile-eyebrow,
-.personal-profile-kicker {
-  display: block;
-  color: #0078d4;
-  font-size: 12px;
-  font-weight: 800;
-  line-height: 1.3;
-  text-transform: uppercase;
-}
-
-.personal-profile-eyebrow {
-  margin-bottom: 14px;
-}
-
-.personal-profile-summary h2 {
-  margin: 0;
-  color: #12344d;
-  font-size: 22px;
-  font-weight: 800;
-  line-height: 1.25;
-  overflow-wrap: anywhere;
-}
-
-.personal-profile-summary p {
-  margin: 10px 0 4px;
-  color: #164a76;
-  font-size: 14px;
-  font-weight: 700;
-}
-
-.personal-profile-summary span:last-child {
-  color: #5e7284;
-  font-size: 13px;
-  line-height: 1.45;
-  overflow-wrap: anywhere;
-}
-
-.personal-profile-content {
-  min-width: 0;
-  padding: 34px 42px 38px;
-}
-
-.personal-profile-kicker {
-  margin-bottom: 6px;
-}
-
-.personal-profile-content h1 {
-  margin: 0 0 28px;
-  color: #0078d4;
-  font-size: 30px;
-  font-weight: 800;
-  line-height: 1.15;
-  letter-spacing: 0;
-}
-
-.personal-profile-sections {
-  display: grid;
-  gap: 22px;
-}
-
-.profile-card {
-  min-width: 0;
-  overflow: hidden;
-  background: #fff;
-  border: 1px solid #d7e0e8;
-  border-radius: 5px;
-  box-shadow: 0 1px 3px rgba(15, 23, 42, 0.08);
-}
-
-.profile-loading,
-.profile-message {
-  padding: 20px;
-}
-
-.profile-message {
-  color: #1f2937;
-}
-
-.profile-message.error {
-  border-color: #fecaca;
-}
-
-.profile-message p {
-  margin: 0 0 14px;
-  color: #b91c1c;
-  font-size: 14px;
-  font-weight: 600;
-}
-
-.profile-message button {
-  min-height: 38px;
-  padding: 0 14px;
-  border: 0;
-  border-radius: 6px;
-  background: #0078d4;
-  color: #fff;
-  cursor: pointer;
-}
-
-.profile-message button:hover {
-  background: #006cbe;
-}
-
-.personal-page .profile-loading,
-.personal-page .profile-message {
-  width: min(980px, 100%);
-  margin: 18px auto 0;
-}
-
-.profile-section {
-  min-width: 0;
-}
-
-.profile-section + .profile-section {
-  padding-top: 22px;
-  border-top: 1px solid #e6edf5;
-}
-
-.profile-section h2 {
-  margin: 0 0 12px;
-  color: #164a76;
-  font-size: 15px;
-  font-weight: 800;
-  line-height: 1.3;
-  text-transform: uppercase;
-}
-
-.profile-details {
-  margin: 0;
-}
-
-.profile-row {
-  display: grid;
-  grid-template-columns: minmax(150px, 34%) minmax(0, 1fr);
-  align-items: start;
-  gap: 18px;
-  min-height: 44px;
-  padding: 10px 0;
-  border-bottom: 1px solid #ebf0f5;
-}
-
-.profile-row:last-child {
-  border-bottom: 0;
-}
-
-.profile-row dt,
-.profile-row dd {
-  margin: 0;
-  overflow-wrap: anywhere;
-}
-
-.profile-row dt {
-  color: #1f2937;
-  font-size: 13px;
-  font-weight: 800;
-}
-
-.profile-row dd {
-  color: #4b647a;
-  font-size: 13px;
-  line-height: 1.45;
-}
-
 @media (max-width: 900px) {
   .dashboard-shell {
     overflow: auto;
@@ -391,15 +216,6 @@
 
   .sidebar {
     width: 230px;
-  }
-
-  .personal-profile {
-    grid-template-columns: 1fr;
-  }
-
-  .personal-profile-summary {
-    border-right: 0;
-    border-bottom: 1px solid #d5e2ec;
   }
 }
 
@@ -424,26 +240,5 @@
 
   .content-body {
     padding: 16px;
-  }
-
-  .personal-profile {
-    margin-top: 8px;
-  }
-
-  .personal-profile-summary,
-  .personal-profile-content {
-    padding: 22px;
-  }
-
-  .personal-profile-content h1 {
-    margin-bottom: 22px;
-    font-size: 24px;
-  }
-
-  .profile-row {
-    grid-template-columns: 1fr;
-    gap: 4px;
-    min-height: auto;
-    padding: 10px 0 12px;
   }
 }
