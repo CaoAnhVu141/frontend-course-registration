@@ -15,6 +15,7 @@ import { RegistrationPeriodsPage } from './modules/registrationperiods'
 import { TopicRegistrationsPage } from './modules/topicregistrations'
 import { SubmissionsPage } from './modules/submissions'
 import { DefenseCommitteesPage } from './modules/defensecommittees'
+import { CommitteeTopicAssignmentsPage } from './modules/committeetopicassignments'
 
 type ProtectedRouteProps = {
   children: ReactElement
@@ -145,6 +146,15 @@ function App() {
         element={
           <ProtectedRoute roles={['ADMIN', 'LECTURER']}>
             <DefenseCommitteesPage />
+          </ProtectedRoute>
+        }
+      />
+
+      <Route
+        path="/committee-topic-assignments"
+        element={
+          <ProtectedRoute roles={['ADMIN']}>
+            <CommitteeTopicAssignmentsPage />
           </ProtectedRoute>
         }
       />

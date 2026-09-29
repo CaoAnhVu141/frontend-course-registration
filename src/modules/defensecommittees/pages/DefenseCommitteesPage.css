@@ -128,7 +128,7 @@
 
 .defense-committee-table {
   width: 100%;
-  min-width: 1200px;
+  min-width: 1240px;
   border-collapse: collapse;
   background: #fff;
   table-layout: fixed;
@@ -192,7 +192,7 @@
 
 .defense-committee-table th:last-child,
 .defense-committee-table td:last-child {
-  width: 260px;
+  width: 300px;
   text-align: center;
 }
 
@@ -316,21 +316,20 @@
 
 .defense-committee-actions {
   display: flex;
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
   justify-content: center;
   align-items: center;
-  gap: 8px;
+  gap: 6px;
   min-height: 34px;
 }
 
 .defense-committee-actions button {
-  min-width: 78px;
   height: 34px;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 6px;
-  padding: 0 12px;
+  gap: 5px;
+  padding: 0 10px;
   border: 1px solid #bfdbfe;
   border-radius: 5px;
   background: #eff6ff;

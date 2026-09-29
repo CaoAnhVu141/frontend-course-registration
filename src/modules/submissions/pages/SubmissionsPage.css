@@ -136,7 +136,7 @@
 
 .submission-table {
   width: 100%;
-  min-width: 1080px;
+  min-width: 1110px;
   border-collapse: collapse;
   background: #fff;
   table-layout: fixed;
@@ -191,7 +191,7 @@
 
 .submission-table th:last-child,
 .submission-table td:last-child {
-  width: 210px;
+  width: 240px;
   text-align: center;
 }
 
@@ -247,10 +247,10 @@
 
 .submission-actions {
   display: flex;
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
   justify-content: center;
   align-items: center;
-  gap: 8px;
+  gap: 6px;
   min-height: 34px;
 }
 

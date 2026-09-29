@@ -109,7 +109,7 @@
 
 .lecturer-table th:last-child,
 .lecturer-table td:last-child {
-  width: 250px;
+  width: 270px;
 }
 
 .lecturer-table tbody tr:hover {
@@ -124,9 +124,9 @@
 
 .lecturer-actions {
   display: flex;
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
   justify-content: center;
-  gap: 8px;
+  gap: 6px;
 }
 
 .lecturer-actions button {
