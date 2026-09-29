@@ -3,6 +3,7 @@ import {
     Building2,
     CalendarClock,
     ClipboardCheck,
+    ClipboardList,
     FileText,
     FolderUp,
     Gavel,
@@ -34,6 +35,7 @@ const navigationItems: NavItem[] = [
     { label: 'Quản lý đăng ký đề tài', icon: ClipboardCheck, href: '/topic-registrations', roles: ['ADMIN', 'LECTURER', 'STUDENT'] },
     { label: 'Quản lý bài nộp', icon: FolderUp, href: '/submissions', roles: ['ADMIN', 'LECTURER', 'STUDENT'] },
     { label: 'Quản lý hội đồng', icon: Gavel, href: '/defense-committees', roles: ['ADMIN', 'LECTURER'] },
+    { label: 'Phân công đề tài', icon: ClipboardList, href: '/committee-topic-assignments', roles: ['ADMIN'] },
 ]
 
 export const navItems = navigationItems.map((item) =>
