@@ -236,7 +236,7 @@ export function RegistrationPeriodsPage() {
                 </tr>
               ) : (
                 visiblePeriods.map((period) => (
-                  <tr key={period.id}>
+                  <tr key={period.id} className={period.status ? '' : 'inactive-row'}>
                     <td>{period.id}</td>
                     <td>{period.name}</td>
                     <td>{period.type}</td>
