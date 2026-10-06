@@ -2,18 +2,23 @@ import { NavLink } from 'react-router-dom'
 import type { AuthUser } from '../../auth/types/auth.type'
 import hcmuteLogo from '../../../assets/hcmute-logo.png'
 import { getRoleLabel, hasRole } from '../../../shared/utils/roleLabel'
-import { navItems } from '../constants/navItems'
+import { navGroups } from '../constants/navItems'
 
 type SidebarProps = {
   user: AuthUser
 }
 
 export function Sidebar({ user }: SidebarProps) {
-  const visibleNavItems = navItems.filter(
-    (item) =>
-      !item.roles ||
-      item.roles.some((role) => hasRole(user.roles, role)),
-  )
+  const visibleGroups = navGroups
+    .map((group) => ({
+      ...group,
+      items: group.items.filter(
+        (item) =>
+          !item.roles ||
+          item.roles.some((role) => hasRole(user.roles, role)),
+      ),
+    }))
+    .filter((group) => group.items.length > 0)
 
   return (
     <aside className="sidebar">
@@ -34,25 +39,32 @@ export function Sidebar({ user }: SidebarProps) {
         <p>{getRoleLabel(user.roles)}</p>
       </div>
 
-      <ul className="nav-menu">
-        {visibleNavItems.map((item) => {
-          const Icon = item.icon
+      <nav className="nav-menu">
+        {visibleGroups.map((group) => (
+          <div key={group.title} className="nav-group">
+            <p className="nav-group-title">{group.title}</p>
+            <ul className="nav-group-list">
+              {group.items.map((item) => {
+                const Icon = item.icon
 
-          return (
-            <li key={item.label}>
-              <NavLink
-                className={({ isActive }) => (isActive ? 'active' : '')}
-                to={item.href}
-              >
-                <span className="nav-icon">
-                  <Icon aria-hidden="true" size={19} strokeWidth={1.9} />
-                </span>
-                {item.label}
-              </NavLink>
-            </li>
-          )
-        })}
-      </ul>
+                return (
+                  <li key={item.label}>
+                    <NavLink
+                      className={({ isActive }) => (isActive ? 'active' : '')}
+                      to={item.href}
+                    >
+                      <span className="nav-icon">
+                        <Icon aria-hidden="true" size={19} strokeWidth={1.9} />
+                      </span>
+                      {item.label}
+                    </NavLink>
+                  </li>
+                )
+              })}
+            </ul>
+          </div>
+        ))}
+      </nav>
     </aside>
   )
 }
