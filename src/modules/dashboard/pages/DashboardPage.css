@@ -58,8 +58,32 @@
 }
 
 .nav-menu {
+  padding: 8px 0 16px;
+}
+
+.nav-group {
+  padding: 6px 0;
+}
+
+.nav-group + .nav-group {
+  margin-top: 2px;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.nav-group-title {
+  margin: 0;
+  padding: 10px 20px 6px;
+  color: rgba(255, 255, 255, 0.55);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.nav-group-list {
   list-style: none;
-  padding: 10px 0;
+  margin: 0;
+  padding: 0;
 }
 
 .nav-menu li a {
