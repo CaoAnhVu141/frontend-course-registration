@@ -1,13 +1,16 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import type { FormEvent } from 'react'
 import {
+  Ban,
   CalendarClock,
+  Check,
   CheckCircle2,
   DoorOpen,
   Gavel,
   Users,
 } from 'lucide-react'
 import { DashboardLayout } from '../../dashboard/components/DashboardLayout'
+import { useConfirmation } from '../../confirmation'
 import { useNotification } from '../../notification'
 import { AppLoading, Pagination } from '../../ui'
 import { getDefenseCommittees } from '../../defensecommittees/services/defenseCommitteeApi'
@@ -19,6 +22,8 @@ import type { Topic } from '../../topics/types/topic.type'
 import { getRegistrationPeriods } from '../../topics/services/registrationPeriodApi'
 import type { RegistrationPeriod } from '../../topics/types/registrationPeriod.type'
 import {
+  cancelCommitteeTopicAssignment,
+  completeCommitteeTopicAssignment,
   createCommitteeTopicAssignment,
   getCommitteeTopicAssignments,
 } from '../services/committeeTopicAssignmentApi'
@@ -38,6 +43,7 @@ const statusConfig: Record<
 
 export function CommitteeTopicAssignmentsPage() {
   const { success, error: showError } = useNotification()
+  const { confirm } = useConfirmation()
 
   const [committees, setCommittees] = useState<DefenseCommittee[]>([])
   const [registrations, setRegistrations] = useState<TopicRegistration[]>([])
@@ -56,6 +62,7 @@ export function CommitteeTopicAssignmentsPage() {
 
   const [assignments, setAssignments] = useState<CommitteeTopicAssignment[]>([])
   const [page, setPage] = useState(1)
+  const [processingId, setProcessingId] = useState<number | null>(null)
 
   const periodNameMap = useMemo(
     () => new Map(periods.map((period) => [period.id, period.name])),
@@ -223,6 +230,59 @@ export function CommitteeTopicAssignmentsPage() {
       showError(getErrorMessage(error))
     } finally {
       setIsSaving(false)
+    }
+  }
+
+  async function handleComplete(assignment: CommitteeTopicAssignment) {
+    const confirmed = await confirm({
+      title: 'Xác nhận hoàn thành bảo vệ',
+      message: `Xác nhận đề tài "${assignment.topicTitle}" đã bảo vệ xong?`,
+      confirmText: 'Xác nhận',
+      cancelText: 'Đóng',
+    })
+
+    if (!confirmed) return
+
+    try {
+      setProcessingId(assignment.id)
+      const response = await completeCommitteeTopicAssignment(assignment.id)
+      setAssignments((current) =>
+        current.map((item) =>
+          item.id === response.data.id ? response.data : item,
+        ),
+      )
+      success(response.message)
+    } catch (error) {
+      showError(getErrorMessage(error))
+    } finally {
+      setProcessingId(null)
+    }
+  }
+
+  async function handleCancel(assignment: CommitteeTopicAssignment) {
+    const confirmed = await confirm({
+      title: 'Hủy phân công',
+      message: `Bạn có chắc muốn hủy phân công đề tài "${assignment.topicTitle}" không?`,
+      confirmText: 'Hủy phân công',
+      cancelText: 'Đóng',
+      tone: 'danger',
+    })
+
+    if (!confirmed) return
+
+    try {
+      setProcessingId(assignment.id)
+      const response = await cancelCommitteeTopicAssignment(assignment.id)
+      setAssignments((current) =>
+        current.map((item) =>
+          item.id === response.data.id ? response.data : item,
+        ),
+      )
+      success(response.message)
+    } catch (error) {
+      showError(getErrorMessage(error))
+    } finally {
+      setProcessingId(null)
     }
   }
 
@@ -470,6 +530,31 @@ export function CommitteeTopicAssignmentsPage() {
                         </span>
                       )}
                     </div>
+
+                    {assignment.status === 'ASSIGNED' && (
+                      <div className="assignment-item-actions">
+                        <button
+                          type="button"
+                          className="complete"
+                          disabled={processingId === assignment.id}
+                          onClick={() => void handleComplete(assignment)}
+                          title="Xác nhận đã bảo vệ"
+                        >
+                          <Check size={15} strokeWidth={1.9} aria-hidden="true" />
+                          <span>Đã bảo vệ</span>
+                        </button>
+                        <button
+                          type="button"
+                          className="cancel"
+                          disabled={processingId === assignment.id}
+                          onClick={() => void handleCancel(assignment)}
+                          title="Hủy phân công"
+                        >
+                          <Ban size={15} strokeWidth={1.9} aria-hidden="true" />
+                          <span>Hủy</span>
+                        </button>
+                      </div>
+                    )}
                   </li>
                 ))}
               </ul>
