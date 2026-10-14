@@ -8,6 +8,7 @@ import {
     FolderUp,
     Gavel,
     GraduationCap,
+    Star,
     Tags,
     UserRound,
     Users,
@@ -64,6 +65,7 @@ export const navGroups: NavGroup[] = [
         items: [
             { label: 'Quản lý hội đồng', icon: Gavel, href: '/defense-committees', roles: ['ADMIN', 'LECTURER'] },
             { label: 'Phân công đề tài', icon: ClipboardList, href: '/committee-topic-assignments', roles: ['ADMIN'] },
+            { label: 'Chấm điểm & Kết quả', icon: Star, href: '/evaluations', roles: ['ADMIN', 'LECTURER', 'STUDENT'] },
         ],
     },
 ]
