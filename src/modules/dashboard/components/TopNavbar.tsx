@@ -1,11 +1,30 @@
+import { useEffect, useState } from 'react'
 import { Bell, Flag, LogOut } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
 import { tokenStorage } from '../../../shared/services/tokenStorage'
 import { STORAGE_KEYS } from '../../../shared/constants/storageKeys'
 import { logout } from '../../auth/services/authApi'
+import { getUnreadCount } from '../../notifications'
 
 export function TopNavbar() {
   const navigate = useNavigate()
+  const [unreadCount, setUnreadCount] = useState(0)
+
+  useEffect(() => {
+    let active = true
+
+    getUnreadCount()
+      .then((count) => {
+        if (active) setUnreadCount(count)
+      })
+      .catch(() => {
+        // Không chặn UI nếu lấy số thông báo lỗi.
+      })
+
+    return () => {
+      active = false
+    }
+  }, [])
 
   async function handleLogout() {
     const refreshToken = localStorage.getItem(STORAGE_KEYS.refreshToken)
@@ -44,9 +63,20 @@ export function TopNavbar() {
         <span className="flag-icon">
           <Flag aria-hidden="true" size={18} strokeWidth={1.9} />
         </span>
-        <span className="bell-icon">
+        <button
+          type="button"
+          className="bell-icon"
+          onClick={() => navigate('/notifications')}
+          aria-label="Thông báo"
+          title="Thông báo"
+        >
           <Bell aria-hidden="true" size={18} strokeWidth={1.9} />
-        </span>
+          {unreadCount > 0 && (
+            <span className="bell-badge">
+              {unreadCount > 99 ? '99+' : unreadCount}
+            </span>
+          )}
+        </button>
         <img
           src="https://www.iconpacks.net/icons/2/free-user-icon-3296-thumb.png"
           alt="User"

@@ -25,6 +25,15 @@ export async function getStudentGroupsByRegistrationPeriod(
   return response.data
 }
 
+// Sinh viên xem các nhóm của chính mình.
+export async function getMyStudentGroups(): Promise<StudentGroup[]> {
+  const response = await apiClient<ApiResponse<StudentGroup[]>>(
+    `${STUDENT_GROUPS_PATH}/me`,
+  )
+
+  return response.data
+}
+
 export function getStudentGroup(studentGroupId: number) {
   return apiClient<ApiResponse<StudentGroup>>(
     `${STUDENT_GROUPS_PATH}/${studentGroupId}`,
