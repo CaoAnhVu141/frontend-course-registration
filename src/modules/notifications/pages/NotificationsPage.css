@@ -17,7 +17,6 @@
   margin-top: 20px;
 }
 
-/* ---- Form đăng thông báo (admin) ---- */
 .notification-compose-head {
   display: flex;
   align-items: center;
@@ -86,7 +85,7 @@
   opacity: 0.6;
 }
 
-/* ---- Danh sách thông báo ---- */
+
 .notification-list-head {
   display: flex;
   align-items: center;

@@ -12,6 +12,7 @@ import { AppLoading, Pagination } from '../../ui'
 import {
   createStudentGroup,
   deleteStudentGroup,
+  getMyStudentGroups,
   getStudentGroup,
   getStudentGroups,
   getStudentGroupsByRegistrationPeriod,
@@ -31,6 +32,7 @@ export function StudentGroupsPage() {
   const canViewGroups = isAdmin || isLecturer
   const canCreateGroup = isStudent
   const canDeleteGroup = isAdmin
+  const canSeeList = canViewGroups || isStudent
 
   const [groups, setGroups] = useState<StudentGroup[]>([])
   const [registrationPeriods, setRegistrationPeriods] = useState<RegistrationPeriod[]>([])
@@ -89,7 +91,9 @@ export function StudentGroupsPage() {
         ? selectedPeriodId
           ? getStudentGroupsByRegistrationPeriod(Number(selectedPeriodId))
           : getStudentGroups()
-        : Promise.resolve([])
+        : isStudent
+          ? getMyStudentGroups()
+          : Promise.resolve([])
 
       const [periodData, groupData] = await Promise.all([
         periodsPromise,
@@ -105,7 +109,7 @@ export function StudentGroupsPage() {
     } finally {
       setIsLoading(false)
     }
-  }, [canViewGroups, selectedPeriodId, showError])
+  }, [canViewGroups, isStudent, selectedPeriodId, showError])
 
   useEffect(() => {
     void loadData()
@@ -153,7 +157,12 @@ export function StudentGroupsPage() {
   }
 
   async function openDetail(group: StudentGroup) {
-    if (!canViewGroups) return
+    if (!canSeeList) return
+
+    if (!canViewGroups) {
+      setDetailGroup(group)
+      return
+    }
 
     try {
       setIsDetailLoading(true)
@@ -225,7 +234,7 @@ export function StudentGroupsPage() {
                 value={search}
                 onChange={(event) => setSearch(event.target.value)}
                 placeholder="Tìm tên nhóm, mã nhóm, người tạo..."
-                disabled={!canViewGroups}
+                disabled={!canSeeList}
               />
             </span>
           </label>
@@ -240,7 +249,7 @@ export function StudentGroupsPage() {
         {error && <div className="student-group-message error">{error}</div>}
         {!canViewGroups && canCreateGroup && (
           <div className="student-group-message info">
-            Sinh viên chỉ có quyền tạo nhóm. Danh sách nhóm sẽ do quản trị viên hoặc giảng viên xem.
+            Danh sách dưới đây là các nhóm bạn đang tham gia.
           </div>
         )}
 
@@ -267,7 +276,7 @@ export function StudentGroupsPage() {
                   <td className="student-group-empty" colSpan={7}>
                     {canViewGroups
                       ? 'Không tìm thấy nhóm sinh viên.'
-                      : 'Chưa có nhóm vừa tạo trong phiên này.'}
+                      : 'Bạn chưa thuộc nhóm nào.'}
                   </td>
                 </tr>
               ) : (
@@ -288,7 +297,7 @@ export function StudentGroupsPage() {
                       <td>{leader ? `${leader.studentCode} - ${leader.username}` : group.createdBy}</td>
                       <td>
                         <div className="student-group-actions">
-                          {canViewGroups && (
+                          {canSeeList && (
                             <button type="button" onClick={() => void openDetail(group)}>
                               <Eye aria-hidden="true" size={16} strokeWidth={1.9} />
                               <span>Chi tiết</span>
@@ -304,7 +313,7 @@ export function StudentGroupsPage() {
                               <Trash2 aria-hidden="true" size={16} strokeWidth={1.9} /> <span>{deletingId === group.id ? 'Đang xóa...' : 'Xóa'}</span>
                             </button>
                           )}
-                          {!canViewGroups && !canDeleteGroup && (
+                          {!canSeeList && !canDeleteGroup && (
                             <span className="student-group-action-empty">-</span>
                           )}
                         </div>
