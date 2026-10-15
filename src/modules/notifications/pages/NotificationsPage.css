@@ -13,12 +13,7 @@
   color: #1f2937;
 }
 
-.notification-compose + .notification-list-card,
-.notification-list-card {
-  margin-top: 20px;
-}
-
-.notification-compose:first-child + .notification-list-card {
+.notification-compose + .notification-list-card {
   margin-top: 20px;
 }
 
