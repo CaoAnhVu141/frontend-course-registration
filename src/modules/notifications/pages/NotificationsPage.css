@@ -1,7 +1,5 @@
 .notifications-content {
   width: 100%;
-  display: grid;
-  gap: 20px;
 }
 
 /* ---- Panel chung (giống các trang quản lý khác) ---- */
@@ -13,6 +11,15 @@
   border: 1px solid #e1e5ea;
   border-radius: 8px;
   color: #1f2937;
+}
+
+.notification-compose + .notification-list-card,
+.notification-list-card {
+  margin-top: 20px;
+}
+
+.notification-compose:first-child + .notification-list-card {
+  margin-top: 20px;
 }
 
 /* ---- Form đăng thông báo (admin) ---- */

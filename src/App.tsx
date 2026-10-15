@@ -17,6 +17,7 @@ import { SubmissionsPage } from './modules/submissions'
 import { DefenseCommitteesPage } from './modules/defensecommittees'
 import { CommitteeTopicAssignmentsPage } from './modules/committeetopicassignments'
 import { EvaluationsPage } from './modules/evaluations'
+import { NotificationsPage } from './modules/notifications'
 
 type ProtectedRouteProps = {
   children: ReactElement
@@ -165,6 +166,15 @@ function App() {
         element={
           <ProtectedRoute roles={['ADMIN', 'LECTURER', 'STUDENT']}>
             <EvaluationsPage />
+          </ProtectedRoute>
+        }
+      />
+
+      <Route
+        path="/notifications"
+        element={
+          <ProtectedRoute roles={['ADMIN', 'LECTURER', 'STUDENT']}>
+            <NotificationsPage />
           </ProtectedRoute>
         }
       />
