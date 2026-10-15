@@ -6,7 +6,10 @@ import { hasRole } from '../../../shared/utils/roleLabel'
 import { useConfirmation } from '../../confirmation'
 import { DashboardLayout } from '../../dashboard/components/DashboardLayout'
 import { useNotification } from '../../notification'
-import { getStudentGroups } from '../../studentgroups/services/studentGroupApi'
+import {
+  getMyStudentGroups,
+  getStudentGroups,
+} from '../../studentgroups/services/studentGroupApi'
 import type { StudentGroup } from '../../studentgroups/types/studentGroup.type'
 import { getPublishedTopics, getTopics } from '../../topics/services/topicApi'
 import type { Topic } from '../../topics/types/topic.type'
@@ -134,7 +137,9 @@ export function TopicRegistrationsPage() {
         : Promise.resolve([])
       const groupPromise = canReviewRegistrations
         ? getStudentGroups()
-        : Promise.resolve([])
+        : canCreateRegistration
+          ? getMyStudentGroups()
+          : Promise.resolve([])
       const topicPromise = canCreateRegistration
         ? getPublishedTopics()
         : getTopics()
@@ -490,21 +495,31 @@ export function TopicRegistrationsPage() {
                   className="form-label"
                   htmlFor="topic-registration-group"
                 >
-                  ID nhóm sinh viên
+                  Nhóm sinh viên
                 </label>
-                <input
+                <select
                   className="form-control"
                   id="topic-registration-group"
                   autoFocus
-                  min={1}
                   required
-                  type="number"
                   value={formStudentGroupId}
                   onChange={(event) =>
                     setFormStudentGroupId(event.target.value)
                   }
-                  placeholder="Nhập ID nhóm sinh viên"
-                />
+                >
+                  <option value="">Chọn nhóm sinh viên</option>
+                  {studentGroups.map((group) => (
+                    <option key={group.id} value={group.id}>
+                      {group.name}
+                    </option>
+                  ))}
+                </select>
+                {studentGroups.length === 0 && (
+                  <p className="topic-registration-note">
+                    Bạn chưa thuộc nhóm nào. Hãy tạo nhóm ở mục "Quản lý nhóm
+                    sinh viên" trước khi đăng ký đề tài.
+                  </p>
+                )}
               </div>
 
               <div className="form-field">

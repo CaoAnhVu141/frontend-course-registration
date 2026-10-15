@@ -254,11 +254,7 @@
   transform: translateY(-1px);
 }
 
-.topic-actions button:only-child {
-  grid-column: 1 / -1;
-}
-
-.topic-actions button:nth-child(3) {
+.topic-actions button:last-child:nth-child(odd) {
   grid-column: 1 / -1;
 }
 
