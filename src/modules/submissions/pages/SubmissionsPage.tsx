@@ -17,11 +17,15 @@ import {
   getSubmissions,
 } from '../services/submissionApi'
 import type {
+  ApiResponse,
   Submission,
   SubmissionFeedback,
   SubmissionVersion,
 } from '../types/submission.type'
-import { getMyTopicRegistrations } from '../../topicregistrations/services/topicRegistrationApi'
+import {
+  getMyTopicRegistrations,
+  getTopicRegistration,
+} from '../../topicregistrations/services/topicRegistrationApi'
 import type { TopicRegistration } from '../../topicregistrations/types/topicRegistration.type'
 import './SubmissionsPage.css'
 
@@ -58,12 +62,29 @@ export function SubmissionsPage() {
     [myRegistrations],
   )
 
+  // topicRegistrationId -> tên đề tài (để hiển thị thay cho ID)
+  const registrationTitleById = useMemo(
+    () =>
+      new Map(
+        myRegistrations.map((registration) => [
+          registration.id,
+          registration.topicTitle,
+        ]),
+      ),
+    [myRegistrations],
+  )
+
+  const registrationTitle = (topicRegistrationId: number) =>
+    registrationTitleById.get(topicRegistrationId) ??
+    `#${topicRegistrationId}`
+
   const [versionSubmission, setVersionSubmission] = useState<Submission | null>(null)
   const [versionFile, setVersionFile] = useState<File | null>(null)
   const [versionChangeNote, setVersionChangeNote] = useState('')
   const [downloadingId, setDownloadingId] = useState<number | null>(null)
 
   const [detailSubmission, setDetailSubmission] = useState<Submission | null>(null)
+  const [detailTopicTitle, setDetailTopicTitle] = useState('')
   const [isDetailLoading, setIsDetailLoading] = useState(false)
 
   const [feedbackVersion, setFeedbackVersion] = useState<SubmissionVersion | null>(null)
@@ -121,15 +142,43 @@ export function SubmissionsPage() {
     void loadSubmissions()
   }, [loadSubmissions])
 
-  useEffect(() => {
+  // Sinh viên: tải đăng ký của nhóm + bài nộp tương ứng (lịch sử đã nộp).
+  const loadMyStudentData = useCallback(async () => {
     if (!canCreateSubmission) return
 
-    getMyTopicRegistrations()
-      .then(setMyRegistrations)
-      .catch(() => {
-        // Không chặn trang nếu tải đăng ký lỗi; vẫn mở được form.
-      })
-  }, [canCreateSubmission])
+    try {
+      setIsLoading(true)
+      setError('')
+      const registrations = await getMyTopicRegistrations()
+      setMyRegistrations(registrations)
+
+      const approved = registrations.filter(
+        (registration) => registration.status === 'APPROVED',
+      )
+      const results = await Promise.allSettled(
+        approved.map((registration) =>
+          getSubmissionByTopicRegistration(registration.id),
+        ),
+      )
+
+      const mySubmissions = results
+        .filter(
+          (result): result is PromiseFulfilledResult<ApiResponse<Submission>> =>
+            result.status === 'fulfilled',
+        )
+        .map((result) => result.value.data)
+
+      setSubmissions(mySubmissions)
+    } catch (loadError) {
+      setError(getErrorMessage(loadError))
+    } finally {
+      setIsLoading(false)
+    }
+  }, [canCreateSubmission, showError])
+
+  useEffect(() => {
+    void loadMyStudentData()
+  }, [loadMyStudentData])
 
   useEffect(() => {
     setPage(1)
@@ -275,9 +324,20 @@ export function SubmissionsPage() {
     try {
       setIsDetailLoading(true)
       setDetailSubmission(submission)
+      setDetailTopicTitle(registrationTitleById.get(submission.topicRegistrationId) ?? '')
       const response = await getSubmission(submission.id)
       setDetailSubmission(response.data)
       upsertSubmission(response.data)
+
+      // Lấy đúng tên đề tài theo đăng ký (không phụ thuộc danh sách đã tải).
+      try {
+        const registration = await getTopicRegistration(
+          response.data.topicRegistrationId,
+        )
+        setDetailTopicTitle(registration.data.topicTitle)
+      } catch {
+        // Giữ nguyên tên tạm nếu không lấy được.
+      }
     } catch (detailError) {
       showError(getErrorMessage(detailError))
     } finally {
@@ -373,9 +433,8 @@ export function SubmissionsPage() {
         {error && <div className="submission-message error">{error}</div>}
         {!canViewAll && canCreateSubmission && (
           <div className="submission-message info">
-            Sinh viên tra cứu bài nộp của nhóm bằng ID đăng ký đề tài đã được
-            duyệt. Mỗi đăng ký đề tài chỉ có một bài nộp và có thể nộp nhiều
-            phiên bản báo cáo.
+            Danh sách bài nộp của nhóm bạn. Mỗi đăng ký đề tài có một bài nộp và
+            có thể nộp nhiều phiên bản báo cáo — xem lịch sử trong phần Chi tiết.
           </div>
         )}
 
@@ -404,7 +463,7 @@ export function SubmissionsPage() {
                   <td className="submission-empty" colSpan={7}>
                     {canViewAll
                       ? 'Không tìm thấy bài nộp.'
-                      : 'Chưa tra cứu bài nộp nào.'}
+                      : 'Nhóm bạn chưa có bài nộp nào.'}
                   </td>
                 </tr>
               ) : (
@@ -418,7 +477,7 @@ export function SubmissionsPage() {
                       className={submission.status ? '' : 'inactive-row'}
                     >
                       <td>{submission.id}</td>
-                      <td>#{submission.topicRegistrationId}</td>
+                      <td>{registrationTitle(submission.topicRegistrationId)}</td>
                       <td>{formatDateTime(submission.submittedAt)}</td>
                       <td>{versions.length}</td>
                       <td>
@@ -643,10 +702,11 @@ export function SubmissionsPage() {
               ) : (
                 <>
                   <dl className="submission-detail-grid">
-                    <dt>ID bài nộp</dt>
-                    <dd>{detailSubmission.id}</dd>
-                    <dt>ID đăng ký đề tài</dt>
-                    <dd>#{detailSubmission.topicRegistrationId}</dd>
+                    <dt>Đề tài</dt>
+                    <dd>
+                      {detailTopicTitle ||
+                        registrationTitle(detailSubmission.topicRegistrationId)}
+                    </dd>
                     <dt>Ngày tạo</dt>
                     <dd>{formatDateTime(detailSubmission.submittedAt)}</dd>
                     <dt>Trạng thái</dt>
