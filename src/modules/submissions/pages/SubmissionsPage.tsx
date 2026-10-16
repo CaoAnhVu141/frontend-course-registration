@@ -20,6 +20,8 @@ import type {
   SubmissionFeedback,
   SubmissionVersion,
 } from '../types/submission.type'
+import { getMyTopicRegistrations } from '../../topicregistrations/services/topicRegistrationApi'
+import type { TopicRegistration } from '../../topicregistrations/types/topicRegistration.type'
 import './SubmissionsPage.css'
 
 const PAGE_SIZE = 5
@@ -52,6 +54,16 @@ export function SubmissionsPage() {
 
   const [isCreateOpen, setIsCreateOpen] = useState(false)
   const [formTopicRegistrationId, setFormTopicRegistrationId] = useState('')
+  const [myRegistrations, setMyRegistrations] = useState<TopicRegistration[]>([])
+
+  // Đăng ký đã duyệt của sinh viên (để chọn khi tạo bài nộp)
+  const approvedRegistrations = useMemo(
+    () =>
+      myRegistrations.filter(
+        (registration) => registration.status === 'APPROVED',
+      ),
+    [myRegistrations],
+  )
 
   const [versionSubmission, setVersionSubmission] = useState<Submission | null>(null)
   const [versionForm, setVersionForm] = useState(emptyVersionForm)
@@ -115,6 +127,16 @@ export function SubmissionsPage() {
   }, [loadSubmissions])
 
   useEffect(() => {
+    if (!canCreateSubmission) return
+
+    getMyTopicRegistrations()
+      .then(setMyRegistrations)
+      .catch(() => {
+        // Không chặn trang nếu tải đăng ký lỗi; vẫn mở được form.
+      })
+  }, [canCreateSubmission])
+
+  useEffect(() => {
     setPage(1)
   }, [search])
 
@@ -160,7 +182,11 @@ export function SubmissionsPage() {
   }
 
   function openCreateForm() {
-    setFormTopicRegistrationId(lookupId)
+    // Chỉ giữ lại lookupId nếu nó trùng một đăng ký đã duyệt.
+    const matched = approvedRegistrations.some(
+      (registration) => String(registration.id) === lookupId,
+    )
+    setFormTopicRegistrationId(matched ? lookupId : '')
     setIsCreateOpen(true)
   }
 
@@ -461,21 +487,31 @@ export function SubmissionsPage() {
             <form onSubmit={(event) => void handleCreateSubmit(event)}>
               <div className="form-field">
                 <label className="form-label" htmlFor="submission-registration">
-                  ID đăng ký đề tài
+                  Đăng ký đề tài
                 </label>
-                <input
+                <select
                   className="form-control"
                   id="submission-registration"
                   autoFocus
                   required
-                  min={1}
-                  type="number"
                   value={formTopicRegistrationId}
                   onChange={(event) =>
                     setFormTopicRegistrationId(event.target.value)
                   }
-                  placeholder="Nhập ID đăng ký đề tài"
-                />
+                >
+                  <option value="">Chọn đăng ký đề tài</option>
+                  {approvedRegistrations.map((registration) => (
+                    <option key={registration.id} value={registration.id}>
+                      {registration.studentGroupName} — {registration.topicTitle}
+                    </option>
+                  ))}
+                </select>
+                {approvedRegistrations.length === 0 && (
+                  <p className="submission-note">
+                    Nhóm bạn chưa có đăng ký đề tài nào đã được duyệt để nộp báo
+                    cáo.
+                  </p>
+                )}
               </div>
 
               <div className="submission-note">

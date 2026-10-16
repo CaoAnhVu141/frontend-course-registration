@@ -18,6 +18,7 @@ import {
   approveTopicRegistration,
   cancelTopicRegistration,
   createTopicRegistration,
+  getMyTopicRegistrations,
   getTopicRegistration,
   getTopicRegistrations,
   rejectTopicRegistration,
@@ -134,7 +135,9 @@ export function TopicRegistrationsPage() {
 
       const registrationPromise = canReviewRegistrations
         ? getTopicRegistrations()
-        : Promise.resolve([])
+        : canCreateRegistration
+          ? getMyTopicRegistrations()
+          : Promise.resolve([])
       const groupPromise = canReviewRegistrations
         ? getStudentGroups()
         : canCreateRegistration
@@ -367,9 +370,7 @@ export function TopicRegistrationsPage() {
         {error && <div className="topic-registration-message error">{error}</div>}
         {!canReviewRegistrations && canCreateRegistration && (
           <div className="topic-registration-message info">
-            Sinh viên có thể tạo đăng ký mới và hủy các đăng ký vừa tạo trong
-            phiên hiện tại. Danh sách toàn bộ đăng ký sẽ do quản trị viên hoặc
-            giảng viên xem.
+            Danh sách dưới đây là các đăng ký đề tài của nhóm bạn.
           </div>
         )}
 
@@ -398,7 +399,7 @@ export function TopicRegistrationsPage() {
                   <td className="topic-registration-empty" colSpan={7}>
                     {canReviewRegistrations
                       ? 'Không tìm thấy đăng ký đề tài.'
-                      : 'Chưa có đăng ký đề tài trong phiên này.'}
+                      : 'Nhóm bạn chưa có đăng ký đề tài nào.'}
                   </td>
                 </tr>
               ) : (
@@ -648,8 +649,6 @@ export function TopicRegistrationsPage() {
                 <AppLoading />
               ) : (
                 <dl className="topic-registration-detail-grid">
-                  <dt>ID đăng ký</dt>
-                  <dd>{detailRegistration.id}</dd>
                   <dt>Nhóm sinh viên</dt>
                   <dd>
                     {detailRegistration.studentGroupName ||
