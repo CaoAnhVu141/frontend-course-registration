@@ -689,20 +689,27 @@ function StudentView() {
   }
 
   return (
-    <div className="evaluation-result-grid">
+    <div className="evaluation-result-list">
       {results.map((result) => (
-        <section key={result.id} className="evaluation-result-card">
-          <header>
-            <span className="evaluation-result-group">
-              <Users size={15} strokeWidth={1.9} aria-hidden="true" />
-              {result.studentGroupName}
-            </span>
-            <span className="evaluation-result-score">
-              {formatScore(result.finalScore)}
-            </span>
-          </header>
+        <section key={result.id} className="evaluation-result-row">
+          <div className="evaluation-result-main">
+            <div className="evaluation-result-info">
+              <span className="evaluation-result-group">
+                <Users size={15} strokeWidth={1.9} aria-hidden="true" />
+                {result.studentGroupName}
+              </span>
+              <p className="evaluation-result-topic">{result.topicTitle}</p>
+              <span className="evaluation-result-published">
+                Công bố{' '}
+                {result.publishedAt ? formatDateTime(result.publishedAt) : ''}
+              </span>
+            </div>
 
-          <p className="evaluation-result-topic">{result.topicTitle}</p>
+            <div className="evaluation-result-final">
+              <span className="evaluation-result-final-label">Điểm cuối</span>
+              <strong>{formatScore(result.finalScore)}</strong>
+            </div>
+          </div>
 
           <div className="evaluation-result-members">
             {result.evaluations.length === 0 ? (
@@ -710,17 +717,21 @@ function StudentView() {
             ) : (
               result.evaluations.map((evaluation) => (
                 <div key={evaluation.id} className="evaluation-result-member">
-                  <span>{evaluation.lecturerCode || evaluation.lecturerEmail}</span>
-                  <strong>{formatScore(evaluation.score)}</strong>
+                  <div className="evaluation-result-member-info">
+                    <span className="evaluation-result-member-name">
+                      {evaluation.lecturerCode || 'Giảng viên'}
+                    </span>
+                    <span className="evaluation-result-member-email">
+                      {evaluation.lecturerEmail}
+                    </span>
+                  </div>
+                  <span className="evaluation-result-member-score">
+                    {formatScore(evaluation.score)}
+                  </span>
                 </div>
               ))
             )}
           </div>
-
-          <footer>
-            Công bố{' '}
-            {result.publishedAt ? formatDateTime(result.publishedAt) : ''}
-          </footer>
         </section>
       ))}
     </div>
