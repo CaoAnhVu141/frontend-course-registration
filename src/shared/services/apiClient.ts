@@ -65,7 +65,11 @@ function request(
     accessToken: string | null,
 ) {
     const headers = new Headers(options?.headers)
-    headers.set('Content-Type', 'application/json')
+
+    // Với FormData (upload file) để trình duyệt tự set Content-Type kèm boundary.
+    if (!(options?.body instanceof FormData)) {
+        headers.set('Content-Type', 'application/json')
+    }
 
     if (accessToken) {
         headers.set(

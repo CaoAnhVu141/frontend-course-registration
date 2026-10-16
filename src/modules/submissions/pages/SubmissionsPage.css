@@ -454,6 +454,70 @@
   background: #dbeafe;
 }
 
+.submission-download-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 32px;
+  padding: 0 12px;
+  border: 1px solid #bbf7d0;
+  border-radius: 5px;
+  background: #f0fdf4;
+  color: #15803d;
+  cursor: pointer;
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+.submission-download-button:hover:not(:disabled) {
+  background: #dcfce7;
+}
+
+.submission-download-button:disabled {
+  cursor: wait;
+  opacity: 0.6;
+}
+
+.submission-file-input {
+  display: flex;
+  align-items: center;
+  min-height: 46px;
+  padding: 6px 10px;
+  height: auto;
+  cursor: pointer;
+  color: #475569;
+  font-size: 13.5px;
+}
+
+.submission-file-input::file-selector-button {
+  margin-right: 12px;
+  padding: 0 16px;
+  height: 34px;
+  border: 0;
+  border-radius: 6px;
+  background: #0078d4;
+  color: #fff;
+  font-size: 13.5px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 160ms ease;
+}
+
+.submission-file-input::file-selector-button:hover {
+  background: #015599;
+}
+
+.submission-file-picked {
+  margin: 8px 0 0;
+  color: #15803d;
+  font-size: 13px;
+  overflow-wrap: anywhere;
+}
+
+.submission-file-picked strong {
+  color: #0f2f57;
+}
+
 .submission-feedback-list {
   display: grid;
   gap: 12px;

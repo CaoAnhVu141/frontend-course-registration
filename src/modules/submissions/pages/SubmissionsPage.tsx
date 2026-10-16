@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import type { FormEvent } from 'react'
-import { Eye, Search, Upload } from 'lucide-react'
+import { Download, Eye, Search, Upload } from 'lucide-react'
 import { tokenStorage } from '../../../shared/services/tokenStorage'
 import { hasRole } from '../../../shared/utils/roleLabel'
 import { DashboardLayout } from '../../dashboard/components/DashboardLayout'
@@ -10,6 +10,7 @@ import {
   createSubmission,
   createSubmissionFeedback,
   createSubmissionVersion,
+  downloadSubmissionVersion,
   getFeedbacksBySubmissionVersion,
   getSubmission,
   getSubmissionByTopicRegistration,
@@ -25,14 +26,6 @@ import type { TopicRegistration } from '../../topicregistrations/types/topicRegi
 import './SubmissionsPage.css'
 
 const PAGE_SIZE = 5
-
-const emptyVersionForm = {
-  fileName: '',
-  storageKey: '',
-  mimeType: 'application/pdf',
-  fileSize: '',
-  changeNote: '',
-}
 
 export function SubmissionsPage() {
   const { success, error: showError } = useNotification()
@@ -66,7 +59,9 @@ export function SubmissionsPage() {
   )
 
   const [versionSubmission, setVersionSubmission] = useState<Submission | null>(null)
-  const [versionForm, setVersionForm] = useState(emptyVersionForm)
+  const [versionFile, setVersionFile] = useState<File | null>(null)
+  const [versionChangeNote, setVersionChangeNote] = useState('')
+  const [downloadingId, setDownloadingId] = useState<number | null>(null)
 
   const [detailSubmission, setDetailSubmission] = useState<Submission | null>(null)
   const [isDetailLoading, setIsDetailLoading] = useState(false)
@@ -218,7 +213,8 @@ export function SubmissionsPage() {
 
   function openVersionForm(submission: Submission) {
     setVersionSubmission(submission)
-    setVersionForm(emptyVersionForm)
+    setVersionFile(null)
+    setVersionChangeNote('')
   }
 
   function closeVersionForm() {
@@ -226,20 +222,33 @@ export function SubmissionsPage() {
     setVersionSubmission(null)
   }
 
+  async function handleDownload(version: SubmissionVersion) {
+    try {
+      setDownloadingId(version.id)
+      await downloadSubmissionVersion(version.id, version.fileName)
+    } catch (downloadError) {
+      showError(getErrorMessage(downloadError))
+    } finally {
+      setDownloadingId(null)
+    }
+  }
+
   async function handleVersionSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault()
     if (!versionSubmission) return
 
+    if (!versionFile) {
+      showError('Vui lòng chọn file báo cáo.')
+      return
+    }
+
     try {
       setIsSaving(true)
-      const response = await createSubmissionVersion({
-        submissionId: versionSubmission.id,
-        fileName: versionForm.fileName.trim(),
-        storageKey: versionForm.storageKey.trim(),
-        mimeType: versionForm.mimeType.trim(),
-        fileSize: versionForm.fileSize ? Number(versionForm.fileSize) : undefined,
-        changeNote: versionForm.changeNote.trim() || undefined,
-      })
+      const response = await createSubmissionVersion(
+        versionSubmission.id,
+        versionFile,
+        versionChangeNote,
+      )
 
       const nextSubmission = {
         ...versionSubmission,
@@ -558,86 +567,24 @@ export function SubmissionsPage() {
             </div>
             <form onSubmit={(event) => void handleVersionSubmit(event)}>
               <div className="form-field">
-                <label className="form-label" htmlFor="submission-file-name">
-                  Tên file
+                <label className="form-label" htmlFor="submission-file">
+                  Chọn file báo cáo
                 </label>
                 <input
-                  className="form-control"
-                  id="submission-file-name"
-                  autoFocus
-                  required
-                  value={versionForm.fileName}
+                  className="form-control submission-file-input"
+                  id="submission-file"
+                  type="file"
+                  accept=".pdf,.doc,.docx,.zip,.rar"
                   onChange={(event) =>
-                    setVersionForm({ ...versionForm, fileName: event.target.value })
+                    setVersionFile(event.target.files?.[0] ?? null)
                   }
-                  placeholder="VD: bao-cao-lan-1.pdf"
                 />
-              </div>
-
-              <div className="form-field">
-                <label className="form-label" htmlFor="submission-storage-key">
-                  Đường dẫn lưu file
-                </label>
-                <input
-                  className="form-control"
-                  id="submission-storage-key"
-                  required
-                  value={versionForm.storageKey}
-                  onChange={(event) =>
-                    setVersionForm({
-                      ...versionForm,
-                      storageKey: event.target.value,
-                    })
-                  }
-                  placeholder="VD: uploads/submission-1/bao-cao-lan-1.pdf"
-                />
-              </div>
-
-              <div className="submission-form-grid">
-                <div className="form-field">
-                  <label className="form-label" htmlFor="submission-mime-type">
-                    Loại file
-                  </label>
-                  <select
-                    className="form-control"
-                    id="submission-mime-type"
-                    value={versionForm.mimeType}
-                    onChange={(event) =>
-                      setVersionForm({
-                        ...versionForm,
-                        mimeType: event.target.value,
-                      })
-                    }
-                  >
-                    <option value="application/pdf">PDF</option>
-                    <option value="application/msword">Word (.doc)</option>
-                    <option value="application/vnd.openxmlformats-officedocument.wordprocessingml.document">
-                      Word (.docx)
-                    </option>
-                    <option value="application/zip">ZIP</option>
-                  </select>
-                </div>
-
-                <div className="form-field">
-                  <label className="form-label" htmlFor="submission-file-size">
-                    Kích thước (byte)
-                  </label>
-                  <input
-                    className="form-control"
-                    id="submission-file-size"
-                    required
-                    min={1}
-                    type="number"
-                    value={versionForm.fileSize}
-                    onChange={(event) =>
-                      setVersionForm({
-                        ...versionForm,
-                        fileSize: event.target.value,
-                      })
-                    }
-                    placeholder="VD: 204800"
-                  />
-                </div>
+                {versionFile && (
+                  <p className="submission-file-picked">
+                    Đã chọn: <strong>{versionFile.name}</strong> (
+                    {formatFileSize(versionFile.size)})
+                  </p>
+                )}
               </div>
 
               <div className="form-field">
@@ -648,13 +595,8 @@ export function SubmissionsPage() {
                   className="form-control"
                   id="submission-change-note"
                   rows={3}
-                  value={versionForm.changeNote}
-                  onChange={(event) =>
-                    setVersionForm({
-                      ...versionForm,
-                      changeNote: event.target.value,
-                    })
-                  }
+                  value={versionChangeNote}
+                  onChange={(event) => setVersionChangeNote(event.target.value)}
                   placeholder="VD: Bản báo cáo lần 1"
                 />
               </div>
@@ -729,13 +671,14 @@ export function SubmissionsPage() {
                         <th>Kích thước</th>
                         <th>Ghi chú</th>
                         <th>Người nộp</th>
+                        <th>Tải xuống</th>
                         <th>Góp ý</th>
                       </tr>
                     </thead>
                     <tbody>
                       {(detailSubmission.submissionVersions ?? []).length === 0 ? (
                         <tr>
-                          <td className="submission-empty" colSpan={6}>
+                          <td className="submission-empty" colSpan={7}>
                             Chưa có phiên bản báo cáo nào.
                           </td>
                         </tr>
@@ -747,6 +690,24 @@ export function SubmissionsPage() {
                             <td>{formatFileSize(version.fileSize)}</td>
                             <td>{version.changeNote || '-'}</td>
                             <td>{version.uploadedBy}</td>
+                            <td>
+                              <button
+                                type="button"
+                                className="submission-download-button"
+                                disabled={downloadingId === version.id}
+                                onClick={() => void handleDownload(version)}
+                                title="Tải file báo cáo"
+                              >
+                                <Download
+                                  aria-hidden="true"
+                                  size={15}
+                                  strokeWidth={1.9}
+                                />
+                                {downloadingId === version.id
+                                  ? 'Đang tải...'
+                                  : 'Tải xuống'}
+                              </button>
+                            </td>
                             <td>
                               <button
                                 type="button"
