@@ -21,6 +21,16 @@ import './RegistrationPeriodsPage.css'
 
 const PAGE_SIZE = 5
 
+const PERIOD_TYPE_OPTIONS = [
+  { value: 'SUBJECT', label: 'Học phần (SUBJECT)' },
+  { value: 'NCKH', label: 'Nghiên cứu khoa học (NCKH)' },
+  { value: 'TLCN', label: 'Tiểu luận chuyên ngành (TLCN)' },
+  { value: 'KLTN', label: 'Khóa luận tốt nghiệp (KLTN)' },
+] as const
+
+const periodTypeLabel = (value: string) =>
+  PERIOD_TYPE_OPTIONS.find((option) => option.value === value)?.label ?? value
+
 const emptyForm = {
   name: '',
   type: '',
@@ -136,6 +146,12 @@ export function RegistrationPeriodsPage() {
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault()
+
+    if (!form.type) {
+      showError('Vui lòng chọn loại kỳ.')
+      return
+    }
+
     setIsSaving(true)
 
     const payload = toRequestPayload(form)
@@ -239,7 +255,7 @@ export function RegistrationPeriodsPage() {
                   <tr key={period.id} className={period.status ? '' : 'inactive-row'}>
                     <td>{period.id}</td>
                     <td>{period.name}</td>
-                    <td>{period.type}</td>
+                    <td>{periodTypeLabel(period.type)}</td>
                     <td>{formatDateRange(period.lecturerRegistrationStart, period.lecturerRegistrationEnd)}</td>
                     <td>{formatDateRange(period.studentRegistrationStart, period.studentRegistrationEnd)}</td>
                     <td>{formatDateTime(period.reviewerScoreDeadline)}</td>
@@ -303,14 +319,21 @@ export function RegistrationPeriodsPage() {
 
               <div className="form-field">
                 <label className="form-label" htmlFor="registration-period-type">Loại kỳ</label>
-                <input
+                <select
                   className="form-control"
                   id="registration-period-type"
                   value={form.type}
                   onChange={(event) => setForm({ ...form, type: event.target.value })}
-                  placeholder="VD: KHOA_LUAN"
-                  maxLength={100}
-                />
+                >
+                  <option value="" disabled>
+                    -- Chọn loại kỳ --
+                  </option>
+                  {PERIOD_TYPE_OPTIONS.map((option) => (
+                    <option key={option.value} value={option.value}>
+                      {option.label}
+                    </option>
+                  ))}
+                </select>
               </div>
 
               <div className="registration-period-form-grid">

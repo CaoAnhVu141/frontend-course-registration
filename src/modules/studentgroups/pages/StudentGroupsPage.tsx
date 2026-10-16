@@ -1,6 +1,8 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import type { FormEvent } from 'react'
-import { Eye, Search, Trash2, X } from 'lucide-react'
+import { Eye, Search, Trash2, UserPlus, X } from 'lucide-react'
+import { getStudentByCode } from '../../students/services/studentApi'
+import type { Student } from '../../students/types/student.type'
 import { tokenStorage } from '../../../shared/services/tokenStorage'
 import { hasRole } from '../../../shared/utils/roleLabel'
 import { useConfirmation } from '../../confirmation'
@@ -12,6 +14,7 @@ import { AppLoading, Pagination } from '../../ui'
 import {
   createStudentGroup,
   deleteStudentGroup,
+  getMyStudentGroups,
   getStudentGroup,
   getStudentGroups,
   getStudentGroupsByRegistrationPeriod,
@@ -31,6 +34,7 @@ export function StudentGroupsPage() {
   const canViewGroups = isAdmin || isLecturer
   const canCreateGroup = isStudent
   const canDeleteGroup = isAdmin
+  const canSeeList = canViewGroups || isStudent
 
   const [groups, setGroups] = useState<StudentGroup[]>([])
   const [registrationPeriods, setRegistrationPeriods] = useState<RegistrationPeriod[]>([])
@@ -46,7 +50,9 @@ export function StudentGroupsPage() {
   const [isDetailLoading, setIsDetailLoading] = useState(false)
   const [groupName, setGroupName] = useState('')
   const [formPeriodId, setFormPeriodId] = useState('')
-  const [memberIds, setMemberIds] = useState('')
+  const [members, setMembers] = useState<Student[]>([])
+  const [memberCode, setMemberCode] = useState('')
+  const [isLookingUp, setIsLookingUp] = useState(false)
 
   const periodNameMap = useMemo(() => {
     return new Map(registrationPeriods.map((period) => [period.id, period.name]))
@@ -89,7 +95,9 @@ export function StudentGroupsPage() {
         ? selectedPeriodId
           ? getStudentGroupsByRegistrationPeriod(Number(selectedPeriodId))
           : getStudentGroups()
-        : Promise.resolve([])
+        : isStudent
+          ? getMyStudentGroups()
+          : Promise.resolve([])
 
       const [periodData, groupData] = await Promise.all([
         periodsPromise,
@@ -105,7 +113,7 @@ export function StudentGroupsPage() {
     } finally {
       setIsLoading(false)
     }
-  }, [canViewGroups, selectedPeriodId, showError])
+  }, [canViewGroups, isStudent, selectedPeriodId, showError])
 
   useEffect(() => {
     void loadData()
@@ -122,8 +130,45 @@ export function StudentGroupsPage() {
   function openCreateForm() {
     setGroupName('')
     setFormPeriodId(selectedPeriodId)
-    setMemberIds('')
+    setMembers([])
+    setMemberCode('')
     setIsFormOpen(true)
+  }
+
+  async function addMemberByCode() {
+    const code = memberCode.trim()
+    if (!code) return
+
+    if (members.some((member) => member.studentCode === code)) {
+      showError('Sinh viên này đã có trong danh sách.')
+      return
+    }
+
+    if (members.length >= 2) {
+      showError('Mỗi nhóm tối đa 3 sinh viên (gồm cả trưởng nhóm).')
+      return
+    }
+
+    try {
+      setIsLookingUp(true)
+      const student = await getStudentByCode(code)
+
+      if (members.some((member) => member.userId === student.userId)) {
+        showError('Sinh viên này đã có trong danh sách.')
+        return
+      }
+
+      setMembers((current) => [...current, student])
+      setMemberCode('')
+    } catch {
+      showError(`Không tìm thấy sinh viên có mã "${code}".`)
+    } finally {
+      setIsLookingUp(false)
+    }
+  }
+
+  function removeMember(userId: number) {
+    setMembers((current) => current.filter((member) => member.userId !== userId))
   }
 
   function closeCreateForm() {
@@ -139,7 +184,7 @@ export function StudentGroupsPage() {
       const response = await createStudentGroup({
         registrationPeriodId: formPeriodId ? Number(formPeriodId) : undefined,
         name: groupName.trim(),
-        memberUserIds: parseMemberIds(memberIds),
+        memberUserIds: members.map((member) => member.userId),
       })
 
       setGroups((current) => [response.data, ...current])
@@ -153,7 +198,12 @@ export function StudentGroupsPage() {
   }
 
   async function openDetail(group: StudentGroup) {
-    if (!canViewGroups) return
+    if (!canSeeList) return
+
+    if (!canViewGroups) {
+      setDetailGroup(group)
+      return
+    }
 
     try {
       setIsDetailLoading(true)
@@ -225,7 +275,7 @@ export function StudentGroupsPage() {
                 value={search}
                 onChange={(event) => setSearch(event.target.value)}
                 placeholder="Tìm tên nhóm, mã nhóm, người tạo..."
-                disabled={!canViewGroups}
+                disabled={!canSeeList}
               />
             </span>
           </label>
@@ -240,7 +290,7 @@ export function StudentGroupsPage() {
         {error && <div className="student-group-message error">{error}</div>}
         {!canViewGroups && canCreateGroup && (
           <div className="student-group-message info">
-            Sinh viên chỉ có quyền tạo nhóm. Danh sách nhóm sẽ do quản trị viên hoặc giảng viên xem.
+            Danh sách dưới đây là các nhóm bạn đang tham gia.
           </div>
         )}
 
@@ -267,7 +317,7 @@ export function StudentGroupsPage() {
                   <td className="student-group-empty" colSpan={7}>
                     {canViewGroups
                       ? 'Không tìm thấy nhóm sinh viên.'
-                      : 'Chưa có nhóm vừa tạo trong phiên này.'}
+                      : 'Bạn chưa thuộc nhóm nào.'}
                   </td>
                 </tr>
               ) : (
@@ -288,7 +338,7 @@ export function StudentGroupsPage() {
                       <td>{leader ? `${leader.studentCode} - ${leader.username}` : group.createdBy}</td>
                       <td>
                         <div className="student-group-actions">
-                          {canViewGroups && (
+                          {canSeeList && (
                             <button type="button" onClick={() => void openDetail(group)}>
                               <Eye aria-hidden="true" size={16} strokeWidth={1.9} />
                               <span>Chi tiết</span>
@@ -304,7 +354,7 @@ export function StudentGroupsPage() {
                               <Trash2 aria-hidden="true" size={16} strokeWidth={1.9} /> <span>{deletingId === group.id ? 'Đang xóa...' : 'Xóa'}</span>
                             </button>
                           )}
-                          {!canViewGroups && !canDeleteGroup && (
+                          {!canSeeList && !canDeleteGroup && (
                             <span className="student-group-action-empty">-</span>
                           )}
                         </div>
@@ -364,15 +414,52 @@ export function StudentGroupsPage() {
               </div>
 
               <div className="form-field">
-                <label className="form-label" htmlFor="student-group-members">ID sinh viên thành viên</label>
-                <input
-                  className="form-control"
-                  id="student-group-members"
-                  value={memberIds}
-                  onChange={(event) => setMemberIds(event.target.value)}
-                  placeholder="Ví dụ: 2, 3"
-                />
-                <p className="student-group-help">Người tạo nhóm sẽ tự động là trưởng nhóm, không cần nhập ID của bạn.</p>
+                <label className="form-label" htmlFor="student-group-members">Thành viên nhóm</label>
+                <div className="student-group-member-add">
+                  <input
+                    className="form-control"
+                    id="student-group-members"
+                    value={memberCode}
+                    onChange={(event) => setMemberCode(event.target.value)}
+                    onKeyDown={(event) => {
+                      if (event.key === 'Enter') {
+                        event.preventDefault()
+                        void addMemberByCode()
+                      }
+                    }}
+                    placeholder="Nhập mã số sinh viên rồi bấm Thêm"
+                  />
+                  <button
+                    type="button"
+                    className="student-group-member-add-btn"
+                    disabled={isLookingUp || !memberCode.trim()}
+                    onClick={() => void addMemberByCode()}
+                  >
+                    <UserPlus aria-hidden="true" size={16} strokeWidth={1.9} />
+                    {isLookingUp ? 'Đang tìm...' : 'Thêm'}
+                  </button>
+                </div>
+
+                {members.length > 0 && (
+                  <ul className="student-group-member-chips">
+                    {members.map((member) => (
+                      <li key={member.userId} className="student-group-member-chip">
+                        <span>
+                          {member.studentCode} - {member.username}
+                        </span>
+                        <button
+                          type="button"
+                          onClick={() => removeMember(member.userId)}
+                          aria-label={`Bỏ ${member.studentCode}`}
+                        >
+                          <X aria-hidden="true" size={14} strokeWidth={2} />
+                        </button>
+                      </li>
+                    ))}
+                  </ul>
+                )}
+
+                <p className="student-group-help">Bạn là trưởng nhóm, không cần thêm mã của mình. Thêm tối đa 2 thành viên.</p>
               </div>
 
               <div className="student-group-note">
@@ -447,13 +534,6 @@ export function StudentGroupsPage() {
       )}
     </DashboardLayout>
   )
-}
-
-function parseMemberIds(value: string) {
-  return value
-    .split(',')
-    .map((item) => Number(item.trim()))
-    .filter((item) => Number.isInteger(item) && item > 0)
 }
 
 function getGroupLeader(group: StudentGroup) {

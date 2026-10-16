@@ -16,6 +16,14 @@ export async function getTopicRegistrations(): Promise<TopicRegistration[]> {
   return response.data
 }
 
+export async function getMyTopicRegistrations(): Promise<TopicRegistration[]> {
+  const response = await apiClient<ApiResponse<TopicRegistration[]>>(
+    `${TOPIC_REGISTRATIONS_PATH}/me`,
+  )
+
+  return response.data
+}
+
 export function getTopicRegistration(id: number) {
   return apiClient<ApiResponse<TopicRegistration>>(
     `${TOPIC_REGISTRATIONS_PATH}/${id}`,

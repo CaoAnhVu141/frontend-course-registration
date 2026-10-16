@@ -49,7 +49,15 @@ export function LecturersPage() {
   const [departmentId, setDepartmentId] = useState('')
   const [academicTitle, setAcademicTitle] = useState('')
   const [maxReviewLoad, setMaxReviewLoad] = useState('')
-  const [expertiseTagIds, setExpertiseTagIds] = useState('')
+  const [expertiseTagIds, setExpertiseTagIds] = useState<number[]>([])
+
+  function toggleExpertiseTag(id: number) {
+    setExpertiseTagIds((current) =>
+      current.includes(id)
+        ? current.filter((item) => item !== id)
+        : [...current, id],
+    )
+  }
 
   const filteredLecturers = useMemo(() => {
     const keyword = search.trim().toLocaleLowerCase('vi')
@@ -131,7 +139,7 @@ export function LecturersPage() {
     setDepartmentId('')
     setAcademicTitle('')
     setMaxReviewLoad('')
-    setExpertiseTagIds('')
+    setExpertiseTagIds([])
     setError('')
     setIsFormOpen(true)
   }
@@ -145,7 +153,7 @@ export function LecturersPage() {
     setDepartmentId(String(lecturer.departmentId ?? ''))
     setAcademicTitle(lecturer.academicTitle ?? '')
     setMaxReviewLoad(String(lecturer.maxReviewLoad ?? ''))
-    setExpertiseTagIds((lecturer.expertiseTagIds ?? []).join(', '))
+    setExpertiseTagIds(lecturer.expertiseTagIds ?? [])
     setError('')
     setIsFormOpen(true)
   }
@@ -165,7 +173,7 @@ export function LecturersPage() {
       departmentId: parseOptionalNumber(departmentId),
       academicTitle: academicTitle.trim(),
       maxReviewLoad: parseOptionalNumber(maxReviewLoad),
-      expertiseTagIds: parseNumberList(expertiseTagIds),
+      expertiseTagIds: expertiseTagIds.length > 0 ? expertiseTagIds : undefined,
     }
 
     try {
@@ -337,8 +345,15 @@ export function LecturersPage() {
               <label>Mã giảng viên</label>
               <input value={lecturerCode} onChange={(event) => setLecturerCode(event.target.value)} placeholder="VD: GV001" />
 
-              <label>ID khoa/phòng ban</label>
-              <input value={departmentId} onChange={(event) => setDepartmentId(event.target.value)} placeholder="VD: 1" />
+              <label>Khoa/phòng ban</label>
+              <select value={departmentId} onChange={(event) => setDepartmentId(event.target.value)}>
+                <option value="">-- Chọn khoa/phòng ban --</option>
+                {departments.map((department) => (
+                  <option key={department.departmentId} value={department.departmentId}>
+                    {department.name}
+                  </option>
+                ))}
+              </select>
 
               <label>Học hàm/học vị</label>
               <input value={academicTitle} onChange={(event) => setAcademicTitle(event.target.value)} placeholder="VD: ThS, TS" />
@@ -346,8 +361,23 @@ export function LecturersPage() {
               <label>Số lượng phản biện tối đa</label>
               <input value={maxReviewLoad} onChange={(event) => setMaxReviewLoad(event.target.value)} placeholder="VD: 10" />
 
-              <label>ID chuyên môn</label>
-              <input value={expertiseTagIds} onChange={(event) => setExpertiseTagIds(event.target.value)} placeholder="VD: 1, 2, 3" />
+              <label>Chuyên môn</label>
+              {expertiseTags.length === 0 ? (
+                <p className="lecturer-field-empty">Chưa có chuyên môn nào.</p>
+              ) : (
+                <div className="lecturer-expertise-list">
+                  {expertiseTags.map((tag) => (
+                    <label key={tag.id} className="lecturer-expertise-option">
+                      <input
+                        type="checkbox"
+                        checked={expertiseTagIds.includes(tag.id)}
+                        onChange={() => toggleExpertiseTag(tag.id)}
+                      />
+                      <span>{tag.name}</span>
+                    </label>
+                  ))}
+                </div>
+              )}
 
               <div className="lecturer-modal-actions">
                 <button type="button" className="secondary" onClick={closeForm}>Hủy</button>
@@ -399,17 +429,6 @@ export function LecturersPage() {
 function parseOptionalNumber(value: string) {
   const trimmedValue = value.trim()
   return trimmedValue ? Number(trimmedValue) : undefined
-}
-
-function parseNumberList(value: string) {
-  const ids = value
-    .split(',')
-    .map((item) => item.trim())
-    .filter(Boolean)
-    .map(Number)
-    .filter((item) => Number.isFinite(item))
-
-  return ids.length > 0 ? ids : undefined
 }
 
 function getExpertiseNames(
