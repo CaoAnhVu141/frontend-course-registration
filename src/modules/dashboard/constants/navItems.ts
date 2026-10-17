@@ -1,6 +1,7 @@
 // src/modules/dashboard/constants/navItems.ts
 import {
     BarChart3,
+    Bell,
     Building2,
     CalendarClock,
     ClipboardCheck,
@@ -9,6 +10,7 @@ import {
     FolderUp,
     Gavel,
     GraduationCap,
+    Star,
     Tags,
     UserRound,
     Users,
@@ -34,6 +36,7 @@ export const navGroups: NavGroup[] = [
         title: 'Cá nhân',
         items: [
             { label: 'Thông tin cá nhân', icon: UserRound, href: '/dashboard' },
+            { label: 'Thông báo', icon: Bell, href: '/notifications' },
         ],
     },
     {
@@ -71,6 +74,7 @@ export const navGroups: NavGroup[] = [
         items: [
             { label: 'Quản lý hội đồng', icon: Gavel, href: '/defense-committees', roles: ['ADMIN', 'LECTURER'] },
             { label: 'Phân công đề tài', icon: ClipboardList, href: '/committee-topic-assignments', roles: ['ADMIN'] },
+            { label: 'Chấm điểm & Kết quả', icon: Star, href: '/evaluations', roles: ['ADMIN', 'LECTURER', 'STUDENT'] },
         ],
     },
 ]

@@ -6,7 +6,10 @@ import { hasRole } from '../../../shared/utils/roleLabel'
 import { useConfirmation } from '../../confirmation'
 import { DashboardLayout } from '../../dashboard/components/DashboardLayout'
 import { useNotification } from '../../notification'
-import { getStudentGroups } from '../../studentgroups/services/studentGroupApi'
+import {
+  getMyStudentGroups,
+  getStudentGroups,
+} from '../../studentgroups/services/studentGroupApi'
 import type { StudentGroup } from '../../studentgroups/types/studentGroup.type'
 import { getPublishedTopics, getTopics } from '../../topics/services/topicApi'
 import type { Topic } from '../../topics/types/topic.type'
@@ -15,6 +18,7 @@ import {
   approveTopicRegistration,
   cancelTopicRegistration,
   createTopicRegistration,
+  getMyTopicRegistrations,
   getTopicRegistration,
   getTopicRegistrations,
   rejectTopicRegistration,
@@ -131,10 +135,14 @@ export function TopicRegistrationsPage() {
 
       const registrationPromise = canReviewRegistrations
         ? getTopicRegistrations()
-        : Promise.resolve([])
+        : canCreateRegistration
+          ? getMyTopicRegistrations()
+          : Promise.resolve([])
       const groupPromise = canReviewRegistrations
         ? getStudentGroups()
-        : Promise.resolve([])
+        : canCreateRegistration
+          ? getMyStudentGroups()
+          : Promise.resolve([])
       const topicPromise = canCreateRegistration
         ? getPublishedTopics()
         : getTopics()
@@ -362,9 +370,7 @@ export function TopicRegistrationsPage() {
         {error && <div className="topic-registration-message error">{error}</div>}
         {!canReviewRegistrations && canCreateRegistration && (
           <div className="topic-registration-message info">
-            Sinh viên có thể tạo đăng ký mới và hủy các đăng ký vừa tạo trong
-            phiên hiện tại. Danh sách toàn bộ đăng ký sẽ do quản trị viên hoặc
-            giảng viên xem.
+            Danh sách dưới đây là các đăng ký đề tài của nhóm bạn.
           </div>
         )}
 
@@ -393,7 +399,7 @@ export function TopicRegistrationsPage() {
                   <td className="topic-registration-empty" colSpan={7}>
                     {canReviewRegistrations
                       ? 'Không tìm thấy đăng ký đề tài.'
-                      : 'Chưa có đăng ký đề tài trong phiên này.'}
+                      : 'Nhóm bạn chưa có đăng ký đề tài nào.'}
                   </td>
                 </tr>
               ) : (
@@ -490,21 +496,31 @@ export function TopicRegistrationsPage() {
                   className="form-label"
                   htmlFor="topic-registration-group"
                 >
-                  ID nhóm sinh viên
+                  Nhóm sinh viên
                 </label>
-                <input
+                <select
                   className="form-control"
                   id="topic-registration-group"
                   autoFocus
-                  min={1}
                   required
-                  type="number"
                   value={formStudentGroupId}
                   onChange={(event) =>
                     setFormStudentGroupId(event.target.value)
                   }
-                  placeholder="Nhập ID nhóm sinh viên"
-                />
+                >
+                  <option value="">Chọn nhóm sinh viên</option>
+                  {studentGroups.map((group) => (
+                    <option key={group.id} value={group.id}>
+                      {group.name}
+                    </option>
+                  ))}
+                </select>
+                {studentGroups.length === 0 && (
+                  <p className="topic-registration-note">
+                    Bạn chưa thuộc nhóm nào. Hãy tạo nhóm ở mục "Quản lý nhóm
+                    sinh viên" trước khi đăng ký đề tài.
+                  </p>
+                )}
               </div>
 
               <div className="form-field">
@@ -633,8 +649,6 @@ export function TopicRegistrationsPage() {
                 <AppLoading />
               ) : (
                 <dl className="topic-registration-detail-grid">
-                  <dt>ID đăng ký</dt>
-                  <dd>{detailRegistration.id}</dd>
                   <dt>Nhóm sinh viên</dt>
                   <dd>
                     {detailRegistration.studentGroupName ||

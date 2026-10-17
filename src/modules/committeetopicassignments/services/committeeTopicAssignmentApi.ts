@@ -30,9 +30,6 @@ export function updateDefenseSchedule(
   )
 }
 
-// Các hàm dưới đây khớp service backend nhưng controller chưa expose endpoint.
-// Giữ sẵn để khi backend nối controller thì FE dùng được ngay.
-
 export function completeCommitteeTopicAssignment(assignmentId: number) {
   return apiClient<ApiResponse<CommitteeTopicAssignment>>(
     `${ASSIGNMENTS_PATH}/${assignmentId}/complete`,
@@ -67,16 +64,6 @@ export async function getAssignmentsByDefenseCommittee(
 ): Promise<CommitteeTopicAssignment[]> {
   const response = await apiClient<ApiResponse<CommitteeTopicAssignment[]>>(
     `${ASSIGNMENTS_PATH}/defense-committee/${defenseCommitteeId}`,
-  )
-
-  return response.data
-}
-
-export async function getAssignmentsByRegistrationPeriod(
-  registrationPeriodId: number,
-): Promise<CommitteeTopicAssignment[]> {
-  const response = await apiClient<ApiResponse<CommitteeTopicAssignment[]>>(
-    `${ASSIGNMENTS_PATH}/registration-period/${registrationPeriodId}`,
   )
 
   return response.data

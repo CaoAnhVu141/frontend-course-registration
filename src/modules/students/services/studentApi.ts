@@ -16,6 +16,14 @@ export function getMyStudentProfile() {
   return apiClient<ApiResponse<Student>>(`${STUDENTS_PATH}/me`)
 }
 
+// Tra cứu sinh viên theo mã số (ADMIN, LECTURER, STUDENT).
+export async function getStudentByCode(studentCode: string): Promise<Student> {
+  const response = await apiClient<ApiResponse<Student>>(
+    `${STUDENTS_PATH}/by-code/${encodeURIComponent(studentCode)}`,
+  )
+  return response.data
+}
+
 export function createStudent(payload: RegisterStudentRequest) {
   return apiClient<ApiResponse<Student>>(`${STUDENTS_PATH}/register`, {
     method: 'POST',
