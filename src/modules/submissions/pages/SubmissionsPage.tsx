@@ -174,7 +174,7 @@ export function SubmissionsPage() {
     } finally {
       setIsLoading(false)
     }
-  }, [canCreateSubmission, showError])
+  }, [canCreateSubmission])
 
   useEffect(() => {
     void loadMyStudentData()
