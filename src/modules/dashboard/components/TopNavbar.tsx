@@ -1,30 +1,14 @@
-import { useEffect, useState } from 'react'
 import { Bell, Flag, LogOut } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
 import { tokenStorage } from '../../../shared/services/tokenStorage'
 import { STORAGE_KEYS } from '../../../shared/constants/storageKeys'
+import { disconnectNotificationSocket } from '../../../shared/services/notificationSocket'
 import { logout } from '../../auth/services/authApi'
-import { getUnreadCount } from '../../notifications'
+import { useRealtimeNotifications } from '../../notifications'
 
 export function TopNavbar() {
   const navigate = useNavigate()
-  const [unreadCount, setUnreadCount] = useState(0)
-
-  useEffect(() => {
-    let active = true
-
-    getUnreadCount()
-      .then((count) => {
-        if (active) setUnreadCount(count)
-      })
-      .catch(() => {
-        // Không chặn UI nếu lấy số thông báo lỗi.
-      })
-
-    return () => {
-      active = false
-    }
-  }, [])
+  const { unreadCount } = useRealtimeNotifications()
 
   async function handleLogout() {
     const refreshToken = localStorage.getItem(STORAGE_KEYS.refreshToken)
@@ -43,6 +27,7 @@ export function TopNavbar() {
         )
       }
     } finally {
+      disconnectNotificationSocket()
       tokenStorage.clear()
       navigate('/', { replace: true })
     }

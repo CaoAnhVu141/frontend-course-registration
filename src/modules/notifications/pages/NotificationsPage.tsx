@@ -17,6 +17,7 @@ import {
   getMyNotifications,
   markNotificationAsRead,
 } from '../services/notificationApi'
+import { useRealtimeNotifications } from '../RealtimeNotificationProvider'
 import type {
   AppNotification,
   NotificationTarget,
