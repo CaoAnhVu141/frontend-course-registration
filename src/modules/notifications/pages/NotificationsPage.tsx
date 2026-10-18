@@ -17,6 +17,8 @@ import {
   getMyNotifications,
   markNotificationAsRead,
 } from '../services/notificationApi'
+import { useRealtimeNotifications } from '../RealtimeNotificationProvider'
+import { onNotificationReceived } from '../../../shared/services/notificationSocket'
 import type {
   AppNotification,
   NotificationTarget,
@@ -42,6 +44,7 @@ export function NotificationsPage() {
   const user = useMemo(() => tokenStorage.getUser(), [])
   const isAdmin = hasRole(user?.roles, 'ADMIN')
   const { success, error: showError } = useNotification()
+  const { refreshUnreadCount } = useRealtimeNotifications()
 
   const [notifications, setNotifications] = useState<AppNotification[]>([])
   const [isLoading, setIsLoading] = useState(true)
@@ -76,6 +79,17 @@ export function NotificationsPage() {
   useEffect(() => {
     void loadNotifications()
   }, [loadNotifications])
+
+  // Thông báo mới đến qua WebSocket: thêm vào đầu danh sách ngay.
+  useEffect(() => {
+    return onNotificationReceived((notification) => {
+      setNotifications((current) =>
+        current.some((item) => item.id === notification.id)
+          ? current
+          : [notification, ...current],
+      )
+    })
+  }, [])
 
   async function handleSend(event: FormEvent<HTMLFormElement>) {
     event.preventDefault()
@@ -112,6 +126,7 @@ export function NotificationsPage() {
           item.id === response.data.id ? response.data : item,
         ),
       )
+      void refreshUnreadCount()
     } catch (error) {
       showError(getErrorMessage(error))
     } finally {
@@ -131,6 +146,7 @@ export function NotificationsPage() {
       setNotifications((current) =>
         current.map((item) => map.get(item.id) ?? item),
       )
+      void refreshUnreadCount()
       success('Đã đánh dấu tất cả là đã đọc.')
     } catch (error) {
       showError(getErrorMessage(error))
