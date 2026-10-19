@@ -6,7 +6,7 @@ import { hasRole } from '../../../shared/utils/roleLabel'
 import { useConfirmation } from '../../confirmation'
 import { DashboardLayout } from '../../dashboard/components/DashboardLayout'
 import { useNotification } from '../../notification'
-import { AppLoading, Pagination } from '../../ui'
+import { AppLoading, ExportButton, Pagination } from '../../ui'
 import {
   createRegistrationPeriod,
   deleteRegistrationPeriod,
@@ -215,6 +215,23 @@ export function RegistrationPeriodsPage() {
               placeholder="Tìm kiếm kỳ đăng ký..."
             />
           </label>
+          <ExportButton
+            fileName="danh-sach-ky-dang-ky"
+            rows={[
+              ['ID', 'Tên kỳ', 'Loại', 'GV đăng ký', 'SV đăng ký', 'Deadline phản biện', 'Ngày bảo vệ', 'Trạng thái'],
+              ...filteredPeriods.map((period) => [
+                period.id,
+                period.name,
+                periodTypeLabel(period.type),
+                formatDateRange(period.lecturerRegistrationStart, period.lecturerRegistrationEnd),
+                formatDateRange(period.studentRegistrationStart, period.studentRegistrationEnd),
+                formatDateTime(period.reviewerScoreDeadline),
+                formatDateTime(period.defenseDate),
+                period.status ? 'Đang hoạt động' : 'Không còn hoạt động',
+              ]),
+            ]}
+            disabled={isLoading || filteredPeriods.length === 0}
+          />
           <button className="registration-period-add-button" type="button" onClick={openCreateForm}>
             <span>+</span> Thêm mới
           </button>

@@ -6,7 +6,7 @@ import { hasRole } from '../../../shared/utils/roleLabel'
 import { DashboardLayout } from '../../dashboard/components/DashboardLayout'
 import { useConfirmation } from '../../confirmation'
 import { useNotification } from '../../notification'
-import { AppLoading, Pagination } from '../../ui'
+import { AppLoading, ExportButton, Pagination } from '../../ui'
 import { getDepartments } from '../../departments/services/departmentApi'
 import type { Department } from '../../departments/types/department.type'
 import { createStudent, deleteStudent, getStudent, getStudents, updateStudent } from '../services/studentApi'
@@ -199,6 +199,20 @@ export function StudentsPage() {
         <div className="students-toolbar">
           <input className="student-search" type="search" aria-label="Tìm kiếm sinh viên" placeholder="Tìm mã sinh viên, email, lớp, khoa..." value={search}
             onChange={(event) => { setSearch(event.target.value); setPage(1) }} />
+          <ExportButton
+            fileName="danh-sach-sinh-vien"
+            rows={[
+              ['ID', 'Mã sinh viên', 'Email', 'Lớp', 'Khoa / phòng ban'],
+              ...filteredStudents.map((student) => [
+                student.userId,
+                student.studentCode,
+                student.email,
+                student.className || '-',
+                departmentNames.get(student.departmentId) ?? `#${student.departmentId}`,
+              ]),
+            ]}
+            disabled={isLoading || Boolean(loadError) || filteredStudents.length === 0}
+          />
           <button
             className="student-primary"
             disabled={!canManage || isLoading || Boolean(loadError) || deletingId !== null}

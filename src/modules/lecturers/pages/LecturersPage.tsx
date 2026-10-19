@@ -3,7 +3,7 @@ import { Eye, Pencil, Search, Trash2, X } from 'lucide-react'
 import { useConfirmation } from '../../confirmation'
 import { DashboardLayout } from '../../dashboard/components/DashboardLayout'
 import { useNotification } from '../../notification'
-import { AppLoading, Pagination } from '../../ui'
+import { AppLoading, ExportButton, Pagination } from '../../ui'
 import { tokenStorage } from '../../../shared/services/tokenStorage'
 import { hasRole } from '../../../shared/utils/roleLabel'
 import { getDepartments } from '../../departments/services/departmentApi'
@@ -263,6 +263,23 @@ export function LecturersPage() {
                   placeholder="Tìm kiếm giảng viên..."
                 />
               </label>
+
+              <ExportButton
+                fileName="danh-sach-giang-vien"
+                rows={[
+                  ['ID', 'Mã GV', 'Email', 'Khoa / phòng ban', 'Học hàm / học vị', 'Tải phản biện', 'Chuyên môn'],
+                  ...filteredLecturers.map((lecturer) => [
+                    lecturer.userId,
+                    lecturer.lecturerCode,
+                    lecturer.email,
+                    departmentNameMap.get(lecturer.departmentId) ?? `#${lecturer.departmentId}`,
+                    lecturer.academicTitle || '-',
+                    lecturer.maxReviewLoad,
+                    getExpertiseNames(lecturer.expertiseTagIds, expertiseTagNameMap),
+                  ]),
+                ]}
+                disabled={isLoading || filteredLecturers.length === 0}
+              />
 
               <button className="lecturer-add-button" type="button" onClick={openCreateForm}>
                 <span>+</span> Thêm mới

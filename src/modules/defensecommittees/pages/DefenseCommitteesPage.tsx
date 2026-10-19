@@ -10,7 +10,7 @@ import { getLecturers } from '../../lecturers/services/lecturerApi'
 import type { Lecturer } from '../../lecturers/types/lecturer.type'
 import { getRegistrationPeriods } from '../../topics/services/registrationPeriodApi'
 import type { RegistrationPeriod } from '../../topics/types/registrationPeriod.type'
-import { AppLoading, Pagination } from '../../ui'
+import { AppLoading, ExportButton, Pagination } from '../../ui'
 import {
   addCommitteeMember,
   closeDefenseCommittee,
@@ -362,6 +362,27 @@ export function DefenseCommitteesPage() {
                 Hội đồng của tôi
               </button>
             )}
+
+            <ExportButton
+              fileName="danh-sach-hoi-dong"
+              rows={[
+                ['ID', 'Mã hội đồng', 'Tên hội đồng', 'Kỳ đăng ký', 'Chủ tịch', 'Số thành viên', 'Trạng thái'],
+                ...visibleCommittees.map((committee) => {
+                  const chairman = getChairman(committee)
+
+                  return [
+                    committee.id,
+                    committee.code,
+                    committee.name,
+                    periodNameMap.get(committee.registrationPeriodId) ?? `#${committee.registrationPeriodId}`,
+                    chairman?.lecturerCode ?? '-',
+                    committee.committeeMembers?.length ?? 0,
+                    committee.status,
+                  ]
+                }),
+              ]}
+              disabled={isLoading || visibleCommittees.length === 0}
+            />
 
             {isAdmin && (
               <button

@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from 'react'
 import { Pencil, Search, Trash2, X } from 'lucide-react'
 import { DashboardLayout } from '../../dashboard/components/DashboardLayout'
-import { AppLoading, Pagination } from '../../ui'
+import { AppLoading, ExportButton, Pagination } from '../../ui'
 import {
   createDepartment,
   deleteDepartment,
@@ -170,6 +170,17 @@ export function DepartmentsPage() {
                   placeholder="Tìm kiếm khoa/phòng ban..."
                 />
               </label>
+              <ExportButton
+                fileName="danh-sach-khoa-phong-ban"
+                rows={[
+                  ['ID', 'Tên khoa / phòng ban'],
+                  ...filteredDepartments.map((department) => [
+                    department.departmentId,
+                    department.name,
+                  ]),
+                ]}
+                disabled={isLoading || filteredDepartments.length === 0}
+              />
               <button className="department-add-button" type="button" onClick={openCreateForm}>
                 <span>+</span> Thêm mới
               </button>

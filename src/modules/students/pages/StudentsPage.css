@@ -4,8 +4,13 @@
 }
 
 .students-panel {
-  min-height: 430px; 
-  color: #1f2937; 
+  width: 100%;
+  min-height: 430px;
+  padding: 24px;
+  background: #f7f8fa;
+  border: 1px solid #e1e5ea;
+  border-radius: 8px;
+  color: #1f2937;
 }
 
 .students-toolbar {
@@ -277,6 +282,10 @@
 }
 
 @media (max-width: 720px) {
+  .students-panel {
+    padding: 14px;
+  }
+
   .students-toolbar 
     { 
     align-items: stretch; 
