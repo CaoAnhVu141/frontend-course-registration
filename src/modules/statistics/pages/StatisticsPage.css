@@ -5,6 +5,14 @@
   font-weight: 400;
 }
 
+.statistics-frame {
+  width: 100%;
+  padding: 24px;
+  border: 1px solid #e1e5ea;
+  border-radius: 8px;
+  background: #f7f8fa;
+}
+
 .statistics-content button,
 .statistics-content input,
 .statistics-content select {
@@ -532,6 +540,10 @@
 }
 
 @media (max-width: 520px) {
+  .statistics-frame {
+    padding: 14px;
+  }
+
   .statistics-overview-head,
   .statistics-panel {
     padding: 17px;
