@@ -3,7 +3,7 @@ import { Pencil, Search, Trash2, X } from 'lucide-react'
 import { useConfirmation } from '../../confirmation'
 import { DashboardLayout } from '../../dashboard/components/DashboardLayout'
 import { useNotification } from '../../notification'
-import { AppLoading, Pagination } from '../../ui'
+import { AppLoading, ExportButton, Pagination } from '../../ui'
 import { STORAGE_KEYS } from '../../../shared/constants/storageKeys'
 import {
         createExpertiseTag,
@@ -119,6 +119,18 @@ export function ExpertiseTagsPage() {
       <section className="expertise-tags-panel">
         <div className="expertise-tags-toolbar">
           <label className="expertise-tag-search"><Search aria-hidden="true" size={17} strokeWidth={2} /><input type="search" value={search} onChange={(event) => setSearch(event.target.value)} placeholder="Tìm kiếm chuyên môn..." /></label>
+          <ExportButton
+            fileName="danh-sach-chuyen-mon"
+            rows={[
+              ['ID', 'Tên chuyên môn', 'Trạng thái'],
+              ...filteredTags.map((tag) => [
+                tag.id,
+                tag.name,
+                tag.status ? 'Đang hoạt động' : 'Không còn hoạt động',
+              ]),
+            ]}
+            disabled={isLoading || filteredTags.length === 0}
+          />
           <button className="expertise-tag-add-button" type="button" onClick={openCreateForm}><span>+</span> Thêm mới</button>
         </div>
         {error && <div className="expertise-tag-message error">{error}</div>}

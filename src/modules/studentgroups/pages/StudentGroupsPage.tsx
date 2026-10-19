@@ -10,7 +10,7 @@ import { DashboardLayout } from '../../dashboard/components/DashboardLayout'
 import { useNotification } from '../../notification'
 import { getRegistrationPeriods } from '../../topics/services/registrationPeriodApi'
 import type { RegistrationPeriod } from '../../topics/types/registrationPeriod.type'
-import { AppLoading, Pagination } from '../../ui'
+import { AppLoading, ExportButton, Pagination } from '../../ui'
 import {
   createStudentGroup,
   deleteStudentGroup,
@@ -279,6 +279,26 @@ export function StudentGroupsPage() {
               />
             </span>
           </label>
+
+          <ExportButton
+            fileName="danh-sach-nhom-sinh-vien"
+            rows={[
+              ['ID', 'Tên nhóm', 'Kỳ đăng ký', 'Số thành viên', 'Trạng thái', 'Trưởng nhóm'],
+              ...visibleGroups.map((group) => {
+                const leader = getGroupLeader(group)
+
+                return [
+                  group.id,
+                  group.name,
+                  periodNameMap.get(group.registrationPeriodId) ?? `#${group.registrationPeriodId}`,
+                  group.members.length,
+                  group.status ? 'Đang hoạt động' : 'Không còn hoạt động',
+                  leader ? `${leader.studentCode} - ${leader.username}` : group.createdBy,
+                ]
+              }),
+            ]}
+            disabled={!canSeeList || isLoading || visibleGroups.length === 0}
+          />
 
           {canCreateGroup && (
             <button className="student-group-add-button" type="button" onClick={openCreateForm}>
