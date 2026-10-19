@@ -286,19 +286,20 @@ export function StatisticsPage() {
 
   return (
     <DashboardLayout title="THỐNG KÊ" contentClassName="statistics-content">
-      {isLoading ? (
-        <section className="statistics-state-card">
-          <AppLoading label="Đang tổng hợp số liệu" />
-        </section>
-      ) : loadError ? (
-        <section className="statistics-state-card statistics-error" role="alert">
-          <p>{loadError}</p>
-          <button type="button" onClick={() => void loadStatistics()}>
-            Thử lại
-          </button>
-        </section>
-      ) : (
-        <>
+      <div className="statistics-frame">
+        {isLoading ? (
+          <section className="statistics-state-card">
+            <AppLoading label="Đang tổng hợp số liệu" />
+          </section>
+        ) : loadError ? (
+          <section className="statistics-state-card statistics-error" role="alert">
+            <p>{loadError}</p>
+            <button type="button" onClick={() => void loadStatistics()}>
+              Thử lại
+            </button>
+          </section>
+        ) : (
+          <>
           <section className="statistics-overview-head">
             <div>
               <span className="statistics-eyebrow">TỔNG QUAN ĐỒ ÁN</span>
@@ -477,8 +478,9 @@ export function StatisticsPage() {
               </div>
             </section>
           </div>
-        </>
-      )}
+          </>
+        )}
+      </div>
     </DashboardLayout>
   )
 }
