@@ -3,6 +3,7 @@ import type { UserRole } from '../../auth/types/auth.type'
 export type Lecturer = {
     userId: number
     username: string
+    name: string
     email: string
     roles: UserRole[]
     lecturerCode: string
@@ -14,6 +15,7 @@ export type Lecturer = {
 
 export type RegisterLecturerRequest = {
     username?: string
+    name?: string
     email?: string
     password?: string
     lecturerCode?: string
@@ -24,6 +26,7 @@ export type RegisterLecturerRequest = {
 }
 
 export type UpdateLecturerRequest = {
+    name?: string
     lecturerCode?: string
     departmentId?: number
     academicTitle?: string

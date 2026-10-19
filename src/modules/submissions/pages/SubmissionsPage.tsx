@@ -25,6 +25,7 @@ import type {
 import {
   getMyTopicRegistrations,
   getTopicRegistration,
+  getTopicRegistrations,
 } from '../../topicregistrations/services/topicRegistrationApi'
 import type { TopicRegistration } from '../../topicregistrations/types/topicRegistration.type'
 import './SubmissionsPage.css'
@@ -43,7 +44,6 @@ export function SubmissionsPage() {
 
   const [submissions, setSubmissions] = useState<Submission[]>([])
   const [search, setSearch] = useState('')
-  const [lookupId, setLookupId] = useState('')
   const [page, setPage] = useState(1)
   const [isLoading, setIsLoading] = useState(true)
   const [isSaving, setIsSaving] = useState(false)
@@ -76,7 +76,7 @@ export function SubmissionsPage() {
 
   const registrationTitle = (topicRegistrationId: number) =>
     registrationTitleById.get(topicRegistrationId) ??
-    `#${topicRegistrationId}`
+    'Chưa có tên đăng ký'
 
   const [versionSubmission, setVersionSubmission] = useState<Submission | null>(null)
   const [versionFile, setVersionFile] = useState<File | null>(null)
@@ -102,8 +102,8 @@ export function SubmissionsPage() {
 
     return sortedSubmissions.filter((submission) =>
       [
-        submission.id,
-        submission.topicRegistrationId,
+          registrationTitleById.get(submission.topicRegistrationId) ??
+            'Chưa có tên đăng ký',
         submission.status ? 'Đang hoạt động' : 'Không còn hoạt động',
         formatDateTime(submission.submittedAt),
         ...(submission.submissionVersions ?? []).map((version) => version.fileName),
@@ -111,7 +111,7 @@ export function SubmissionsPage() {
         String(value ?? '').toLocaleLowerCase('vi').includes(keyword),
       ),
     )
-  }, [search, submissions])
+  }, [search, submissions, registrationTitleById])
 
   const totalPages = Math.max(1, Math.ceil(visibleSubmissions.length / PAGE_SIZE))
   const pagedSubmissions = visibleSubmissions.slice(
@@ -129,6 +129,11 @@ export function SubmissionsPage() {
       setIsLoading(true)
       setError('')
       setSubmissions(await getSubmissions())
+      try {
+        setMyRegistrations(await getTopicRegistrations())
+      } catch {
+        // Keep submissions available if registration lookup is unavailable.
+      }
     } catch (loadError) {
       const message = getErrorMessage(loadError)
       setError(message)
@@ -200,37 +205,8 @@ export function SubmissionsPage() {
     })
   }
 
-  async function handleLookup(event: FormEvent<HTMLFormElement>) {
-    event.preventDefault()
-
-    const topicRegistrationId = Number(lookupId)
-
-    if (!Number.isInteger(topicRegistrationId) || topicRegistrationId <= 0) {
-      showError('ID đăng ký đề tài không hợp lệ.')
-      return
-    }
-
-    try {
-      setIsLoading(true)
-      setError('')
-      const response = await getSubmissionByTopicRegistration(topicRegistrationId)
-      upsertSubmission(response.data)
-      success(response.message)
-    } catch (lookupError) {
-      const message = getErrorMessage(lookupError)
-      setError(message)
-      showError(message)
-    } finally {
-      setIsLoading(false)
-    }
-  }
-
   function openCreateForm() {
-    // Chỉ giữ lại lookupId nếu nó trùng một đăng ký đã duyệt.
-    const matched = approvedRegistrations.some(
-      (registration) => String(registration.id) === lookupId,
-    )
-    setFormTopicRegistrationId(matched ? lookupId : '')
+    setFormTopicRegistrationId('')
     setIsCreateOpen(true)
   }
 
@@ -405,25 +381,6 @@ export function SubmissionsPage() {
               />
             </div>
           </label>
-
-          <form
-            className="submission-lookup-field"
-            onSubmit={(event) => void handleLookup(event)}
-          >
-            <span>ID đăng ký</span>
-            <div className="submission-lookup">
-              <input
-                type="number"
-                min={1}
-                value={lookupId}
-                onChange={(event) => setLookupId(event.target.value)}
-                placeholder="ID đăng ký đề tài"
-              />
-              <button type="submit" disabled={isLoading}>
-                Tra cứu
-              </button>
-            </div>
-          </form>
 
           <div className="submission-toolbar-actions">
             <ExportButton
