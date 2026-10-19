@@ -13,7 +13,7 @@ import {
 import type { StudentGroup } from '../../studentgroups/types/studentGroup.type'
 import { getPublishedTopics, getTopics } from '../../topics/services/topicApi'
 import type { Topic } from '../../topics/types/topic.type'
-import { AppLoading, Pagination } from '../../ui'
+import { AppLoading, ExportButton, Pagination } from '../../ui'
 import {
   approveTopicRegistration,
   cancelTopicRegistration,
@@ -355,6 +355,22 @@ export function TopicRegistrationsPage() {
               type="search"
             />
           </label>
+
+          <ExportButton
+            fileName="danh-sach-dang-ky-de-tai"
+            rows={[
+              ['ID', 'Nhóm sinh viên', 'Đề tài', 'Người đăng ký', 'Ngày đăng ký', 'Trạng thái'],
+              ...visibleRegistrations.map((registration) => [
+                registration.id,
+                registration.studentGroupName || groupNameMap.get(registration.studentGroupId) || `#${registration.studentGroupId}`,
+                registration.topicTitle || topicNameMap.get(registration.topicId) || `#${registration.topicId}`,
+                registration.registeredBy,
+                formatDateTime(registration.registeredAt),
+                statusConfig[registration.status]?.label ?? registration.status,
+              ]),
+            ]}
+            disabled={isLoading || visibleRegistrations.length === 0}
+          />
 
           {canCreateRegistration && (
             <button

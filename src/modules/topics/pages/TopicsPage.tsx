@@ -8,7 +8,7 @@ import type { Department } from '../../departments/types/department.type'
 import { useConfirmation } from '../../confirmation'
 import { DashboardLayout } from '../../dashboard/components/DashboardLayout'
 import { useNotification } from '../../notification'
-import { AppLoading, Pagination } from '../../ui'
+import { AppLoading, ExportButton, Pagination } from '../../ui'
 import {
   approveTopic,
   createTopic,
@@ -275,6 +275,22 @@ export function TopicsPage() {
               type="search"
             />
           </label>
+          <ExportButton
+            fileName="danh-sach-de-tai"
+            rows={[
+              ['ID', 'Tên đề tài', 'Khoa / phòng ban', 'Kỳ đăng ký', 'Người đề xuất', 'Trạng thái', 'Lý do từ chối'],
+              ...visibleTopics.map((topic) => [
+                topic.id,
+                topic.title,
+                departmentNameMap.get(topic.departmentId) ?? `#${topic.departmentId}`,
+                registrationPeriodNameMap.get(topic.registrationPeriodId) ?? `#${topic.registrationPeriodId}`,
+                topic.proposedBy,
+                statusConfig[topic.status].label,
+                topic.rejectionReason || '-',
+              ]),
+            ]}
+            disabled={isLoading || visibleTopics.length === 0}
+          />
           {canManageTopics && (
             <button
               className="topic-add-button"

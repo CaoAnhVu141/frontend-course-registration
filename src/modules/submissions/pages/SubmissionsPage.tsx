@@ -5,7 +5,7 @@ import { tokenStorage } from '../../../shared/services/tokenStorage'
 import { hasRole } from '../../../shared/utils/roleLabel'
 import { DashboardLayout } from '../../dashboard/components/DashboardLayout'
 import { useNotification } from '../../notification'
-import { AppLoading, Pagination } from '../../ui'
+import { AppLoading, ExportButton, Pagination } from '../../ui'
 import {
   createSubmission,
   createSubmissionFeedback,
@@ -393,41 +393,70 @@ export function SubmissionsPage() {
     <DashboardLayout title="QUẢN LÝ BÀI NỘP" contentClassName="submissions-content">
       <section className="submissions-panel">
         <div className="submissions-toolbar">
-          <label className="submission-search">
-            <Search aria-hidden="true" size={17} strokeWidth={2} />
-            <input
-              type="search"
-              value={search}
-              onChange={(event) => setSearch(event.target.value)}
-              placeholder="Tìm kiếm bài nộp..."
-            />
+          <label className="submission-search-field">
+            <span>Tìm kiếm</span>
+            <div className="submission-search">
+              <Search aria-hidden="true" size={17} strokeWidth={2} />
+              <input
+                type="search"
+                value={search}
+                onChange={(event) => setSearch(event.target.value)}
+                placeholder="Tìm kiếm bài nộp..."
+              />
+            </div>
           </label>
 
           <form
-            className="submission-lookup"
+            className="submission-lookup-field"
             onSubmit={(event) => void handleLookup(event)}
           >
-            <input
-              type="number"
-              min={1}
-              value={lookupId}
-              onChange={(event) => setLookupId(event.target.value)}
-              placeholder="ID đăng ký đề tài"
-            />
-            <button type="submit" disabled={isLoading}>
-              Tra cứu
-            </button>
+            <span>ID đăng ký</span>
+            <div className="submission-lookup">
+              <input
+                type="number"
+                min={1}
+                value={lookupId}
+                onChange={(event) => setLookupId(event.target.value)}
+                placeholder="ID đăng ký đề tài"
+              />
+              <button type="submit" disabled={isLoading}>
+                Tra cứu
+              </button>
+            </div>
           </form>
 
-          {canCreateSubmission && (
-            <button
-              className="submission-add-button"
-              type="button"
-              onClick={openCreateForm}
-            >
-              <span>+</span> Tạo bài nộp
-            </button>
-          )}
+          <div className="submission-toolbar-actions">
+            <ExportButton
+              fileName="danh-sach-bai-nop"
+              rows={[
+                ['ID', 'Đề tài', 'Ngày nộp', 'Số phiên bản', 'File mới nhất', 'Trạng thái'],
+                ...visibleSubmissions.map((submission) => {
+                  const versions = submission.submissionVersions ?? []
+                  const latestVersion = versions[versions.length - 1]
+
+                  return [
+                    submission.id,
+                    registrationTitle(submission.topicRegistrationId),
+                    formatDateTime(submission.submittedAt),
+                    versions.length,
+                    latestVersion?.fileName ?? 'Chưa có báo cáo',
+                    submission.status ? 'Đang hoạt động' : 'Không còn hoạt động',
+                  ]
+                }),
+              ]}
+              disabled={!canViewAll || isLoading || visibleSubmissions.length === 0}
+            />
+
+            {canCreateSubmission && (
+              <button
+                className="submission-add-button"
+                type="button"
+                onClick={openCreateForm}
+              >
+                <span>+</span> Tạo bài nộp
+              </button>
+            )}
+          </div>
         </div>
 
         {error && <div className="submission-message error">{error}</div>}

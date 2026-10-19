@@ -2,6 +2,7 @@ import { useCallback, useEffect, useMemo, useState } from 'react'
 import {
   BarChart3,
   CheckCircle2,
+  Download,
   FileCheck2,
   RefreshCw,
   Star,
@@ -237,6 +238,52 @@ export function StatisticsPage() {
     },
   ]
 
+  function handleExport() {
+    const rows: ExportRow[] = [
+      ['BÁO CÁO THỐNG KÊ ĐỒ ÁN'],
+      ['Kỳ đăng ký', selectedPeriodName],
+      [],
+      ['CHỈ SỐ TỔNG QUAN', 'GIÁ TRỊ'],
+      ['Nhóm sinh viên', statistics.totalGroups],
+      ['Số bài nộp', statistics.totalSubmissions],
+      [
+        'Điểm trung bình',
+        statistics.averageScore === null ? 'Chưa có' : statistics.averageScore,
+      ],
+      ['Nhóm đã có kết quả', statistics.gradedGroupCount],
+      ['Đề tài được duyệt', statistics.approvedTopics],
+      ['Đề tài bị từ chối', statistics.rejectedTopics],
+      ['Đề tài chờ duyệt', statistics.pendingTopics],
+      ['Tổng số đề tài', statistics.totalTopics],
+      [],
+      ['ĐIỂM TRUNG BÌNH THEO KỲ', 'ĐIỂM', 'SỐ KẾT QUẢ'],
+      ...periodAverages.map(({ period, averageScore, resultCount }) => [
+        period.name,
+        averageScore === null ? 'Chưa có' : averageScore,
+        resultCount,
+      ]),
+      [],
+      ['TÌNH TRẠNG ĐỀ TÀI', 'SỐ LƯỢNG', 'TỶ LỆ'],
+      ['Đã duyệt', statistics.approvedTopics, `${approvedRatio}%`],
+      ['Từ chối', statistics.rejectedTopics, `${rejectedRatio}%`],
+      ['Chờ duyệt', statistics.pendingTopics, `${pendingRatio}%`],
+    ]
+
+    const workbook = createExcelWorkbook(rows)
+    const blob = new Blob([workbook], {
+      type: 'application/vnd.ms-excel;charset=utf-8',
+    })
+    const url = URL.createObjectURL(blob)
+    const link = document.createElement('a')
+
+    link.href = url
+    link.download = `thong-ke-${slugify(selectedPeriodName)}.xls`
+    document.body.appendChild(link)
+    link.click()
+    link.remove()
+    window.setTimeout(() => URL.revokeObjectURL(url), 0)
+  }
+
   return (
     <DashboardLayout title="THỐNG KÊ" contentClassName="statistics-content">
       {isLoading ? (
@@ -277,6 +324,16 @@ export function StatisticsPage() {
                     </option>
                   ))}
                 </select>
+                <button
+                  type="button"
+                  className="statistics-export"
+                  onClick={handleExport}
+                  aria-label="Xuất file Excel"
+                  title="Xuất file Excel"
+                >
+                  <Download size={17} aria-hidden="true" />
+                  <span>Xuất file</span>
+                </button>
                 <button
                   type="button"
                   className="statistics-refresh"
@@ -433,6 +490,9 @@ type TopicProgressProps = {
   tone: 'approved' | 'rejected' | 'pending'
 }
 
+type ExportCell = string | number | null
+type ExportRow = ExportCell[]
+
 function TopicProgress({ label, count, ratio, tone }: TopicProgressProps) {
   return (
     <div className="statistics-progress-item">
@@ -493,4 +553,50 @@ function getErrorMessage(error: unknown) {
   return error instanceof Error
     ? error.message
     : 'Không thể tải dữ liệu thống kê.'
+}
+
+function createExcelWorkbook(rows: ExportRow[]) {
+  const tableRows = rows
+    .map((row) => {
+      if (row.length === 0) return '<tr><td>&nbsp;</td></tr>'
+
+      return `<tr>${row
+        .map((cell) => `<td>${escapeHtml(cell)}</td>`)
+        .join('')}</tr>`
+    })
+    .join('')
+
+  return `\ufeff<!DOCTYPE html>
+<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:excel">
+  <head>
+    <meta charset="UTF-8" />
+    <style>
+      table { border-collapse: collapse; font-family: Arial, sans-serif; }
+      td { border: 1px solid #d9e2ec; padding: 7px 10px; mso-number-format: General; }
+      tr:first-child td { background: #164a76; color: #ffffff; font-weight: 700; font-size: 15px; }
+      td:first-child { font-weight: 600; }
+    </style>
+  </head>
+  <body><table>${tableRows}</table></body>
+</html>`
+}
+
+function escapeHtml(value: ExportCell) {
+  return String(value ?? '')
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;')
+}
+
+function slugify(value: string) {
+  return value
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .replace(/đ/g, 'd')
+    .replace(/Đ/g, 'D')
+    .replace(/[^a-zA-Z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '')
+    .toLowerCase() || 'tat-ca-cac-ky'
 }
