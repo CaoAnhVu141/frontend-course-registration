@@ -341,12 +341,12 @@ export function StudentGroupsPage() {
                   </td>
                 </tr>
               ) : (
-                pagedGroups.map((group) => {
+                pagedGroups.map((group, index) => {
                   const leader = getGroupLeader(group)
 
                   return (
                     <tr key={group.id}>
-                      <td>{group.id}</td>
+                      <td>{(page - 1) * PAGE_SIZE + index + 1}</td>
                       <td>{group.name}</td>
                       <td>{periodNameMap.get(group.registrationPeriodId) ?? `#${group.registrationPeriodId}`}</td>
                       <td>{group.members.length}</td>

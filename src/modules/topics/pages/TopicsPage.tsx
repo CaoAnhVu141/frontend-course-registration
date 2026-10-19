@@ -330,9 +330,9 @@ export function TopicsPage() {
                   <td className="topic-empty" colSpan={8}>Không tìm thấy đề tài phù hợp.</td>
                 </tr>
               ) : (
-                pagedTopics.map((topic) => (
+                pagedTopics.map((topic, index) => (
                   <tr key={topic.id} className={isInactiveTopic(topic) ? 'inactive-row' : ''}>
-                    <td>{topic.id}</td>
+                    <td>{(page - 1) * PAGE_SIZE + index + 1}</td>
                     <td>
                       <div className="topic-title">{topic.title}</div>
                     </td>

@@ -426,7 +426,7 @@ export function DefenseCommitteesPage() {
                   </td>
                 </tr>
               ) : (
-                pagedCommittees.map((committee) => {
+                pagedCommittees.map((committee, index) => {
                   const members = committee.committeeMembers ?? []
                   const chairman = getChairman(committee)
                   const isClosed = committee.status === 'CLOSED'
@@ -436,7 +436,7 @@ export function DefenseCommitteesPage() {
                       key={committee.id}
                       className={isClosed ? 'inactive-row' : ''}
                     >
-                      <td>{committee.id}</td>
+                      <td>{(page - 1) * PAGE_SIZE + index + 1}</td>
                       <td>
                         <span className="defense-committee-code">
                           {committee.code}
