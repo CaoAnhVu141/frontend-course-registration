@@ -49,14 +49,16 @@
   justify-content: space-between;
   gap: 28px;
   padding: 24px 26px;
-  border-color: #164a76;
-  background: #164a76;
+  border-color: #0078d4;
+  border-radius: 8px;
+  background: #0078d4;
+  box-shadow: none;
 }
 
 .statistics-eyebrow {
   display: block;
   margin-bottom: 5px;
-  color: #bfdbfe;
+  color: #dbeafe;
   font-size: 12px;
   font-weight: 700;
   letter-spacing: 0.12em;
@@ -66,6 +68,7 @@
   margin: 0;
   color: #fff;
   font-size: clamp(20px, 2.1vw, 28px);
+  font-weight: 700;
   line-height: 1.25;
 }
 
@@ -162,7 +165,7 @@
 .statistics-updated-at {
   display: block;
   margin-top: 6px;
-  color: #bfdbfe;
+  color: #dbeafe;
   font-size: 12px;
   text-align: right;
 }
