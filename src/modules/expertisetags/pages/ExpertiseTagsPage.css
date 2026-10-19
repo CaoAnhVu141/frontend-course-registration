@@ -220,7 +220,11 @@
 
 .expertise-tag-modal form > label:not(.expertise-tag-status-input) {
   display: block;
-  margin-bottom: 8px;
+  margin: 18px 0 8px;
+}
+
+.expertise-tag-modal form > label:first-of-type {
+  margin-top: 0;
 }
 
 .expertise-tag-modal form input[type='text'],

@@ -1,7 +1,7 @@
 import { useEffect } from 'react'
+import { Navigate } from 'react-router-dom'
 import { STORAGE_KEYS } from '../../../shared/constants/storageKeys'
 import { useNotification } from '../../notification'
-import { DashboardLayout } from '../components/DashboardLayout'
 
 export function DashboardPage() {
   const { success } = useNotification()
@@ -17,5 +17,5 @@ export function DashboardPage() {
     success(loginMessage)
   }, [success])
 
-  return <DashboardLayout contentClassName="personal-page" />
+  return <Navigate to="/notifications" replace />
 }
