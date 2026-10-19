@@ -43,6 +43,7 @@ export function LecturersPage() {
   const [isDetailLoading, setIsDetailLoading] = useState(false)
 
   const [username, setUsername] = useState('')
+  const [name, setName] = useState('')
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [lecturerCode, setLecturerCode] = useState('')
@@ -66,6 +67,7 @@ export function LecturersPage() {
       : lecturers.filter((lecturer) =>
           [
             lecturer.username,
+            lecturer.name,
             lecturer.email,
             lecturer.lecturerCode,
             lecturer.academicTitle,
@@ -133,6 +135,7 @@ export function LecturersPage() {
   function openCreateForm() {
     setEditingLecturer(null)
     setUsername('')
+    setName('')
     setEmail('')
     setPassword('')
     setLecturerCode('')
@@ -147,6 +150,7 @@ export function LecturersPage() {
   function openEditForm(lecturer: Lecturer) {
     setEditingLecturer(lecturer)
     setUsername(lecturer.username)
+    setName(lecturer.name ?? '')
     setEmail(lecturer.email)
     setPassword('')
     setLecturerCode(lecturer.lecturerCode)
@@ -169,6 +173,7 @@ export function LecturersPage() {
     setIsSaving(true)
 
     const payload = {
+      name: name.trim(),
       lecturerCode: lecturerCode.trim(),
       departmentId: parseOptionalNumber(departmentId),
       academicTitle: academicTitle.trim(),
@@ -267,10 +272,11 @@ export function LecturersPage() {
               <ExportButton
                 fileName="danh-sach-giang-vien"
                 rows={[
-                  ['ID', 'Mã GV', 'Email', 'Khoa / phòng ban', 'Học hàm / học vị', 'Tải phản biện', 'Chuyên môn'],
+                  ['ID', 'Mã GV', 'Họ và tên', 'Email', 'Khoa / phòng ban', 'Học hàm / học vị', 'Tải phản biện', 'Chuyên môn'],
                   ...filteredLecturers.map((lecturer) => [
                     lecturer.userId,
                     lecturer.lecturerCode,
+                    lecturer.name || '-',
                     lecturer.email,
                     departmentNameMap.get(lecturer.departmentId) ?? `#${lecturer.departmentId}`,
                     lecturer.academicTitle || '-',
@@ -294,6 +300,7 @@ export function LecturersPage() {
                   <tr>
                     <th>STT</th>
                     <th>Mã GV</th>
+                    <th>Họ và tên</th>
                     <th>Email</th>
                     <th>Khoa/Phòng ban</th>
                     <th>Học hàm/học vị</th>
@@ -305,14 +312,15 @@ export function LecturersPage() {
 
                 <tbody>
                   {isLoading ? (
-                    <tr><td colSpan={8} className="lecturer-empty"><AppLoading /></td></tr>
+                    <tr><td colSpan={9} className="lecturer-empty"><AppLoading /></td></tr>
                   ) : visibleLecturers.length === 0 ? (
-                    <tr><td colSpan={8} className="lecturer-empty">Không tìm thấy giảng viên.</td></tr>
+                    <tr><td colSpan={9} className="lecturer-empty">Không tìm thấy giảng viên.</td></tr>
                   ) : (
                     visibleLecturers.map((lecturer, index) => (
                       <tr key={lecturer.userId}>
                         <td>{(page - 1) * PAGE_SIZE + index + 1}</td>
                         <td>{lecturer.lecturerCode}</td>
+                        <td>{lecturer.name || '-'}</td>
                         <td>{lecturer.email}</td>
                         <td>{departmentNameMap.get(lecturer.departmentId) ?? `#${lecturer.departmentId}`}</td>
                         <td>{lecturer.academicTitle || '-'}</td>
@@ -358,6 +366,9 @@ export function LecturersPage() {
                   <input type="password" value={password} onChange={(event) => setPassword(event.target.value)} placeholder="Nhập mật khẩu" />
                 </>
               )}
+
+              <label>Họ và tên</label>
+              <input value={name} onChange={(event) => setName(event.target.value)} placeholder="Nhập họ và tên" />
 
               <label>Mã giảng viên</label>
               <input value={lecturerCode} onChange={(event) => setLecturerCode(event.target.value)} placeholder="VD: GV001" />
@@ -420,6 +431,8 @@ export function LecturersPage() {
                   <dd>{detailLecturer.userId}</dd>
                   <dt>Tên đăng nhập</dt>
                   <dd>{detailLecturer.username}</dd>
+                  <dt>Họ và tên</dt>
+                  <dd>{detailLecturer.name || '-'}</dd>
                   <dt>Email</dt>
                   <dd>{detailLecturer.email}</dd>
                   <dt>Mã giảng viên</dt>

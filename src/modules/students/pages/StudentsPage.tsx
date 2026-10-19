@@ -14,7 +14,7 @@ import type { Student } from '../types/student.type'
 import './StudentsPage.css'
 
 const PAGE_SIZE = 5
-const emptyForm = { username: '', email: '', password: '', studentCode: '', departmentId: '', className: '' }
+const emptyForm = { username: '', name: '', email: '', password: '', studentCode: '', departmentId: '', className: '' }
 
 export function StudentsPage() {
   const user = tokenStorage.getUser()
@@ -96,7 +96,7 @@ export function StudentsPage() {
   const filteredStudents = useMemo(() => {
     const keyword = search.trim().toLocaleLowerCase('vi')
     return students.filter((student) =>
-      [student.username, student.email, student.studentCode, student.className, departmentNames.get(student.departmentId)]
+      [student.username, student.name, student.email, student.studentCode, student.className, departmentNames.get(student.departmentId)]
         .some((value) => value?.toLocaleLowerCase('vi').includes(keyword)),
     )
   }, [students, search, departmentNames])
@@ -109,6 +109,7 @@ export function StudentsPage() {
     setEditingStudent(student)
     setForm(student ? {
       username: student.username,
+      name: student.name ?? '',
       email: student.email,
       password: '',
       studentCode: student.studentCode,
@@ -130,6 +131,7 @@ export function StudentsPage() {
     mutationPending.current = true
     setIsSaving(true)
     const payload = {
+      name: form.name.trim(),
       studentCode: form.studentCode.trim(),
       departmentId: form.departmentId ? Number(form.departmentId) : undefined,
       className: form.className.trim(),
@@ -202,10 +204,11 @@ export function StudentsPage() {
           <ExportButton
             fileName="danh-sach-sinh-vien"
             rows={[
-              ['ID', 'Mã sinh viên', 'Email', 'Lớp', 'Khoa / phòng ban'],
+              ['ID', 'Mã sinh viên', 'Họ và tên', 'Email', 'Lớp', 'Khoa / phòng ban'],
               ...filteredStudents.map((student) => [
                 student.userId,
                 student.studentCode,
+                student.name || '-',
                 student.email,
                 student.className || '-',
                 departmentNames.get(student.departmentId) ?? `#${student.departmentId}`,
@@ -225,13 +228,13 @@ export function StudentsPage() {
         {loadError && <div className="student-error" role="alert">{loadError} <button onClick={() => setReload((value) => value + 1)}>Thử lại</button></div>}
         <div className="student-table-wrap">
           <table className="student-table">
-            <thead><tr><th>ID</th><th>Mã sinh viên</th><th>Email</th><th>Lớp</th><th>Khoa/Phòng ban</th><th>Thao tác</th></tr></thead>
+            <thead><tr><th>ID</th><th>Mã sinh viên</th><th>Họ và tên</th><th>Email</th><th>Lớp</th><th>Khoa/Phòng ban</th><th>Thao tác</th></tr></thead>
             <tbody>
               {isLoading || loadError || visibleStudents.length === 0 ? (
-                <tr><td colSpan={6} className="student-empty">{isLoading ? <AppLoading /> : loadError ? 'Không thể tải danh sách sinh viên.' : 'Không tìm thấy sinh viên.'}</td></tr>
+                <tr><td colSpan={7} className="student-empty">{isLoading ? <AppLoading /> : loadError ? 'Không thể tải danh sách sinh viên.' : 'Không tìm thấy sinh viên.'}</td></tr>
               ) : visibleStudents.map((student) => (
                 <tr key={student.userId}>
-                  <td>{student.userId}</td><td>{student.studentCode}</td><td>{student.email}</td><td>{student.className || '-'}</td>
+                  <td>{student.userId}</td><td>{student.studentCode}</td><td>{student.name || '-'}</td><td>{student.email}</td><td>{student.className || '-'}</td>
                   <td>{departmentNames.get(student.departmentId) ?? `#${student.departmentId}`}</td>
                   <td><div className="student-actions">
                     <button
@@ -285,6 +288,8 @@ export function StudentsPage() {
               <dd>{detailStudent.userId}</dd>
               <dt>Tên đăng nhập</dt>
               <dd>{detailStudent.username}</dd>
+              <dt>Họ và tên</dt>
+              <dd>{detailStudent.name || '-'}</dd>
               <dt>Email</dt>
               <dd>{detailStudent.email}</dd>
               <dt>Mã sinh viên</dt>
@@ -309,10 +314,16 @@ export function StudentsPage() {
             {!editingStudent && <>
               <label htmlFor="student-username">Tên đăng nhập</label>
               <input id="student-username" autoComplete="off" value={form.username} onChange={(event) => setForm({ ...form, username: event.target.value })} />
+              <label htmlFor="student-name">Họ và tên</label>
+              <input id="student-name" value={form.name} onChange={(event) => setForm({ ...form, name: event.target.value })} />
               <label htmlFor="student-email">Email</label>
               <input id="student-email" type="email" value={form.email} onChange={(event) => setForm({ ...form, email: event.target.value })} />
               <label htmlFor="student-password">Mật khẩu</label>
               <input id="student-password" type="password" autoComplete="new-password" value={form.password} onChange={(event) => setForm({ ...form, password: event.target.value })} />
+            </>}
+            {editingStudent && <>
+              <label htmlFor="student-name">Họ và tên</label>
+              <input id="student-name" value={form.name} onChange={(event) => setForm({ ...form, name: event.target.value })} />
             </>}
             <label htmlFor="student-code">Mã sinh viên</label>
             <input id="student-code" value={form.studentCode} onChange={(event) => setForm({ ...form, studentCode: event.target.value })} />
