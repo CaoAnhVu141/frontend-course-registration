@@ -268,9 +268,9 @@ export function RegistrationPeriodsPage() {
                   </td>
                 </tr>
               ) : (
-                visiblePeriods.map((period) => (
+                visiblePeriods.map((period, index) => (
                   <tr key={period.id} className={period.status ? '' : 'inactive-row'}>
-                    <td>{period.id}</td>
+                    <td>{(page - 1) * PAGE_SIZE + index + 1}</td>
                     <td>{period.name}</td>
                     <td>{periodTypeLabel(period.type)}</td>
                     <td>{formatDateRange(period.lecturerRegistrationStart, period.lecturerRegistrationEnd)}</td>

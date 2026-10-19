@@ -154,6 +154,15 @@ textarea.form-control {
   line-height: 1.45;
 }
 
+[class$='-add-button'] {
+  font-weight: 600;
+  letter-spacing: 0.01em;
+}
+
+[class$='-add-button'] > span {
+  font-weight: 700;
+}
+
 .app-loading-state {
   min-height: 64px;
   display: inline-flex;

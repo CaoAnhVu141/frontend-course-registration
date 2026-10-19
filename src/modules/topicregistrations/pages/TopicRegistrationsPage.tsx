@@ -419,7 +419,7 @@ export function TopicRegistrationsPage() {
                   </td>
                 </tr>
               ) : (
-                pagedRegistrations.map((registration) => (
+                pagedRegistrations.map((registration, index) => (
                   <tr
                     key={registration.id}
                     className={
@@ -429,7 +429,7 @@ export function TopicRegistrationsPage() {
                         : undefined
                     }
                   >
-                    <td>{registration.id}</td>
+                    <td>{(page - 1) * PAGE_SIZE + index + 1}</td>
                     <td>
                       {groupNameMap.get(registration.studentGroupId) ??
                         registration.studentGroupName ??

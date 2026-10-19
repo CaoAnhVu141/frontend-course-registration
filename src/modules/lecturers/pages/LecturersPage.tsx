@@ -309,9 +309,9 @@ export function LecturersPage() {
                   ) : visibleLecturers.length === 0 ? (
                     <tr><td colSpan={8} className="lecturer-empty">Không tìm thấy giảng viên.</td></tr>
                   ) : (
-                    visibleLecturers.map((lecturer) => (
+                    visibleLecturers.map((lecturer, index) => (
                       <tr key={lecturer.userId}>
-                        <td>{lecturer.userId}</td>
+                        <td>{(page - 1) * PAGE_SIZE + index + 1}</td>
                         <td>{lecturer.lecturerCode}</td>
                         <td>{lecturer.email}</td>
                         <td>{departmentNameMap.get(lecturer.departmentId) ?? `#${lecturer.departmentId}`}</td>

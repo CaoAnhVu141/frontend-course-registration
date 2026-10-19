@@ -12,7 +12,6 @@ import {
     GraduationCap,
     Star,
     Tags,
-    UserRound,
     Users,
     UsersRound,
 } from 'lucide-react'
@@ -35,7 +34,6 @@ export const navGroups: NavGroup[] = [
     {
         title: 'Cá nhân',
         items: [
-            { label: 'Thông tin cá nhân', icon: UserRound, href: '/dashboard' },
             { label: 'Thông báo', icon: Bell, href: '/notifications' },
         ],
     },

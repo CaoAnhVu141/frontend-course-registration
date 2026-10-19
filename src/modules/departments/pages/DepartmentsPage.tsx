@@ -203,9 +203,9 @@ export function DepartmentsPage() {
                   ) : visibleDepartments.length === 0 ? (
                     <tr><td colSpan={3} className="department-empty">Không tìm thấy khoa/phòng ban.</td></tr>
                   ) : (
-                    visibleDepartments.map((department) => (
+                    visibleDepartments.map((department, index) => (
                       <tr key={department.departmentId}>
-                        <td>{department.departmentId}</td>
+                        <td>{(page - 1) * PAGE_SIZE + index + 1}</td>
                         <td>{department.name}</td>
                         <td className="department-actions">
                           <button type="button" onClick={() => openEditForm(department)} title="Sửa"><Pencil aria-hidden="true" size={16} strokeWidth={1.9} /> <span>Sửa</span></button>

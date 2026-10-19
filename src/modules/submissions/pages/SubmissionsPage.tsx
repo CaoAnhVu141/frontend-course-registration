@@ -496,7 +496,7 @@ export function SubmissionsPage() {
                   </td>
                 </tr>
               ) : (
-                pagedSubmissions.map((submission) => {
+                pagedSubmissions.map((submission, index) => {
                   const versions = submission.submissionVersions ?? []
                   const latestVersion = versions[versions.length - 1]
 
@@ -505,7 +505,7 @@ export function SubmissionsPage() {
                       key={submission.id}
                       className={submission.status ? '' : 'inactive-row'}
                     >
-                      <td>{submission.id}</td>
+                      <td>{(page - 1) * PAGE_SIZE + index + 1}</td>
                       <td>{registrationTitle(submission.topicRegistrationId)}</td>
                       <td>{formatDateTime(submission.submittedAt)}</td>
                       <td>{versions.length}</td>
