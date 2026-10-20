@@ -1,10 +1,40 @@
 import { apiClient } from '../../../shared/services/apiClient'
-import type { ApiResponse, Topic, TopicRequest } from '../types/topic.type'
+import type {
+  ApiResponse,
+  Topic,
+  TopicRequest,
+  TopicStatus,
+} from '../types/topic.type'
 
 const TOPICS_PATH = '/api/topics'
 
 export async function getTopics(): Promise<Topic[]> {
   const response = await apiClient<ApiResponse<Topic[]>>(TOPICS_PATH)
+  return response.data
+}
+
+export type TopicSearchParams = {
+  keyword?: string
+  departmentId?: number
+  registrationPeriodId?: number
+  status?: TopicStatus
+}
+
+export async function searchTopics(
+  params: TopicSearchParams,
+): Promise<Topic[]> {
+  const query = new URLSearchParams()
+  if (params.keyword?.trim()) query.set('keyword', params.keyword.trim())
+  if (params.departmentId) query.set('departmentId', String(params.departmentId))
+  if (params.registrationPeriodId)
+    query.set('registrationPeriodId', String(params.registrationPeriodId))
+  if (params.status) query.set('status', params.status)
+
+  const queryString = query.toString()
+  const response = await apiClient<ApiResponse<Topic[]>>(
+    `${TOPICS_PATH}/search${queryString ? `?${queryString}` : ''}`,
+  )
+
   return response.data
 }
 

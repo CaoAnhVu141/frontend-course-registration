@@ -144,8 +144,8 @@ export function StudentGroupsPage() {
       return
     }
 
-    if (members.length >= 2) {
-      showError('Mỗi nhóm tối đa 3 sinh viên (gồm cả trưởng nhóm).')
+    if (members.length >= 4) {
+      showError('Mỗi nhóm tối đa 5 sinh viên (gồm cả trưởng nhóm).')
       return
     }
 
@@ -479,11 +479,11 @@ export function StudentGroupsPage() {
                   </ul>
                 )}
 
-                <p className="student-group-help">Bạn là trưởng nhóm, không cần thêm mã của mình. Thêm tối đa 2 thành viên.</p>
+                <p className="student-group-help">Bạn là trưởng nhóm, không cần thêm mã của mình. Thêm tối đa 4 thành viên.</p>
               </div>
 
               <div className="student-group-note">
-                Mỗi nhóm tối đa 3 sinh viên tính cả trưởng nhóm. Mỗi sinh viên chỉ được thuộc một nhóm trong cùng kỳ đăng ký.
+                Mỗi nhóm tối đa 5 sinh viên tính cả trưởng nhóm. Mỗi sinh viên chỉ được thuộc một nhóm trong cùng kỳ đăng ký.
               </div>
 
               <div className="student-group-modal-actions">

@@ -16,6 +16,7 @@ import {
   getTopics,
   publishTopic,
   rejectTopic,
+  searchTopics,
   updateTopic,
 } from '../services/topicApi'
 import { getRegistrationPeriods } from '../services/registrationPeriodApi'
@@ -48,6 +49,10 @@ export function TopicsPage() {
   const [departments, setDepartments] = useState<Department[]>([])
   const [registrationPeriods, setRegistrationPeriods] = useState<RegistrationPeriod[]>([])
   const [search, setSearch] = useState('')
+  const [filterDepartmentId, setFilterDepartmentId] = useState('')
+  const [filterPeriodId, setFilterPeriodId] = useState('')
+  const [filterStatus, setFilterStatus] = useState<TopicStatus | ''>('')
+  const [isSearching, setIsSearching] = useState(false)
   const [editingTopic, setEditingTopic] = useState<Topic | null>(null)
   const [isFormOpen, setIsFormOpen] = useState(false)
   const [rejectingTopic, setRejectingTopic] = useState<Topic | null>(null)
@@ -127,6 +132,39 @@ export function TopicsPage() {
   useEffect(() => {
     void loadTopics()
   }, [loadTopics])
+
+  // Tìm kiếm nâng cao qua backend (/api/topics/search)
+  async function runSearch() {
+    try {
+      setIsSearching(true)
+      setError('')
+      const result = await searchTopics({
+        keyword: search,
+        departmentId: filterDepartmentId ? Number(filterDepartmentId) : undefined,
+        registrationPeriodId: filterPeriodId ? Number(filterPeriodId) : undefined,
+        status: filterStatus || undefined,
+      })
+      setTopics(result)
+      setPage(1)
+    } catch (searchError) {
+      showError(getErrorMessage(searchError))
+    } finally {
+      setIsSearching(false)
+    }
+  }
+
+  async function resetFilters() {
+    setSearch('')
+    setFilterDepartmentId('')
+    setFilterPeriodId('')
+    setFilterStatus('')
+    setPage(1)
+    await loadTopics()
+  }
+
+  const hasActiveFilter = Boolean(
+    search || filterDepartmentId || filterPeriodId || filterStatus,
+  )
 
   useEffect(() => {
     setPage(1)
@@ -271,10 +309,69 @@ export function TopicsPage() {
             <input
               value={search}
               onChange={(event) => setSearch(event.target.value)}
+              onKeyDown={(event) => {
+                if (event.key === 'Enter') void runSearch()
+              }}
               placeholder="Tìm kiếm đề tài..."
               type="search"
             />
           </label>
+          <select
+            className="topic-filter"
+            value={filterDepartmentId}
+            onChange={(event) => setFilterDepartmentId(event.target.value)}
+          >
+            <option value="">Tất cả khoa/phòng ban</option>
+            {departments.map((department) => (
+              <option key={department.departmentId} value={department.departmentId}>
+                {department.name}
+              </option>
+            ))}
+          </select>
+          <select
+            className="topic-filter"
+            value={filterPeriodId}
+            onChange={(event) => setFilterPeriodId(event.target.value)}
+          >
+            <option value="">Tất cả kỳ đăng ký</option>
+            {registrationPeriods.map((period) => (
+              <option key={period.id} value={period.id}>
+                {period.name}
+              </option>
+            ))}
+          </select>
+          <select
+            className="topic-filter"
+            value={filterStatus}
+            onChange={(event) =>
+              setFilterStatus(event.target.value as TopicStatus | '')
+            }
+          >
+            <option value="">Tất cả trạng thái</option>
+            {Object.entries(statusConfig).map(([value, config]) => (
+              <option key={value} value={value}>
+                {config.label}
+              </option>
+            ))}
+          </select>
+          <button
+            type="button"
+            className="topic-search-button"
+            disabled={isSearching}
+            onClick={() => void runSearch()}
+          >
+            <Search aria-hidden="true" size={16} strokeWidth={2} />
+            {isSearching ? 'Đang tìm...' : 'Tìm kiếm'}
+          </button>
+          {hasActiveFilter && (
+            <button
+              type="button"
+              className="topic-reset-button"
+              onClick={() => void resetFilters()}
+            >
+              Đặt lại
+            </button>
+          )}
           <ExportButton
             fileName="danh-sach-de-tai"
             rows={[
