@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react'
 import type { FormEvent } from 'react'
-import { Pencil, Search, Trash2 } from 'lucide-react'
+import { CalendarDays, ChevronLeft, ChevronRight, Pencil, Search, Trash2 } from 'lucide-react'
 import { tokenStorage } from '../../../shared/services/tokenStorage'
 import { hasRole } from '../../../shared/utils/roleLabel'
 import { useConfirmation } from '../../confirmation'
@@ -431,18 +431,134 @@ type DateTimeFieldProps = {
 }
 
 function DateTimeField({ id, label, value, onChange }: DateTimeFieldProps) {
+  const [isOpen, setIsOpen] = useState(false)
+  const [visibleMonth, setVisibleMonth] = useState(() => {
+    const selected = parseLocalDateTime(value)
+    return selected ? new Date(selected.getFullYear(), selected.getMonth(), 1) : new Date(new Date().getFullYear(), new Date().getMonth(), 1)
+  })
+  const selectedDate = parseLocalDateTime(value)
+  const monthStart = new Date(visibleMonth.getFullYear(), visibleMonth.getMonth(), 1)
+  const calendarStart = new Date(monthStart)
+  calendarStart.setDate(1 - ((monthStart.getDay() + 6) % 7))
+  const calendarDays = Array.from({ length: 42 }, (_, index) => {
+    const day = new Date(calendarStart)
+    day.setDate(calendarStart.getDate() + index)
+    return day
+  })
+
+  function selectDate(day: Date) {
+    const current = selectedDate ?? new Date()
+    onChange(formatLocalDateTime(new Date(
+      day.getFullYear(), day.getMonth(), day.getDate(),
+      selectedDate ? current.getHours() : 9,
+      selectedDate ? current.getMinutes() : 0,
+    )))
+  }
+
+  function changeTime(part: 'hours' | 'minutes', nextValue: number) {
+    const current = selectedDate ?? new Date()
+    const next = new Date(current)
+    if (part === 'hours') next.setHours(nextValue)
+    else next.setMinutes(nextValue)
+    onChange(formatLocalDateTime(next))
+  }
+
+  function selectToday() {
+    const now = new Date()
+    onChange(formatLocalDateTime(now))
+    setVisibleMonth(new Date(now.getFullYear(), now.getMonth(), 1))
+  }
+
   return (
-    <div className="form-field">
+    <div className={`form-field registration-date-field${isOpen ? ' open' : ''}`}>
       <label className="form-label" htmlFor={id}>{label}</label>
-      <input
-        className="form-control"
+      <button
+        className="registration-date-trigger"
         id={id}
-        type="datetime-local"
-        value={value}
-        onChange={(event) => onChange(event.target.value)}
-      />
+        type="button"
+        aria-haspopup="dialog"
+        aria-expanded={isOpen}
+        onClick={() => setIsOpen((current) => !current)}
+      >
+        <span className={value ? '' : 'placeholder'}>
+          {selectedDate ? formatDateTime(value) : 'Chọn ngày và giờ'}
+        </span>
+        <CalendarDays aria-hidden="true" size={18} />
+      </button>
+      {isOpen && (
+        <div className="registration-date-picker" role="dialog" aria-label={`Chọn ${label.toLocaleLowerCase('vi')}`}>
+          <div className="registration-date-picker-heading">
+            <div>
+              <span>CHỌN NGÀY</span>
+              <strong>{new Intl.DateTimeFormat('vi-VN', { month: 'long', year: 'numeric' }).format(visibleMonth)}</strong>
+            </div>
+            <div className="registration-date-month-actions">
+              <button type="button" aria-label="Tháng trước" onClick={() => setVisibleMonth(new Date(visibleMonth.getFullYear(), visibleMonth.getMonth() - 1, 1))}><ChevronLeft size={18} /></button>
+              <button type="button" aria-label="Tháng sau" onClick={() => setVisibleMonth(new Date(visibleMonth.getFullYear(), visibleMonth.getMonth() + 1, 1))}><ChevronRight size={18} /></button>
+            </div>
+          </div>
+          <div className="registration-date-calendar">
+            {['T2', 'T3', 'T4', 'T5', 'T6', 'T7', 'CN'].map((weekday) => (
+              <span className="weekday" key={weekday}>{weekday}</span>
+            ))}
+            {calendarDays.map((day) => {
+              const isCurrentMonth = day.getMonth() === visibleMonth.getMonth()
+              const isSelected = Boolean(selectedDate && sameCalendarDay(day, selectedDate))
+              const isToday = sameCalendarDay(day, new Date())
+              return (
+                <button
+                  className={`${isCurrentMonth ? '' : 'outside-month'}${isSelected ? ' selected' : ''}${isToday ? ' today' : ''}`}
+                  key={day.toISOString()}
+                  type="button"
+                  aria-pressed={isSelected}
+                  onClick={() => selectDate(day)}
+                >
+                  {day.getDate()}
+                </button>
+              )
+            })}
+          </div>
+          <div className="registration-date-time-row">
+            <span>Thời gian</span>
+            <div>
+              <select aria-label="Giờ" value={String(selectedDate?.getHours() ?? 9).padStart(2, '0')} onChange={(event) => changeTime('hours', Number(event.target.value))}>
+                {Array.from({ length: 24 }, (_, hour) => <option key={hour} value={String(hour).padStart(2, '0')}>{String(hour).padStart(2, '0')}</option>)}
+              </select>
+              <span>:</span>
+              <select aria-label="Phút" value={String(selectedDate?.getMinutes() ?? 0).padStart(2, '0')} onChange={(event) => changeTime('minutes', Number(event.target.value))}>
+                {Array.from({ length: 60 }, (_, minute) => <option key={minute} value={String(minute).padStart(2, '0')}>{String(minute).padStart(2, '0')}</option>)}
+              </select>
+            </div>
+          </div>
+          <div className="registration-date-picker-footer">
+            <button type="button" onClick={() => onChange('')}>Xóa ngày</button>
+            <button type="button" onClick={selectToday}>Hôm nay</button>
+            <button type="button" className="done" onClick={() => setIsOpen(false)}>Xong</button>
+          </div>
+        </div>
+      )}
     </div>
   )
+}
+
+function parseLocalDateTime(value: string) {
+  if (!value) return null
+  const [datePart, timePart = '00:00'] = value.split('T')
+  const [year, month, day] = datePart.split('-').map(Number)
+  const [hours, minutes] = timePart.split(':').map(Number)
+  const date = new Date(year, month - 1, day, hours, minutes)
+  return Number.isNaN(date.getTime()) ? null : date
+}
+
+function formatLocalDateTime(value: Date) {
+  const pad = (part: number) => String(part).padStart(2, '0')
+  return `${value.getFullYear()}-${pad(value.getMonth() + 1)}-${pad(value.getDate())}T${pad(value.getHours())}:${pad(value.getMinutes())}`
+}
+
+function sameCalendarDay(first: Date, second: Date) {
+  return first.getFullYear() === second.getFullYear()
+    && first.getMonth() === second.getMonth()
+    && first.getDate() === second.getDate()
 }
 
 function toRequestPayload(form: RegistrationPeriodForm): RegistrationPeriodRequest {
