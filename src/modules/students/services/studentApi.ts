@@ -5,7 +5,11 @@ const STUDENTS_PATH = '/api/students'
 
 export async function getStudents(): Promise<Student[]> {
   const response = await apiClient<ApiResponse<Student[]>>(STUDENTS_PATH)
-  return response.data
+  return response.data.filter((student) => !isInactive(student.status))
+}
+
+function isInactive(status: Student['status']) {
+  return status === false || status === 0 || status === 'false' || status === '0'
 }
 
 export function getStudent(userId: number) {

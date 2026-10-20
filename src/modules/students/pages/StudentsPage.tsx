@@ -284,10 +284,6 @@ export function StudentsPage() {
             <AppLoading />
           ) : (
             <dl className="student-detail-grid">
-              <dt>User ID</dt>
-              <dd>{detailStudent.userId}</dd>
-              <dt>Tên đăng nhập</dt>
-              <dd>{detailStudent.username}</dd>
               <dt>Họ và tên</dt>
               <dd>{detailStudent.name || '-'}</dd>
               <dt>Email</dt>

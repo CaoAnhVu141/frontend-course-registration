@@ -199,7 +199,7 @@ export function NotificationsPage() {
                   maxLength={255}
                   value={title}
                   onChange={(event) => setTitle(event.target.value)}
-                  placeholder="VD: Lịch bảo vệ đợt 1"
+                  placeholder="Tiêu đề của bạn"
                 />
               </div>
             </div>
