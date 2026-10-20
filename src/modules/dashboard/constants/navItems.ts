@@ -35,6 +35,7 @@ export const navGroups: NavGroup[] = [
         title: 'Cá nhân',
         items: [
             { label: 'Thông báo', icon: Bell, href: '/notifications' },
+            { label: 'Thống kê', icon: BarChart3, href: '/statistics', roles: ['ADMIN'] },
         ],
     },
     {
@@ -44,12 +45,6 @@ export const navGroups: NavGroup[] = [
             { label: 'Quản lý chuyên môn', icon: Tags, href: '/expertisetags', roles: ['ADMIN'] },
             { label: 'Quản lý giảng viên', icon: GraduationCap, href: '/lecturers', roles: ['ADMIN'] },
             { label: 'Quản lý kỳ đăng ký', icon: CalendarClock, href: '/registration-periods', roles: ['ADMIN'] },
-        ],
-    },
-    {
-        title: 'Báo cáo',
-        items: [
-            { label: 'Thống kê', icon: BarChart3, href: '/statistics', roles: ['ADMIN'] },
         ],
     },
     {
