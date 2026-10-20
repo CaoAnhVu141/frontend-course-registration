@@ -374,7 +374,7 @@
   min-height: 5px;
   position: relative;
   border-radius: 0;
-  background: linear-gradient(180deg, #19a9df 0%, #0878bc 100%);
+  background: linear-gradient(180deg, #0878bc 0%, #015599 100%);
   box-shadow: 0 6px 14px rgba(8, 120, 188, 0.18);
 }
 
