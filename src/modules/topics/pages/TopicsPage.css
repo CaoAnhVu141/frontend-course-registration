@@ -15,13 +15,67 @@
 .topics-toolbar {
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  gap: 16px;
+  flex-wrap: wrap;
+  gap: 12px;
   margin-bottom: 20px;
 }
 
+.topics-toolbar > .app-export-button {
+  margin-left: auto;
+}
+
+.topic-filter {
+  height: 40px;
+  padding: 0 12px;
+  border: 1px solid #cbd5e1;
+  border-radius: 6px;
+  background: #fff;
+  color: #334155;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.topic-search-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  height: 40px;
+  padding: 0 16px;
+  border: 0;
+  border-radius: 6px;
+  background: #0078d4;
+  color: #fff;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 160ms ease;
+}
+
+.topic-search-button:hover:not(:disabled) {
+  background: #0064b1;
+}
+
+.topic-search-button:disabled {
+  opacity: 0.65;
+  cursor: wait;
+}
+
+.topic-reset-button {
+  height: 40px;
+  padding: 0 14px;
+  border: 1px solid #cbd5e1;
+  border-radius: 6px;
+  background: #fff;
+  color: #334155;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.topic-reset-button:hover {
+  background: #f1f5f9;
+}
+
 .topic-search {
-  width: min(420px, 100%);
+  width: min(280px, 100%);
   height: 40px;
   display: flex;
   align-items: center;

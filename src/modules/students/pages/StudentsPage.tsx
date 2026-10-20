@@ -95,10 +95,12 @@ export function StudentsPage() {
   )
   const filteredStudents = useMemo(() => {
     const keyword = search.trim().toLocaleLowerCase('vi')
-    return students.filter((student) =>
-      [student.username, student.email, student.studentCode, student.className, departmentNames.get(student.departmentId)]
-        .some((value) => value?.toLocaleLowerCase('vi').includes(keyword)),
-    )
+    return students
+      .filter((student) =>
+        [student.username, student.email, student.studentCode, student.className, departmentNames.get(student.departmentId)]
+          .some((value) => value?.toLocaleLowerCase('vi').includes(keyword)),
+      )
+      .sort((first, second) => second.userId - first.userId)
   }, [students, search, departmentNames])
   const totalPages = Math.max(1, Math.ceil(filteredStudents.length / PAGE_SIZE))
   const currentPage = Math.min(page, totalPages)
@@ -229,9 +231,9 @@ export function StudentsPage() {
             <tbody>
               {isLoading || loadError || visibleStudents.length === 0 ? (
                 <tr><td colSpan={6} className="student-empty">{isLoading ? <AppLoading /> : loadError ? 'Không thể tải danh sách sinh viên.' : 'Không tìm thấy sinh viên.'}</td></tr>
-              ) : visibleStudents.map((student) => (
+              ) : visibleStudents.map((student, index) => (
                 <tr key={student.userId}>
-                  <td>{student.userId}</td><td>{student.studentCode}</td><td>{student.email}</td><td>{student.className || '-'}</td>
+                  <td>{(currentPage - 1) * PAGE_SIZE + index + 1}</td><td>{student.studentCode}</td><td>{student.email}</td><td>{student.className || '-'}</td>
                   <td>{departmentNames.get(student.departmentId) ?? `#${student.departmentId}`}</td>
                   <td><div className="student-actions">
                     <button
