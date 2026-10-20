@@ -225,7 +225,7 @@ export function StudentsPage() {
         {loadError && <div className="student-error" role="alert">{loadError} <button onClick={() => setReload((value) => value + 1)}>Thử lại</button></div>}
         <div className="student-table-wrap">
           <table className="student-table">
-            <thead><tr><th>ID</th><th>Mã sinh viên</th><th>Email</th><th>Lớp</th><th>Khoa/Phòng ban</th><th>Thao tác</th></tr></thead>
+            <thead><tr><th>STT</th><th>Mã sinh viên</th><th>Email</th><th>Lớp</th><th>Khoa/Phòng ban</th><th>Thao tác</th></tr></thead>
             <tbody>
               {isLoading || loadError || visibleStudents.length === 0 ? (
                 <tr><td colSpan={6} className="student-empty">{isLoading ? <AppLoading /> : loadError ? 'Không thể tải danh sách sinh viên.' : 'Không tìm thấy sinh viên.'}</td></tr>
