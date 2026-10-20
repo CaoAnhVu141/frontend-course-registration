@@ -427,10 +427,6 @@ export function LecturersPage() {
                 <AppLoading />
               ) : (
                 <dl className="lecturer-detail-grid">
-                  <dt>User ID</dt>
-                  <dd>{detailLecturer.userId}</dd>
-                  <dt>Tên đăng nhập</dt>
-                  <dd>{detailLecturer.username}</dd>
                   <dt>Họ và tên</dt>
                   <dd>{detailLecturer.name || '-'}</dd>
                   <dt>Email</dt>

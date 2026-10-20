@@ -9,6 +9,7 @@ export type Student = {
   studentCode: string
   departmentId: number
   className: string
+  status?: boolean | number | string
 }
 
 export type UpdateStudentRequest = {
