@@ -22,6 +22,7 @@ import type {
   SubmissionFeedback,
   SubmissionVersion,
 } from '../types/submission.type'
+import { getLecturers } from '../../lecturers/services/lecturerApi'
 import {
   getMyTopicRegistrations,
   getTopicRegistration,
@@ -89,6 +90,7 @@ export function SubmissionsPage() {
 
   const [feedbackVersion, setFeedbackVersion] = useState<SubmissionVersion | null>(null)
   const [feedbacks, setFeedbacks] = useState<SubmissionFeedback[]>([])
+  const [lecturerNames, setLecturerNames] = useState<Record<number, string>>({})
   const [isFeedbackLoading, setIsFeedbackLoading] = useState(false)
   const [feedbackComment, setFeedbackComment] = useState('')
 
@@ -331,7 +333,14 @@ export function SubmissionsPage() {
       setIsFeedbackLoading(true)
       setFeedbackVersion(version)
       setFeedbackComment('')
-      setFeedbacks(await getFeedbacksBySubmissionVersion(version.id))
+      const [feedbackData, lecturers] = await Promise.all([
+        getFeedbacksBySubmissionVersion(version.id),
+        getLecturers().catch(() => []),
+      ])
+      setFeedbacks(feedbackData)
+      setLecturerNames(Object.fromEntries(
+        lecturers.map((lecturer) => [lecturer.userId, lecturer.name]),
+      ))
     } catch (feedbackError) {
       showError(getErrorMessage(feedbackError))
     } finally {
@@ -808,7 +817,11 @@ export function SubmissionsPage() {
                 feedbacks.map((feedback) => (
                   <article className="submission-feedback-item" key={feedback.id}>
                     <header>
-                      <strong>{feedback.lecturerCode}</strong>
+                      <strong>
+                        {feedback.lecturerName || lecturerNames[feedback.lecturerUserId]
+                          ? `${feedback.lecturerName || lecturerNames[feedback.lecturerUserId]} (${feedback.lecturerCode})`
+                          : feedback.lecturerCode}
+                      </strong>
                       <span>{feedback.lecturerEmail}</span>
                     </header>
                     <p>{feedback.comment}</p>

@@ -21,6 +21,7 @@ export type SubmissionFeedback = {
   id: number
   submissionVersionId: number
   lecturerUserId: number
+  lecturerName?: string
   lecturerEmail: string
   lecturerCode: string
   comment: string
