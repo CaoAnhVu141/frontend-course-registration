@@ -3,6 +3,7 @@ export type UserRole = 'LECTURER' | 'STUDENT' | 'ADMIN'
 export type AuthUser = {
     id?: string | number
     username?: string
+    name?: string
     email?: string
     roles: UserRole[]
 }
@@ -38,6 +39,7 @@ export type BackendLoginPayload = {
     token_type?: string
     id?: string | number
     username?: string
+    name?: string
     email?: string
     roles?: string[]
     expiresIn?: number

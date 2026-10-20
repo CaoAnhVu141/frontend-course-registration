@@ -34,6 +34,7 @@ export async function login(payload: LoginRequest): Promise<LoginResponse> {
         user: {
             id: data.id,
             username: data.username,
+            name: data.name,
             email: data.email,
             roles: normalizeRoles(data.roles),
         },

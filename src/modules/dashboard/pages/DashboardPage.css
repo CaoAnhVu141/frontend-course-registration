@@ -57,6 +57,12 @@
   color: var(--text-light);
 }
 
+.user-info .user-name {
+  margin-bottom: 4px;
+  color: #fff;
+  font-weight: 600;
+}
+
 .nav-menu {
   padding: 8px 0 16px;
 }
