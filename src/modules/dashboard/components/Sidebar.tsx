@@ -36,6 +36,7 @@ export function Sidebar({ user }: SidebarProps) {
           className="avatar"
         />
         <h4>{user.email ?? 'Chưa có email'}</h4>
+        {user.name && <p className="user-name">{user.name}</p>}
         <p>{getRoleLabel(user.roles)}</p>
       </div>
 

@@ -137,6 +137,7 @@ async function refreshAccessToken(): Promise<string | null> {
             user: {
                 id: payload?.id,
                 username: payload?.username,
+                name: payload?.name,
                 email: payload?.email,
                 roles: normalizeRoles(payload?.roles),
             },
