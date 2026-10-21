@@ -393,7 +393,7 @@ function LecturerView() {
                   <li key={evaluation.id} className="evaluation-item">
                     <div className="evaluation-item-head">
                       <span className="evaluation-item-lecturer">
-                        {evaluation.lecturerCode || evaluation.lecturerEmail}
+                        {evaluation.lecturerName || evaluation.lecturerCode || evaluation.lecturerEmail}
                       </span>
                       <span className="evaluation-item-score">
                         {formatScore(evaluation.score)}
@@ -603,7 +603,7 @@ function AdminView() {
                   <li key={evaluation.id} className="evaluation-item">
                     <div className="evaluation-item-head">
                       <span className="evaluation-item-lecturer">
-                        {evaluation.lecturerCode || evaluation.lecturerEmail}
+                        {evaluation.lecturerName || evaluation.lecturerCode || evaluation.lecturerEmail}
                       </span>
                       <span className="evaluation-item-score">
                         {formatScore(evaluation.score)}
@@ -719,7 +719,7 @@ function StudentView() {
                 <div key={evaluation.id} className="evaluation-result-member">
                   <div className="evaluation-result-member-info">
                     <span className="evaluation-result-member-name">
-                      {evaluation.lecturerCode || 'Giảng viên'}
+                      {evaluation.lecturerName || evaluation.lecturerCode || 'Giảng viên'}
                     </span>
                     <span className="evaluation-result-member-email">
                       {evaluation.lecturerEmail}

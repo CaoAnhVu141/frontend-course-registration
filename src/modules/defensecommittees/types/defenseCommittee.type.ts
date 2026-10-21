@@ -5,6 +5,7 @@ export type CommitteeRole = 'MEMBER' | 'REVIEWER' | 'CHAIRMAN' | 'SECRETARY'
 export type CommitteeMember = {
   id: number
   lecturerId: number
+  lecturerName?: string | null
   lecturerCode: string
   lecturerEmail: string
   committeeRole: CommitteeRole

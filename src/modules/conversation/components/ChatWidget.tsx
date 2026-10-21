@@ -28,7 +28,7 @@ export function ChatWidget() {
     if (!canChat) return
     try {
       setIsLoading(true)
-      const data = await getMyConversations(isLecturer)
+      const data = await getMyConversations()
       setConversations(data)
       setSelectedId((current) => current && data.some((item) => item.id === current) ? current : data[0]?.id ?? null)
     } catch (loadError) {
