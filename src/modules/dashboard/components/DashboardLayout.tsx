@@ -3,6 +3,7 @@ import { Navigate } from 'react-router-dom'
 import { tokenStorage } from '../../../shared/services/tokenStorage'
 import { Sidebar } from './Sidebar'
 import { TopNavbar } from './TopNavbar'
+import { ChatWidget } from '../../conversation/components/ChatWidget'
 import '../pages/DashboardPage.css'
 
 type DashboardLayoutProps = {
@@ -34,6 +35,8 @@ export function DashboardLayout({
           {children}
         </div>
       </main>
+
+      <ChatWidget />
     </div>
   )
 }
