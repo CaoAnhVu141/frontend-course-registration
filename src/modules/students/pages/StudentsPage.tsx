@@ -204,9 +204,9 @@ export function StudentsPage() {
           <ExportButton
             fileName="danh-sach-sinh-vien"
             rows={[
-              ['ID', 'Mã sinh viên', 'Họ và tên', 'Email', 'Lớp', 'Khoa / phòng ban'],
-              ...filteredStudents.map((student) => [
-                student.userId,
+              ['STT', 'Mã sinh viên', 'Họ và tên', 'Email', 'Lớp', 'Khoa / phòng ban'],
+              ...filteredStudents.map((student, index) => [
+                index + 1,
                 student.studentCode,
                 student.name || '-',
                 student.email,
@@ -228,13 +228,13 @@ export function StudentsPage() {
         {loadError && <div className="student-error" role="alert">{loadError} <button onClick={() => setReload((value) => value + 1)}>Thử lại</button></div>}
         <div className="student-table-wrap">
           <table className="student-table">
-            <thead><tr><th>ID</th><th>Mã sinh viên</th><th>Họ và tên</th><th>Email</th><th>Lớp</th><th>Khoa/Phòng ban</th><th>Thao tác</th></tr></thead>
+            <thead><tr><th>STT</th><th>Mã sinh viên</th><th>Họ và tên</th><th>Email</th><th>Lớp</th><th>Khoa/Phòng ban</th><th>Thao tác</th></tr></thead>
             <tbody>
               {isLoading || loadError || visibleStudents.length === 0 ? (
                 <tr><td colSpan={7} className="student-empty">{isLoading ? <AppLoading /> : loadError ? 'Không thể tải danh sách sinh viên.' : 'Không tìm thấy sinh viên.'}</td></tr>
-              ) : visibleStudents.map((student) => (
+              ) : visibleStudents.map((student, index) => (
                 <tr key={student.userId}>
-                  <td>{student.userId}</td><td>{student.studentCode}</td><td>{student.name || '-'}</td><td>{student.email}</td><td>{student.className || '-'}</td>
+                  <td>{(currentPage - 1) * PAGE_SIZE + index + 1}</td><td>{student.studentCode}</td><td>{student.name || '-'}</td><td>{student.email}</td><td>{student.className || '-'}</td>
                   <td>{departmentNames.get(student.departmentId) ?? `#${student.departmentId}`}</td>
                   <td><div className="student-actions">
                     <button
