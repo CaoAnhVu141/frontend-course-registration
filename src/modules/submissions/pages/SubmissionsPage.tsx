@@ -721,7 +721,6 @@ export function SubmissionsPage() {
                   <table className="submission-version-table">
                     <thead>
                       <tr>
-                        <th>ID</th>
                         <th>Tên file</th>
                         <th>Kích thước</th>
                         <th>Ghi chú</th>
@@ -733,14 +732,13 @@ export function SubmissionsPage() {
                     <tbody>
                       {(detailSubmission.submissionVersions ?? []).length === 0 ? (
                         <tr>
-                          <td className="submission-empty" colSpan={7}>
+                          <td className="submission-empty" colSpan={6}>
                             Chưa có phiên bản báo cáo nào.
                           </td>
                         </tr>
                       ) : (
                         detailSubmission.submissionVersions.map((version) => (
                           <tr key={version.id}>
-                            <td>{version.id}</td>
                             <td>{version.fileName}</td>
                             <td>{formatFileSize(version.fileSize)}</td>
                             <td>{version.changeNote || '-'}</td>

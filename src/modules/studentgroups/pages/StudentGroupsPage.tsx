@@ -527,8 +527,7 @@ export function StudentGroupsPage() {
                   <table className="student-group-member-table">
                     <thead>
                       <tr>
-                        <th>User ID</th>
-                        <th>Username</th>
+                        <th>Họ tên</th>
                         <th>Mã sinh viên</th>
                         <th>Vai trò</th>
                         <th>Ngày tham gia</th>
@@ -537,8 +536,7 @@ export function StudentGroupsPage() {
                     <tbody>
                       {detailGroup.members.map((member) => (
                         <tr key={member.userId}>
-                          <td>{member.userId}</td>
-                          <td>{member.username}</td>
+                          <td>{member.name}</td>
                           <td>{member.studentCode}</td>
                           <td>{member.role === 'LEADER' ? 'Trưởng nhóm' : 'Thành viên'}</td>
                           <td>{formatDateTime(member.joinedAt)}</td>
