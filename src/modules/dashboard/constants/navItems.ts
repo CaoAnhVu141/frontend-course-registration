@@ -41,7 +41,7 @@ export const navGroups: NavGroup[] = [
     {
         title: 'Danh mục',
         items: [
-            { label: 'Quản lý khoa/phòng ban', icon: Building2, href: '/departments', roles: ['ADMIN'] },
+            { label: 'Quản lý khoa', icon: Building2, href: '/departments', roles: ['ADMIN'] },
             { label: 'Quản lý chuyên môn', icon: Tags, href: '/expertisetags', roles: ['ADMIN'] },
             { label: 'Quản lý giảng viên', icon: GraduationCap, href: '/lecturers', roles: ['ADMIN'] },
             { label: 'Quản lý kỳ đăng ký', icon: CalendarClock, href: '/registration-periods', roles: ['ADMIN'] },

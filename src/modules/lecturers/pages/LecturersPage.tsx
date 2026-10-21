@@ -302,7 +302,7 @@ export function LecturersPage() {
                     <th>Mã GV</th>
                     <th>Họ và tên</th>
                     <th>Email</th>
-                    <th>Khoa/Phòng ban</th>
+                    <th>Khoa</th>
                     <th>Học hàm/học vị</th>
                     <th>Tải phản biện</th>
                     <th>Chuyên môn</th>
