@@ -4,6 +4,7 @@ export type Evaluation = {
   id: number
   assignmentId: number
   lecturerUserId: number
+  lecturerName?: string | null
   lecturerCode: string
   lecturerEmail: string
   score: number

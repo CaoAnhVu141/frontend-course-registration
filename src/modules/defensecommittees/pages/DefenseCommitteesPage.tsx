@@ -786,6 +786,7 @@ export function DefenseCommitteesPage() {
                   <table className="defense-committee-member-table">
                     <thead>
                       <tr>
+                        <th>Họ tên</th>
                         <th>Mã GV</th>
                         <th>Email</th>
                         <th>Vai trò</th>
@@ -795,7 +796,7 @@ export function DefenseCommitteesPage() {
                     <tbody>
                       {(detailCommittee.committeeMembers ?? []).length === 0 ? (
                         <tr>
-                          <td className="defense-committee-empty" colSpan={4}>
+                          <td className="defense-committee-empty" colSpan={5}>
                             Hội đồng chưa có thành viên.
                           </td>
                         </tr>
@@ -803,6 +804,7 @@ export function DefenseCommitteesPage() {
                         sortMembers(detailCommittee.committeeMembers).map(
                           (member) => (
                             <tr key={member.id}>
+                              <td>{member.lecturerName || member.lecturerCode}</td>
                               <td>{member.lecturerCode}</td>
                               <td>{member.lecturerEmail}</td>
                               <td>
@@ -861,6 +863,7 @@ export function DefenseCommitteesPage() {
                 <table className="defense-committee-member-table">
                   <thead>
                     <tr>
+                      <th>Họ tên</th>
                       <th>Mã GV</th>
                       <th>Email</th>
                       <th>Vai trò</th>
@@ -870,6 +873,7 @@ export function DefenseCommitteesPage() {
                   <tbody>
                     {myMemberships.map((membership) => (
                       <tr key={membership.id}>
+                        <td>{membership.lecturerName || membership.lecturerCode}</td>
                         <td>{membership.lecturerCode}</td>
                         <td>{membership.lecturerEmail}</td>
                         <td>
