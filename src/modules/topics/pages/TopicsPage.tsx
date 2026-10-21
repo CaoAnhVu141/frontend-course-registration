@@ -532,13 +532,16 @@ export function TopicsPage() {
                   id="topic-period"
                   value={registrationPeriodId}
                   onChange={(event) => setRegistrationPeriodId(event.target.value)}
+                  required
                 >
                   <option value="">Chọn kỳ đăng ký</option>
-                  {registrationPeriods.map((period) => (
-                    <option key={period.id} value={period.id}>
-                      {period.name}
-                    </option>
-                  ))}
+                  {registrationPeriods
+                    .filter((period) => period.status)
+                    .map((period) => (
+                      <option key={period.id} value={period.id}>
+                        {period.name}
+                      </option>
+                    ))}
                 </select>
               </div>
 
