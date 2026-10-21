@@ -3,6 +3,7 @@ export type GroupMemberRole = 'LEADER' | 'MEMBER'
 export type GroupMember = {
   userId: number
   username: string
+  name: string | null
   studentCode: string
   role: GroupMemberRole
   joinedAt: string
